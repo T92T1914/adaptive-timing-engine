@@ -2,11 +2,13 @@
 
 [![CI](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml)
 
-**Adaptive event scheduling, bounded asynchronous replanning, and an inspectable timing simulation.** Pure Python 3.11+, with no runtime dependencies.
+**Experiments in humanized timing: workload, recovery, and responsive replanning.** Pure Python 3.11+, with no runtime dependencies.
 
-A timing system has to do more than produce a schedule. What happens when demand rises, an old calculation finishes late, or the execution loop wakes up after a deadline? This project makes those interactions visible and testable.
+A simulated performer needs more than random delays. Timing variation interacts with workload, accumulated effort, recovery, and the constraints on what can be executed. This package makes those interactions visible through configurable policies and an offline trace explorer. It also examines a separate systems problem: keeping an obsolete background calculation from replacing a newer plan.
 
 The request-mailbox design was extracted and generalized from a larger private application. The public event model, configurable behavioral policies, virtual executor, and demonstration are a new independent implementation. All example workloads and parameters are synthetic; the timing model is not a validated model of human performance.
+
+The larger project studies human-like input performance, including technique selection and feedback-driven recovery. **This repository is a focused public companion, not the complete performer.** Application adapters, original calibration data, and the full technique implementation remain private. The public package exposes the mechanisms implemented here, with its own reproducible evidence.
 
 [Run it](#run-it) · [Measured examples](#measured-examples) · [Architecture](#architecture) · [Design decisions](docs/design-decisions.md) · [API example](examples/replanning.py)
 
