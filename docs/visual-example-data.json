@@ -1,0 +1,21 @@
+{
+  "source_commit": "6e12229",
+  "source": "adaptive_timing.experiment.worker_experiment",
+  "conditions": "First compute deliberately gated by threading.Event; 100 replacements; 2000 empty-executor polls. This is not a CPU-contention or real-time deadline benchmark.",
+  "request_count": 101,
+  "computed_payloads": [
+    0,
+    100
+  ],
+  "stats": {
+    "generation": 101,
+    "submitted": 101,
+    "computed": 2,
+    "replaced": 99,
+    "stale": 1,
+    "failures": 0,
+    "queued": 0,
+    "running": false
+  },
+  "timeline": "Schematic event order; horizontal spacing does not represent elapsed time"
+}

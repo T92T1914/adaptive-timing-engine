@@ -36,6 +36,11 @@ Installation is optional when running from a checkout. The wheel includes the vi
 
 ## Measured examples
 
+[![A controlled worker experiment reduces 101 requests to two calculations and rejects one obsolete result.](docs/adaptive-timing-example.png)](docs/visual-example.md)
+
+One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
+[Reproduce and inspect the values](docs/visual-example.md).
+
 The committed experiment compares **4 workloads × 4 policy variants × 3 seeds**, with 240 tasks per case. Policies receive identical events and identical per-event random draws. Seeds are 7, 42, and 73; all parameters and interpreter details are recorded alongside the results.
 
 | Question | Observation at seed 42 | What it establishes |
