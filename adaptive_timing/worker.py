@@ -81,11 +81,15 @@ class LatestWorker(Generic[RequestT, ValueT]):
             with self._condition:
                 self._computed += 1
                 self._failures += error is not None
-                self._running = False
                 if not self._closed and generation == self._generation:
                     self._pending = outcome
                 else:
                     self._stale += 1
+            # A sleeping thread keeps its frame alive. Release completed work
+            # outside the lock, before wait_idle can report cleanup complete.
+            del payload, value, outcome, error
+            with self._condition:
+                self._running = False
                 self._condition.notify_all()
 
     def take(self) -> Outcome[ValueT] | None:
