@@ -9,3 +9,6 @@ dist/
 reports/
 .codex/
 AGENTS.md
+
+# Generated public site
+_site/
