@@ -6,9 +6,7 @@
 
 I wanted to see how workload, recovery and timing variation affect which tasks can actually run. This package makes those interactions visible in an offline trace explorer. It also handles a problem that comes up when planning happens in the background: an old calculation finishing after a newer request has made it obsolete.
 
-The request mailbox design was extracted and generalized from a larger private application. The public event model, configurable behavioral policies, virtual executor, and demonstration are a new independent implementation. All example workloads and parameters are synthetic; the timing model is not a validated model of human performance.
-
-The application and its original data stay private. This package stands on its own, with generated workloads, configurable policies and tests that can be run without the original application.
+I generalized the request mailbox from a larger private application, then built an independent event model, executor and experiment around it. Everything needed to run this version is here. The workloads and parameters are synthetic, so the results describe this simulation rather than validated human performance.
 
 [Run it](#run-it) · [Measured examples](#measured-examples) · [Architecture](#architecture) · [Design decisions](docs/design-decisions.md) · [API example](examples/replanning.py)
 

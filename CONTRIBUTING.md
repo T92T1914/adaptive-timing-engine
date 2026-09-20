@@ -1,6 +1,6 @@
-# Contributing to Adaptive Timing Engine
+# Working on Adaptive Timing Engine
 
-I welcome focused fixes, clearer examples and results that challenge an assumption in the project. If something looks wrong, I would rather have a small case I can run than a broad claim that it is broken.
+This project separates a plan from what the executor actually manages to dispatch. I want changes to keep that distinction visible, especially when work becomes obsolete or misses its deadline.
 
 ## Start locally
 
@@ -28,21 +28,15 @@ Start with [the timing model](adaptive_timing/model.py), [worker](adaptive_timin
 
 ## Report a bug or propose a change
 
-Check the existing issues first. Include the revision, Python version, operating system, command, expected behavior and actual output. For a numerical issue, include the smallest input that demonstrates it. Remove credentials and private data from logs before posting.
+Include the event sequence, revision, expected outcome and actual trace. A short reproducible race or deadline failure is more useful than a screenshot alone. Keep issued event IDs and resource reservations intact when testing replanning.
 
-Keep a pull request focused on one problem. Explain what changes for someone using the project, why the approach fits and which checks you ran. Add a regression test when it captures a real failure. Documentation changes should be checked against the current code and examples.
+For concurrency changes, use deterministic thread gates like the [engine tests](tests/test_engine.py). A convenient sleep can hide the failure being tested. For policy changes, retain paired traces and report admission as well as timing offsets; less variation can admit more work.
 
 ## Evidence and scope
 
 Keep event identities, workloads and paired random draws consistent when comparing policies. Distinguish rejected plans, expired tasks and dispatched work. Record interpreter and machine details for measured latency. The effort and recovery parameters are synthetic; a successful simulation does not validate human behavior.
 
 Useful next work includes comparing admission policies under the same workloads and measuring execution costs separately from virtual polling delays. Keep the public examples independent and reproducible.
-
-## Writing
-
-Use plain language and concrete examples. Avoid em dashes and unnecessary hyphens in authored prose. Preserve the exact spelling of code, commands, paths, package names, links and quoted evidence. Claims about performance should link to measurements and say what was actually tested.
-
-Be respectful when discussing a change. Questions and disagreements are welcome; keep them about the work.
 
 ## Development container and public site
 
