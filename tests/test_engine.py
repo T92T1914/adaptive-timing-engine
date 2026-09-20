@@ -249,6 +249,37 @@ class ConcurrencyTests(unittest.TestCase):
         controller.close(2)
         self.assertEqual(len(errors),1)
 
+    def test_missing_plan_reports_failure_and_keeps_previous_schedule(self):
+        calls = 0
+
+        def planner(request):
+            nonlocal calls
+            calls += 1
+            if calls == 2:
+                return None
+            return build_plan(request.events)
+
+        controller = Controller(planner)
+        try:
+            original = controller.request(PlanningRequest((event(),)))
+            self.assertTrue(controller.worker.wait_idle())
+            controller.poll(0.0)
+            self.assertEqual(controller.installed_revision, original)
+
+            controller.request(PlanningRequest(()))
+            self.assertTrue(controller.worker.wait_idle())
+            self.assertEqual(controller.poll(1.1)[0].id, "a")
+            self.assertIsNotNone(controller.last_error)
+            self.assertEqual(controller.installed_revision, original)
+
+            replacement = controller.request(PlanningRequest(()))
+            self.assertTrue(controller.worker.wait_idle())
+            controller.poll(1.1)
+            self.assertEqual(controller.installed_revision, replacement)
+            self.assertIsNone(controller.last_error)
+        finally:
+            controller.close(2)
+
     def test_controller_adopts_latest_revision(self):
         controller = Controller()
         try:

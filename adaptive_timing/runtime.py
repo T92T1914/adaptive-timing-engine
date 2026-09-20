@@ -144,7 +144,7 @@ class Controller:
         outcome = self.worker.take()
         if outcome is not None and outcome.generation == self.revision:
             self.last_error = outcome.error
-            if outcome.error is None and outcome.value is not None:
+            if outcome.error is None:
                 try:
                     self.executor.install(outcome.value)
                 except (ValueError, TypeError, AttributeError) as exc:
