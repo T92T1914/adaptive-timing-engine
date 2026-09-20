@@ -26,6 +26,8 @@ This is an algorithmic work bound, not a hard wall clock bound: releasing old Py
 
 A new plan replaces future intent. It cannot undo an event already emitted or a resource already reserved by a late dispatch. The executor retains issued IDs and resource availability. At dispatch time it checks whether the task can still complete before its deadline; if not, it emits an expiration record. Invalid plan adoption leaves the previous plan installed.
 
+A planner returning `None` is a failed result, not an empty schedule. The controller records that error and keeps the previous plan. A valid empty plan is an explicit request to clear future work. The regression test checks that a later valid result can still replace the plan and clear the error.
+
 The resource gap belongs to the reservation made when a task is dispatched. A later policy change does not retroactively alter that reservation. Applications needing longer safety intervals must model those intervals in their event durations or define a different reservation contract.
 
 ## Compare policies without changing the random experiment
