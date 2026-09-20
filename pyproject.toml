@@ -7,10 +7,14 @@ name = "adaptive-timing-engine"
 version = "0.1.0"
 description = "Adaptive event scheduling with bounded asynchronous replanning and reproducible simulation"
 requires-python = ">=3.11"
-authors = [{name = "Strix"}]
+authors = [{name = "Trinidy Farris"}]
 license = {text = "MIT"}
 readme = "README.md"
 dependencies = []
+
+[project.urls]
+Source = "https://github.com/T92T1914/adaptive-timing-engine"
+Issues = "https://github.com/T92T1914/adaptive-timing-engine/issues"
 
 [project.scripts]
 adaptive-timing = "adaptive_timing.__main__:main"
