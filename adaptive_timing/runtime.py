@@ -106,6 +106,12 @@ class PlanningRequest:
     def __post_init__(self):
         if not isinstance(self.events, tuple):
             raise ValueError("events must be an immutable tuple")
+        if any(not isinstance(event, Event) for event in self.events):
+            raise TypeError("events must contain Event snapshots")
+        if not isinstance(self.policy, Policy):
+            raise TypeError("policy must be a Policy snapshot")
+        if not isinstance(self.seed, int) or isinstance(self.seed, bool):
+            raise TypeError("seed must be an integer")
         finite(self.now, "now")
 
 
@@ -129,6 +135,8 @@ class Controller:
 
     def request(self, request: PlanningRequest) -> int:
         self.executor._assert_owner()
+        if not isinstance(request, PlanningRequest):
+            raise TypeError("request requires a PlanningRequest snapshot")
         self.revision = self.worker.request(request)
         return self.revision
 
