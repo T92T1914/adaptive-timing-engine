@@ -76,7 +76,13 @@ class LatestWorker(Generic[RequestT, ValueT]):
             try:
                 value = self._compute(payload)
             except Exception as exc:
-                error = f"{type(exc).__name__}: {exc}"
+                # Exceptions can implement their own broken __str__. Reporting
+                # that failure must not kill the worker and strand _running.
+                try:
+                    message = str(exc)
+                except Exception:
+                    message = "<message unavailable>"
+                error = f"{type(exc).__name__}: {message}"
             outcome = Outcome(generation, value, error, time.perf_counter() - started)
             with self._condition:
                 self._computed += 1
