@@ -92,3 +92,13 @@ MIT. See [LICENSE](LICENSE).
 ## Questions and contributions
 
 Found a problem or have a useful comparison? [Open an issue](https://github.com/T92T1914/adaptive-timing-engine/issues) with a small example I can run. The [contribution guide](CONTRIBUTING.md) covers setup, checks and the evidence to include with a change.
+
+## Engineering skills in this project
+
+I use this project to study what happens when new work arrives before the old calculation finishes. It connects concurrency, scheduling and diagnostics in a small system where I can inspect the event trace.
+
+- **Concurrency.** Inspect the worker that replaces waiting requests and rejects obsolete results. [Inspect the work](adaptive_timing/worker.py).
+- **Runtime state.** Follow plan adoption, resource reservations and bounded dispatch. [Inspect the work](adaptive_timing/runtime.py).
+- **Controlled experiments.** Compare the same workload and seed with one mechanism disabled. [Inspect the work](docs/evidence/results.md).
+
+These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real-time guarantees or a calibrated human-performance model.

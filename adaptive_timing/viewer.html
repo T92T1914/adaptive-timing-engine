@@ -4,6 +4,16 @@
 <style>
 :root{color-scheme:dark;--bg:#0c101a;--panel:#151c2b;--text:#e9edf7;--muted:#aebbd1;--line:#35435a;--cyan:#74dfef;--pink:#fa89cf}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,sans-serif}main{max-width:1260px;margin:auto;padding:32px 24px}h1{font-size:clamp(26px,4vw,40px);margin:5px 0 10px;letter-spacing:-.03em}h2{font-size:20px;margin:0 0 14px}p{max-width:85ch;color:var(--muted)}.kicker{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--cyan)}.controls,.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}label{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--muted)}select,button{font:inherit;padding:10px;background:#1c2639;color:var(--text);border:1px solid var(--line);border-radius:8px}button{cursor:pointer}button:hover{border-color:var(--cyan)}:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}.card,.panel{background:var(--panel);border:1px solid #28364b;border-radius:12px;padding:18px}.value{font-size:29px;font-weight:700;color:var(--cyan)}.caption{font-size:13px;color:var(--muted)}.panel{margin:16px 0}canvas{width:100%;height:280px;display:block}.legend{display:flex;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.legend span:first-child{color:var(--cyan)}.legend span:nth-child(2){color:var(--pink)}.range{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:14px}input{accent-color:var(--cyan);width:100%}.tablewrap{overflow:auto;max-height:350px}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}th{position:sticky;top:0;background:var(--panel)}.notes{display:grid;grid-template-columns:1fr 1fr;gap:16px}.notes p{margin:0}.badge{display:inline-block;padding:4px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;color:var(--muted)}footer{margin:25px 0;color:var(--muted);font-size:13px}a{color:var(--cyan)}@media(max-width:680px){main{padding:22px 14px}.controls,.metrics{grid-template-columns:1fr 1fr}.notes{grid-template-columns:1fr}.value{font-size:23px}canvas{height:250px}}
+
+.controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+.controls label,.controls select,.controls button,.card,.panel{min-width:0;max-width:100%}
+.controls select,.controls button{width:100%;min-height:44px}
+.tablewrap:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+input[type=range]{min-height:44px;margin:0}
+.scroll-hint{font-size:13px}
+@media(max-width:680px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.controls,.range{grid-template-columns:1fr}.badge{border-radius:10px}.value{overflow-wrap:anywhere}}
+@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f7f8fc;--panel:#fff;--text:#192337;--muted:#48576d;--line:#9aa8bc;--cyan:#075e79;--pink:#a32073}select,button{background:#edf1f8}.card,.panel{border-color:var(--line)}}
 </style>
 <main>
 <div class="kicker">ADAPTIVE TIMING ENGINE / EXPERIMENT LAB</div>
@@ -27,7 +37,7 @@
 <canvas id="timeline" role="img" aria-label="Timing offsets over target time; equivalent values are available in the trace table"></canvas>
 <div class="legend"><span>● Admitted task (offset from target)</span><span>× Rejected task</span><span>Zero line = target time</span></div></section>
 <section class="notes"><div class="panel"><h2>What this comparison means</h2><p id="explanation"></p></div><div class="panel"><h2>Background planning</h2><p id="worker"></p><p>The first calculation was deliberately blocked in this test. This shows queue coalescing and stale-result rejection, not CPU isolation or a hard real-time guarantee.</p></div></section>
-<section class="panel"><h2>Trace in the visible window</h2><p id="table-summary"></p><div class="tablewrap"><table><thead><tr><th>Task</th><th>Resource</th><th>Target (s)</th><th>Start (s)</th><th>Offset (ms)</th><th>Fatigue</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section class="panel"><h2>Trace in the visible window</h2><p id="table-summary"></p><p class="scroll-hint">Scroll the table sideways on smaller screens. Keyboard: focus the table, then use the arrow keys.</p><div class="tablewrap" tabindex="0" role="region" aria-label="Scrollable task trace"><table><thead><tr><th>Task</th><th>Resource</th><th>Target (s)</th><th>Start (s)</th><th>Offset (ms)</th><th>Fatigue</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <footer>Model parameters are illustrative, not fitted human measurements. Timing variation is not a score to maximize. Planning is greedy, with explicit resource and deadline constraints.</footer>
 </main>
 <script type="application/json" id="data">__REPORT_DATA__</script>
@@ -49,15 +59,17 @@ function render(){
  const canvas=$('timeline'),box=canvas.getBoundingClientRect(),scale=devicePixelRatio||1;canvas.width=box.width*scale;canvas.height=box.height*scale;const ctx=canvas.getContext('2d');ctx.scale(scale,scale);const w=box.width,h=box.height,l=48,r=18,t=24,b=34;
  const maxOffset=Math.max(25,...visible.filter(v=>v.status==='planned').map(v=>Math.abs(v.start-v.target)*1000));
  const x=value=>l+(value-begin)/(end-begin||1)*(w-l-r);const y=value=>t+(maxOffset-value)/(2*maxOffset)*(h-t-b);
- ctx.font='12px system-ui';ctx.strokeStyle='#35435a';ctx.fillStyle='#aebbd1';ctx.lineWidth=1;
+ const palette=getComputedStyle(document.documentElement),color=name=>palette.getPropertyValue(name).trim();
+ ctx.font='12px system-ui';ctx.strokeStyle=color('--line');ctx.fillStyle=color('--muted');ctx.lineWidth=1;
  for(let i=0;i<=4;i++){const val=-maxOffset+i*maxOffset/2;ctx.beginPath();ctx.moveTo(l,y(val));ctx.lineTo(w-r,y(val));ctx.stroke();ctx.fillText(val.toFixed(0),3,y(val)+4)}
  ctx.fillText('ms',3,12);for(let i=0;i<=4;i++){const val=begin+(end-begin)*i/4;ctx.fillText(val.toFixed(1)+'s',Math.min(w-45,x(val)),h-8)}
- for(const row of visible){const px=x(row.target);if(row.status==='rejected'){ctx.strokeStyle='#fa89cf';ctx.beginPath();ctx.moveTo(px-3,t-5);ctx.lineTo(px+3,t+1);ctx.moveTo(px+3,t-5);ctx.lineTo(px-3,t+1);ctx.stroke()}else{ctx.fillStyle=row.constrained?'#bda9ff':'#74dfef';ctx.beginPath();ctx.arc(px,y((row.start-row.target)*1000),3,0,2*Math.PI);ctx.fill()}}
+ for(const row of visible){const px=x(row.target);if(row.status==='rejected'){ctx.strokeStyle=color('--pink');ctx.beginPath();ctx.moveTo(px-3,t-5);ctx.lineTo(px+3,t+1);ctx.moveTo(px+3,t-5);ctx.lineTo(px-3,t+1);ctx.stroke()}else{ctx.fillStyle=row.constrained?color('--pink'):color('--cyan');ctx.beginPath();ctx.arc(px,y((row.start-row.target)*1000),3,0,2*Math.PI);ctx.fill()}}
  $('rows').replaceChildren();for(const row of visible){const tr=document.createElement('tr');const values=[row.id,row.resource,row.target.toFixed(4),row.start?.toFixed(4)??'N/A',row.start===undefined?'N/A':((row.start-row.target)*1000).toFixed(2),row.fatigue?.toFixed(3)??'N/A',row.status==='rejected'?'rejected':row.constrained?'constrained':'planned'];for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('rows').append(tr)}
- $('table-summary').textContent=`${visible.length} of ${current.events} tasks. Purple plot points indicate constrained timing requests. This table is also the text alternative to the plot.`;
+ $('table-summary').textContent=`${visible.length} of ${current.events} tasks. Pink plot points indicate constrained timing requests. This table is also the text alternative to the plot.`;
 }
 for(const id of ['scenario','variant','seed','start','span'])$(id).addEventListener('input',render);
 window.addEventListener('resize',render);
+matchMedia('(prefers-color-scheme: light)').addEventListener('change',render);
 $('download').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`${current.scenario}-${current.variant}-${current.seed}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)});
 render();
 </script></html>
