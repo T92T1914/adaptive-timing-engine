@@ -53,6 +53,9 @@ class Policy:
     use_noise: bool = True
 
     def __post_init__(self) -> None:
+        for name in ("use_load", "use_fatigue", "use_noise"):
+            if not isinstance(getattr(self, name), bool):
+                raise TypeError(f"{name} must be a boolean")
         for name in ("sigma", "load_gain", "fatigue_gain", "effort_per_event", "resource_gap"):
             finite(getattr(self, name), name)
         for name in ("density_window", "comfortable_rate", "recovery_seconds"):
@@ -93,6 +96,8 @@ class Plan:
         ready: dict[str, float] = {}
         previous = (-math.inf, "")
         for item in self.scheduled:
+            if not isinstance(item, Scheduled) or not isinstance(item.event, Event):
+                raise TypeError("scheduled entries must be Scheduled records containing Event snapshots")
             event = item.event
             finite(item.requested, "requested", minimum=-math.inf)
             for name in ("density", "fatigue", "sigma"):
@@ -109,6 +114,8 @@ class Plan:
             previous = (item.start, event.id)
             ready[event.resource] = item.finish + self.resource_gap
         for item in self.rejected:
+            if not isinstance(item, Rejected) or not isinstance(item.event, Event):
+                raise TypeError("rejected entries must be Rejected records containing Event snapshots")
             if item.event.id in seen:
                 raise ValueError("an event appears more than once in the plan")
             seen.add(item.event.id)

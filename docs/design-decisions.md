@@ -8,6 +8,8 @@ The public version generalizes the payload and result types, adds an explicit sh
 
 The low level mailbox's `take()` is atomic, but validity at consumption is not a perpetual guarantee. A new request could arrive just afterward. `Controller` therefore owns both submission and adoption on one thread. Other threads cannot submit through that controller; the worker only computes immutable snapshots. The caller must also avoid sharing mutable payloads through the low level generic worker.
 
+The controller accepts a `PlanningRequest` containing `Event` and `Policy` records and an integer seed. Policy switches require actual booleans, so a mutable container cannot change their truth value while a request waits. `Plan` requires `Scheduled` and `Rejected` records containing `Event` snapshots. Matching field names on a mutable object are not enough: changing one after validation could move a task before its earliest start or alter a queued calculation. Invalid request types are rejected before invalidating an existing ready result. These checks enforce the declared record contract; they do not protect against deliberately bypassing Python's frozen dataclasses or modifying classes at runtime.
+
 ## Bound waiting work instead of promising cancellation
 
 Running arbitrary Python code cannot be safely killed by this worker. The active calculation finishes, but its stale output is discarded; intermediate waiting requests are replaced. This bounds waiting slots rather than waiting time. A slow or stuck callback still delays the newest calculation. Shutdown with a finite timeout reports whether the worker actually stopped.
