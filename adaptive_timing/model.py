@@ -53,6 +53,9 @@ class Policy:
     use_noise: bool = True
 
     def __post_init__(self) -> None:
+        for name in ("use_load", "use_fatigue", "use_noise"):
+            if not isinstance(getattr(self, name), bool):
+                raise TypeError(f"{name} must be a boolean")
         for name in ("sigma", "load_gain", "fatigue_gain", "effort_per_event", "resource_gap"):
             finite(getattr(self, name), name)
         for name in ("density_window", "comfortable_rate", "recovery_seconds"):

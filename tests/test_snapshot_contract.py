@@ -36,6 +36,30 @@ class SnapshotContractTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises(TypeError):
                 replace(PlanningRequest((self.event,), self.policy), **changes)
 
+    def test_policy_switches_reject_mutable_and_non_boolean_values(self):
+        for name in ("use_noise", "use_load", "use_fatigue"):
+            for value in ([], {}, set(), 0, 1, None, "false"):
+                with self.subTest(name=name, value=value), self.assertRaises(TypeError):
+                    replace(self.policy, **{name: value})
+            for value in (False, True):
+                with self.subTest(name=name, value=value):
+                    policy = replace(self.policy, **{name: value})
+                    request = PlanningRequest((self.event,), policy)
+                    self.assertIs(getattr(request.policy, name), value)
+                    self.assertEqual(len(build_plan(request.events, request.policy).scheduled), 1)
+
+    def test_event_and_policy_scalar_fields_reject_ordinary_containers(self):
+        for original, names in (
+            (self.event, ("id", "resource", "target", "earliest", "deadline", "duration")),
+            (self.policy, ("sigma", "density_window", "comfortable_rate", "load_gain",
+                           "fatigue_gain", "effort_per_event", "recovery_seconds", "resource_gap")),
+        ):
+            for name in names:
+                for value in ([], {}, set()):
+                    with self.subTest(record=type(original).__name__, name=name, value=value):
+                        with self.assertRaises((TypeError, ValueError)):
+                            replace(original, **{name: value})
+
     def test_invalid_submission_keeps_ready_revision(self):
         controller = Controller()
         try:
