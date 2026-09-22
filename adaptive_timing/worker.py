@@ -75,12 +75,16 @@ class LatestWorker(Generic[RequestT, ValueT]):
             error = None
             try:
                 value = self._compute(payload)
-            except Exception as exc:
+            except BaseException as exc:
+                # A callback's SystemExit or KeyboardInterrupt belongs to this
+                # request. Letting it kill the thread would leave later work
+                # queued forever. This boundary does not catch owner-thread
+                # interrupts or change the explicit close() lifecycle.
                 # Exceptions can implement their own broken __str__. Reporting
                 # that failure must not kill the worker and strand _running.
                 try:
                     message = str(exc)
-                except Exception:
+                except BaseException:
                     message = "<message unavailable>"
                 error = f"{type(exc).__name__}: {message}"
             outcome = Outcome(generation, value, error, time.perf_counter() - started)
