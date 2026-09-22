@@ -14,6 +14,8 @@ The controller accepts a `PlanningRequest` containing `Event` and `Policy` recor
 
 Running arbitrary Python code cannot be safely killed by this worker. The active calculation finishes, but its stale output is discarded; intermediate waiting requests are replaced. This bounds waiting slots rather than waiting time. A slow or stuck callback still delays the newest calculation. Shutdown with a finite timeout reports whether the worker actually stopped.
 
+A callback that raises `SystemExit`, `KeyboardInterrupt`, or another `BaseException` produces a failed outcome just like an ordinary exception. Otherwise the background thread could die while its mailbox kept accepting work and reporting itself as busy. The next waiting request can still run, and an obsolete failure cannot replace a newer result. This boundary is only around callback execution and diagnostic formatting. It does not intercept interrupts on the owner thread, forcibly cancel work, or replace `close()` as the shutdown path.
+
 The gated worker experiment forces this situation and records two computed payloads out of 101 requests. That is evidence about queue policy, not a claim that 101 arbitrary calculations became 50 times faster.
 
 ## Validate once, process incrementally
