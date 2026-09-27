@@ -51,3 +51,11 @@ cover optional authoring dependencies and the retained source. Use
 `python tools/render_worker_figure.py --check` to validate committed images
 without fonts or another worker experiment. Keep original evidence separate
 from new presentation editions.
+
+For causal policy changes, read the [information contract](docs/causal-policy.md)
+and run the regressions in `tests/test_causal.py`. The public comparison is
+rendered from retained values by `python tools/render_causal_report.py` and by
+the site builder. `tests/test_causal_evidence.py` audits every saved plan,
+terminal count, paired offset and resource interval without another study.
+Do not run the full comparison just to refresh a report. A new comparison
+needs its own committed protocol and output directory.

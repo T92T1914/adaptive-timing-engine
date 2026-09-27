@@ -10,6 +10,7 @@ sys.path.insert(0, str(ROOT))
 from adaptive_timing.presentation import ROOT as PRESENTATION_ROOT, appearance_css
 from tools.render_saved_viewer import render
 from tools.render_worker_figure import check_outputs
+from tools.render_causal_report import render as render_causal
 OUT = ROOT / "_site"
 FILES = {
     "site/index.html": "index.html",
@@ -22,6 +23,8 @@ FILES = {
     "docs/adaptive-timing-clair.svg": "worker-clair.svg",
     "docs/adaptive-timing-obscur.svg": "worker-obscur.svg",
     "docs/adaptive-timing-figure.json": "worker-figure.json",
+    "docs/causal-evidence/summary.json": "causal-summary.json",
+    "docs/causal-evidence/raw.json.gz": "causal-raw.json.gz",
 }
 
 
@@ -39,7 +42,9 @@ def main():
     (OUT / "appearance.css").write_text(appearance_css(), encoding="utf-8", newline="\n")
     shutil.copyfile(PRESENTATION_ROOT / "appearance.js", OUT / "appearance.js")
     render(OUT)
-    generated = {"appearance.css", "appearance.js", "explorer.html", "presentation.json"}
+    render_causal(OUT)
+    generated = {"appearance.css", "appearance.js", "explorer.html", "presentation.json",
+                 "causal.html", "causal-presentation.json"}
     unexpected = {p.name for p in OUT.iterdir()} - set(FILES.values()) - generated
     if unexpected:
         raise ValueError("Unexpected site output files: " + str(sorted(unexpected)))

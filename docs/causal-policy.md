@@ -95,7 +95,8 @@ version and outcome storage grows with the event count. Start a fresh session
 for independent work. The implementation is intended for inspectable bounded
 streams, with no new claims about constant memory or CPU isolation.
 
-The [comparison protocol](causal-protocol.md) declares the new experiment.
+The [comparison protocol](causal-protocol.md) declares the new experiment,
+and [the retained results](causal-evidence/results.md) include every pair.
 The [causality tests](../tests/test_causal.py) change future announcements,
 updates and cancellations while requiring earlier plans and dispatch records
 to remain identical. They also include an offline positive control that does

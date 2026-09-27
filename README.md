@@ -66,6 +66,32 @@ The committed experiment compares **4 workloads × 4 policy variants × 3 seeds*
 
 See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency.
 
+### Planning as information arrives
+
+`CausalScheduler` receives immutable announcements, updates and cancellations.
+A task announced before its release is legitimately known future work. A fact
+that has not arrived is absent from the planning snapshot. Updating the known
+catalog invalidates old results, while issued IDs and service reservations
+survive. The [information contract and API example](docs/causal-policy.md)
+explain equal timestamp ordering, terminal states and delayed results.
+
+The new [causal comparison report](https://t92t1914.github.io/adaptive-timing-engine/causal.html)
+retains 24 pairs across four synthetic workloads, two delivery patterns and
+three seeds. The causal policy dispatched fewer tasks in 9 pairs, the same
+number in 7 and more in 8. At seed 42, steady work with revisions dispatched
+100 tasks under the causal policy and 111 under the offline comparator.
+Saturation also exposed cases where repeated causal replanning dispatched more
+work. These are whole policy comparisons, including different information and
+effort estimates. They do not establish a universal winner.
+
+The [protocol](docs/causal-protocol.md) and implementation were committed before
+the run. [Every result](docs/causal-evidence/results.md),
+[summary values](docs/causal-evidence/summary.json) and
+[raw traces](docs/causal-evidence/raw.json.gz) are retained. Planned entries,
+distinct admissions, rejection, expiration, dispatch and cancellation remain
+separate. External completion is unknown. This study does not rerun or supply
+a missing evaluated revision for the original batch experiment.
+
 ## Architecture
 
 ```mermaid
@@ -83,6 +109,7 @@ flowchart LR
 | Component | Responsibility | Decision worth inspecting |
 | --- | --- | --- |
 | [`model.py`](adaptive_timing/model.py) | Timing policy, workload, recovery, resource windows | Noise is keyed by event identity, so an ablation cannot accidentally change its random inputs. |
+| [`causal.py`](adaptive_timing/causal.py) | Delivered information, incremental planning and result adoption | A result must match the current immutable request and generation before it can change the session. |
 | [`worker.py`](adaptive_timing/worker.py) | Latest request computation and versioned outcomes | A new request invalidates already completed pending output immediately, not only when its replacement finishes. |
 | [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning; the poll budget also counts duplicates and deferred tasks. |
 | [`experiment.py`](adaptive_timing/experiment.py) | Generated data and paired comparisons | Full traces accompany measurements, and execution expiration is separate from planning rejection. |
@@ -93,7 +120,8 @@ An event has an immutable ID, target time, earliest start, completion deadline, 
 ## Scope and limits
 
 * The behavioral policy uses workload dependent variation and a synthetic effort/recovery state. There are no fitted human profiles, learned model weights, or claims of human indistinguishability.
-* The planner knows the full input batch. Its centered workload window uses future information; it is not a causal online estimator or an optimal admission algorithm.
+* `build_plan` is the preserved offline comparator. It knows the full input batch and uses a centered workload window. `CausalScheduler` only counts delivered outstanding work and builds effort from virtual dispatch history plus the current plan. Neither is an optimal admission algorithm.
+* The causal session uses one complete delivery group per timestamp. Rejected, expired, dispatched and canceled IDs are terminal. It clears unissued work when new information arrives, which can lose opportunities while replacement planning is delayed. See the [causal contract](docs/causal-policy.md) before integrating an asynchronous caller.
 * The background worker is a thread. It keeps planning out of the polling method but does not isolate CPU bound Python work from the GIL. It cannot forcibly cancel an in progress calculation.
 * Polling processes at most its candidate budget. Plan validation happens during construction, before adoption. Python reference cleanup, allocation, garbage collection, locking, and OS scheduling still prevent a hard real time latency guarantee.
 * The executor returns records; it does not actuate devices or an external application. Service durations are assumed inputs, not measurements of a real device. Event IDs cannot be reused during an executor session; its issued ID set grows until that session is discarded.
