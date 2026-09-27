@@ -204,7 +204,7 @@ test('worker figure follows effective appearance, prints Clair and downloads exa
     assert.equal(await image.isVisible(),true);
     assert.equal(await page.locator('.worker-'+(mode==='clair'?'obscur':'clair')).isVisible(),false);
     await image.scrollIntoViewIfNeeded();
-    await page.waitForFunction(mode=>document.querySelector('.worker-'+mode).naturalWidth===960,mode);
+    await page.waitForFunction(mode=>[...document.querySelectorAll('.worker-'+mode+' img')].filter(e=>e.getBoundingClientRect().width>0).every(e=>e.complete&&e.naturalWidth>0),mode);
   };
   await edition('obscur');
   await page.locator('#appearance').selectOption('clair');await edition('clair');
@@ -287,4 +287,28 @@ test('causal report preserves every result across appearance and offline summary
   await offline.locator('#appearance:not([disabled])').waitFor();
   assert.deepEqual(JSON.parse(await offline.locator('#causal-data').textContent()),summary);
   assert.deepEqual(requests,[]);
+});
+
+
+test('wide figure follows its container and preserves every delivered file', async t => {
+  const page = await fixture(t, {viewport:{width:1280,height:900},colorScheme:'dark'});
+  await page.goto(base+'/'); await page.locator('#appearance:not([disabled])').waitFor();
+  for (const mode of ['clair','obscur']) {
+    await page.locator('#appearance').selectOption(mode);
+    const visible=page.locator('#worker-figure img:visible');
+    assert.equal(await visible.count(),1);
+    assert.equal(await visible.getAttribute('src'),`worker-${mode}-wide.png`);
+    await visible.scrollIntoViewIfNeeded(); await visible.evaluate(e=>e.decode());
+    assert.deepEqual(await visible.evaluate(e=>[e.naturalWidth,e.naturalHeight]),[1800,1280]);
+    const destination=process.env.TIMING_SCREENSHOT_DIR;
+    if(destination){await mkdir(destination,{recursive:true});await visible.screenshot({path:path.join(destination,`worker-${mode}-wide.png`)});}
+    await page.locator('#worker-figure').evaluate(e=>e.style.width='400px');
+    assert.equal(await visible.getAttribute('src'),`worker-${mode}.png`);
+    await page.locator('#worker-figure').evaluate(e=>e.style.removeProperty('width'));
+    for(const suffix of ['','-wide'])for(const ext of ['png','svg']){
+      const file=`worker-${mode}${suffix}.${ext}`;
+      const response=await page.request.get(base+'/'+file);assert.equal(response.status(),200);
+      assert.deepEqual(await response.body(),await readFile(path.join(root,file)));
+    }
+  }
 });

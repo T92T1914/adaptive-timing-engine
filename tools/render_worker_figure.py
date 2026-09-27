@@ -122,7 +122,7 @@ def semantic_record(data):
     }
 
 
-def draw(data, tokens, mode, files, output):
+def draw(data, tokens, mode, files, output, wide=False):
     import matplotlib
 
     matplotlib.use("Agg")
@@ -135,7 +135,11 @@ def draw(data, tokens, mode, files, output):
     roles = tokens["themes"][mode]
     fonts = {name: FontProperties(fname=str(path)) for name, path in files.items()}
     with rc_context({"svg.fonttype": "path", "svg.hashsalt": "timing-worker-v1"}):
-        fig = Figure(figsize=(4.8, 11.2), dpi=200, facecolor=roles["canvas"])
+        fig = Figure(
+            figsize=(9, 6.4) if wide else (4.8, 11.2),
+            dpi=200,
+            facecolor=roles["canvas"],
+        )
         labels = []
 
         def label(x, y, text, size=13, face="Regular", color=None):
@@ -152,56 +156,133 @@ def draw(data, tokens, mode, files, output):
             labels.append(item)
             return item
 
-        label(0.065, 0.96, "ADAPTIVE TIMING ENGINE", 12, "SemiBold", roles["accent"])
-        label(0.065, 0.915, "Keep the current\nresult.", 27, "Bold")
-        label(0.065, 0.815, "One calculation active.\nOne request waiting.", 14)
-        label(0.065, 0.755, "101 requests", 17, "Bold")
-        label(0.535, 0.755, "2 calculations", 17, "Bold")
-        for index, (key, title, body, role) in enumerate(EVENTS):
-            top = 0.705 - index * 0.14
-            box = FancyBboxPatch(
-                (0.065, top - 0.112),
-                0.87,
-                0.112,
-                transform=fig.transFigure,
-                boxstyle="round,pad=0.008,rounding_size=0.01",
-                facecolor=roles["panel"],
-                edgecolor=roles["border"],
-                linewidth=0.8,
-                gid=f"event-{key}",
-            )
-            fig.add_artist(box)
+        if wide:
             label(
-                0.09, top - 0.012, f"{index + 1}. {title}", 13, "SemiBold", roles[role]
+                0.055, 0.96, "ADAPTIVE TIMING ENGINE", 12, "SemiBold", roles["accent"]
             )
-            label(0.09, top - 0.046, body, 13)
-            if index < len(EVENTS) - 1:
-                arrow = FancyArrowPatch(
-                    (0.5, top - 0.122),
-                    (0.5, top - 0.13),
-                    transform=fig.transFigure,
-                    arrowstyle="-|>",
-                    mutation_scale=10,
-                    color=roles["muted"],
-                    gid=f"next-{key}",
+            label(0.055, 0.90, "Keep the current result.", 27, "Bold")
+            label(
+                0.055,
+                0.81,
+                "101 requests. 2 calculations. One active, one waiting.",
+                14,
+            )
+            # Read left to right in each numbered row. Arrows preserve event order.
+            positions = [(0.055, 0.70), (0.535, 0.70), (0.055, 0.46), (0.535, 0.46)]
+            for index, ((key, title, body, role), (x, top)) in enumerate(
+                zip(EVENTS, positions, strict=True)
+            ):
+                fig.add_artist(
+                    FancyBboxPatch(
+                        (x, top - 0.17),
+                        0.41,
+                        0.17,
+                        transform=fig.transFigure,
+                        boxstyle="round,pad=0.008,rounding_size=0.01",
+                        facecolor=roles["panel"],
+                        edgecolor=roles["border"],
+                        linewidth=0.8,
+                        gid=f"event-{key}",
+                    )
                 )
-                fig.add_artist(arrow)
-        label(0.065, 0.145, "0 failures. Nothing queued or running.", 12.5)
-        label(
-            0.065,
-            0.111,
-            "Event order, not elapsed time.\nNo speedup or deadline guarantee.\nRecorded source: 6e12229.",
-            12.5,
-            color=roles["muted"],
-        )
-        label(
-            0.065,
-            0.037,
-            "Controlled example, no new workload.",
-            12,
-            "Italic",
-            roles["muted"],
-        )
+                label(
+                    x + 0.012,
+                    top - 0.015,
+                    f"{index + 1}. {title}",
+                    13,
+                    "SemiBold",
+                    roles[role],
+                )
+                label(x + 0.012, top - 0.067, body, 13)
+                if index < 3:
+                    start, end = ((x + 0.42, top - 0.085), (x + 0.46, top - 0.085))
+                    if index == 1:
+                        start, end = ((0.74, 0.52), (0.26, 0.47))
+                    fig.add_artist(
+                        FancyArrowPatch(
+                            start,
+                            end,
+                            transform=fig.transFigure,
+                            arrowstyle="-|>",
+                            mutation_scale=12,
+                            color=roles["muted"],
+                            gid=f"next-{key}",
+                        )
+                    )
+            label(0.055, 0.24, "0 failures. Nothing queued or running.", 13, "SemiBold")
+            label(
+                0.055,
+                0.17,
+                "Event order, not elapsed time. No speedup or deadline guarantee.",
+                13,
+                color=roles["muted"],
+            )
+            label(
+                0.055,
+                0.10,
+                "Controlled example, no new workload. Recorded source: 6e12229.",
+                13,
+                "Italic",
+                roles["muted"],
+            )
+        else:
+            label(
+                0.065, 0.96, "ADAPTIVE TIMING ENGINE", 12, "SemiBold", roles["accent"]
+            )
+            label(0.065, 0.915, "Keep the current\nresult.", 27, "Bold")
+            label(0.065, 0.815, "One calculation active.\nOne request waiting.", 14)
+            label(0.065, 0.755, "101 requests", 17, "Bold")
+            label(0.535, 0.755, "2 calculations", 17, "Bold")
+            for index, (key, title, body, role) in enumerate(EVENTS):
+                top = 0.705 - index * 0.14
+                box = FancyBboxPatch(
+                    (0.065, top - 0.112),
+                    0.87,
+                    0.112,
+                    transform=fig.transFigure,
+                    boxstyle="round,pad=0.008,rounding_size=0.01",
+                    facecolor=roles["panel"],
+                    edgecolor=roles["border"],
+                    linewidth=0.8,
+                    gid=f"event-{key}",
+                )
+                fig.add_artist(box)
+                label(
+                    0.09,
+                    top - 0.012,
+                    f"{index + 1}. {title}",
+                    13,
+                    "SemiBold",
+                    roles[role],
+                )
+                label(0.09, top - 0.046, body, 13)
+                if index < len(EVENTS) - 1:
+                    arrow = FancyArrowPatch(
+                        (0.5, top - 0.122),
+                        (0.5, top - 0.13),
+                        transform=fig.transFigure,
+                        arrowstyle="-|>",
+                        mutation_scale=10,
+                        color=roles["muted"],
+                        gid=f"next-{key}",
+                    )
+                    fig.add_artist(arrow)
+            label(0.065, 0.145, "0 failures. Nothing queued or running.", 12.5)
+            label(
+                0.065,
+                0.111,
+                "Event order, not elapsed time.\nNo speedup or deadline guarantee.\nRecorded source: 6e12229.",
+                12.5,
+                color=roles["muted"],
+            )
+            label(
+                0.065,
+                0.037,
+                "Controlled example, no new workload.",
+                12,
+                "Italic",
+                roles["muted"],
+            )
         canvas = FigureCanvasAgg(fig)
         canvas.draw()
         # Catch cropped labels before publishing either edition.
@@ -223,7 +304,8 @@ def draw(data, tokens, mode, files, output):
             }
             if ext == "svg":
                 metadata["Date"] = None
-            path = output / f"adaptive-timing-{mode}.{ext}"
+            suffix = "-wide" if wide else ""
+            path = output / f"adaptive-timing-{mode}{suffix}.{ext}"
             fig.savefig(path, metadata=metadata)
             if ext == "svg":
                 path.write_text(
@@ -244,8 +326,9 @@ def check_outputs():
         if record["inputs_sha256_lf"][name] != digest(ROOT / name, text=True):
             raise ValueError(f"Figure input changed: {name}")
     expected = {
-        f"docs/adaptive-timing-{mode}.{ext}"
+        f"docs/adaptive-timing-{mode}{suffix}.{ext}"
         for mode in ("clair", "obscur")
+        for suffix in ("", "-wide")
         for ext in ("png", "svg")
     }
     if set(record["outputs_sha256"]) != expected:
@@ -282,13 +365,18 @@ def main():
             mode: draw(data, tokens, mode, files, output)
             for mode in ("clair", "obscur")
         }
+        wide_layouts = {
+            mode: draw(data, tokens, mode, files, output, wide=True)
+            for mode in ("clair", "obscur")
+        }
         import matplotlib
 
         record = {
-            "schema_version": 1,
+            "schema_version": 2,
             "evidence": semantic_record(data),
             "renderer": {"matplotlib": matplotlib.__version__, "backend": "Agg"},
             "layout": layouts,
+            "wide_layout": wide_layouts,
             "typography": {
                 "files": font_evidence,
                 "painted_faces": ["Regular", "SemiBold", "Bold", "Italic"],

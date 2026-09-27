@@ -2,6 +2,7 @@
 
 import copy
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -75,6 +76,38 @@ class WorkerFigureTests(unittest.TestCase):
             self.assertEqual(len(root.findall(".//s:g[@id='next-start']", NS)), 1)
             self.assertEqual(len(root.findall(".//s:g[@id='next-replace']", NS)), 1)
             self.assertEqual(len(root.findall(".//s:g[@id='next-reject']", NS)), 1)
+
+    def test_wide_sequence_keeps_order_counters_and_glyphs(self):
+        for mode in ("clair", "obscur"):
+            raw = (figure.ROOT / f"docs/adaptive-timing-{mode}-wide.svg").read_text()
+            root = ET.fromstring(raw)
+            positions = []
+            for index, (key, title, _, _) in enumerate(figure.EVENTS):
+                path = root.find(f".//s:g[@id='event-{key}']/s:path", NS).get("d")
+                xy = re.match(r"M ([\d.]+) ([\d.]+)", path)
+                positions.append(tuple(map(float, xy.groups())))
+                self.assertIn(f"<!-- {index + 1}. {title} -->", raw)
+            self.assertLess(positions[0][0], positions[1][0])
+            self.assertEqual(positions[0][1], positions[1][1])
+            self.assertLess(positions[0][1], positions[2][1])
+            self.assertEqual(positions[0][0], positions[2][0])
+            self.assertEqual(positions[1][0], positions[3][0])
+            self.assertEqual(positions[2][1], positions[3][1])
+            for key in ("start", "replace", "reject"):
+                self.assertIsNotNone(root.find(f".//s:g[@id='next-{key}']", NS))
+            for text in (
+                "99 requests replaced.",
+                "payload 100, revision 101.",
+                "Its obsolete result is rejected.",
+            ):
+                self.assertIn(text, raw)
+            self.assertEqual(
+                json.loads(root.find(".//dc:description", NS).text),
+                figure.semantic_record(figure.load_data()),
+            )
+            for face in ("Regular", "SemiBold", "Bold", "Italic"):
+                self.assertIn(f'xlink:href="#Inter-{face}-', raw)
+            self.assertNotIn("<text", raw)
 
     def test_real_inter_outlines_and_no_external_glyph_requests(self):
         for mode in ("clair", "obscur"):
