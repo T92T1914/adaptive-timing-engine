@@ -1,0 +1,3 @@
+# Rendering receipts identify exact SVG bytes on Windows and Linux.
+docs/adaptive-timing-clair.svg text eol=lf
+docs/adaptive-timing-obscur.svg text eol=lf

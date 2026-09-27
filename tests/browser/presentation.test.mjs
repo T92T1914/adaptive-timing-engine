@@ -12,7 +12,7 @@ import {chromium} from 'playwright';
 // connect to a running browser, launch a visible fallback or reuse a profile.
 const root=fileURLToPath(new URL('../../_site/',import.meta.url));
 const expected=JSON.parse(gunzipSync(await readFile(new URL('../../docs/evidence/traces.json.gz',import.meta.url))));
-const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml'};
+const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.json':'application/json','.svg':'image/svg+xml','.png':'image/png'};
 let browser,server,base;
 before(async()=>{
   server=createServer(async(req,res)=>{
@@ -193,5 +193,43 @@ test('local Inter supplies six actual faces under both appearances',
     for(const [selector,name]of [['h1','Bold'],['.font-note','Regular'],['label[for="appearance"]','SemiBold']]){
       const providers=await fonts(page,selector);assert.ok(providers.some(f=>f.postScriptName==='Inter-'+name),JSON.stringify({selector,name,providers}));
     }
+  }
+});
+
+
+test('worker figure follows effective appearance, prints Clair and downloads exact SVGs',async t=>{
+  const page=await fixture(t,{colorScheme:'dark'});await ready(page,'/');
+  const edition=async mode=>{
+    const image=page.locator('.worker-'+mode);
+    assert.equal(await image.isVisible(),true);
+    assert.equal(await page.locator('.worker-'+(mode==='clair'?'obscur':'clair')).isVisible(),false);
+    await image.scrollIntoViewIfNeeded();
+    await page.waitForFunction(mode=>document.querySelector('.worker-'+mode).naturalWidth===960,mode);
+  };
+  await edition('obscur');
+  await page.locator('#appearance').selectOption('clair');await edition('clair');
+  await page.reload();await edition('clair');
+  await page.emulateMedia({colorScheme:'light'});
+  await page.locator('#appearance').selectOption('obscur');await edition('obscur');
+  for(const mode of ['clair','obscur']){
+    await page.locator('#appearance').selectOption(mode);
+    await page.setViewportSize({width:390,height:844});await edition(mode);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    if(process.env.TIMING_SCREENSHOT_DIR){
+      await mkdir(process.env.TIMING_SCREENSHOT_DIR,{recursive:true});
+      await page.locator('#worker-figure').screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,'worker-'+mode+'-mobile.png')});
+    }
+    const pending=page.waitForEvent('download');
+    await page.locator('a[download][href="worker-'+mode+'.svg"]').click();
+    const download=await pending;
+    assert.deepEqual(await readFile(await download.path()),await readFile(path.join(root,'worker-'+mode+'.svg')));
+  }
+  await page.emulateMedia({media:'print'});await edition('clair');
+  await page.emulateMedia({media:'screen'});await edition('obscur');
+  await page.locator('#appearance').selectOption('auto');await edition('clair');
+  await page.emulateMedia({colorScheme:'dark'});await edition('obscur');
+  for(const colorScheme of ['light','dark']){
+    const noJS=await fixture(t,{javaScriptEnabled:false,colorScheme});await noJS.goto(base+'/');
+    assert.equal(await noJS.locator('.worker-'+(colorScheme==='light'?'clair':'obscur')).isVisible(),true);
   }
 });

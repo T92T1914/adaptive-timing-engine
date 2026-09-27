@@ -12,3 +12,13 @@ summary{min-height:44px;padding-block:10px}
 @media(max-width:700px){.engineering-grid{grid-template-columns:1fr;gap:16px}.panel{padding:18px}.button{max-width:100%;overflow-wrap:anywhere}}
 @media(forced-colors:active){.panel,.button,select,.metric{border-color:CanvasText}a,.button.primary{color:LinkText}.button.primary{background:Canvas}}
 h1,h2,h3{font-weight:700}label,summary{font-weight:600}.appearance-control{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:20px 0}.appearance-control label{margin:0}.appearance-control select{min-width:0}.appearance-control small{max-width:100%}nav{flex-wrap:wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.panel,.two>section{min-width:0}a{overflow-wrap:anywhere}@media print{.appearance-control{display:none}}@media(forced-colors:active){:root,:root[data-appearance]{--canvas:Canvas;--panel:Canvas;--text:CanvasText;--muted:CanvasText;--accent:LinkText;--divider:CanvasText;--control:Canvas;--focus:Highlight;--code:Canvas}}
+
+/* The image follows the effective setting, including no-script Auto and print. */
+#worker-figure{max-width:480px;margin-inline:auto}
+.worker-obscur{display:none}
+@media(prefers-color-scheme:dark){:root:not([data-appearance="clair"]) .worker-clair{display:none}:root:not([data-appearance="clair"]) .worker-obscur{display:block}}
+:root[data-appearance="obscur"] .worker-clair{display:none}
+:root[data-appearance="obscur"] .worker-obscur{display:block}
+:root[data-appearance="clair"] .worker-clair{display:block}
+:root[data-appearance="clair"] .worker-obscur{display:none}
+@media print{:root .worker-clair,:root[data-appearance] .worker-clair{display:block}:root .worker-obscur,:root[data-appearance] .worker-obscur{display:none}}

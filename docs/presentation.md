@@ -14,9 +14,19 @@ The plot and table show planning decisions. A constrained task is still planned,
 
 Circles mark planned tasks, squares mark constrained planned tasks and crosses mark rejected tasks. Color reinforces those meanings. Appearance changes redraw the canvas while retaining the selected case and time window. The scrollable table gives the equivalent values with units and status text. With JavaScript disabled, Auto and all saved case summaries remain available. Print uses Clair without changing the stored screen preference.
 
+The [worker diagram](visual-example.md) has a separate renderer for the retained
+101 request example. New PNG and outlined SVG editions preserve its counters,
+source revision and event order without running work. The original figure
+remains available. Its recorded source is separate from the unknown evaluated
+revision of the trace archive above.
+
 ## Typography
 
-Six local Inter lookups cover Regular 400, SemiBold 600, Bold 700 and their genuine italics. No font files are embedded or downloaded. Visitors without those faces use a system fallback. Code stays monospace, and unsupported characters use normal language or symbol fallbacks. Local rendered-glyph checks establish the tested environment only, not every visitor's font installation or native application acceptance.
+The HTML viewer uses six local Inter lookups that cover Regular 400, SemiBold 600, Bold 700 and their genuine italics. No font files are embedded or downloaded. Visitors without those faces use a system fallback. Code stays monospace, and unsupported characters use normal language or symbol fallbacks. Local rendered-glyph checks establish the tested environment only, not every visitor's font installation or native application acceptance.
+
+The fixed worker figures use verified Inter files during authoring. Their PNG
+pixels and SVG outlines preserve those glyphs even when the viewer has no Inter
+installed. This does not change the HTML viewer's local font policy.
 
 ## Verification
 

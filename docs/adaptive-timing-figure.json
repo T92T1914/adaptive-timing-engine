@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "evidence": {
+    "retained_worker_example": {
+      "source_commit": "6e12229",
+      "source": "adaptive_timing.experiment.worker_experiment",
+      "conditions": "First compute deliberately gated by threading.Event; 100 replacements; 2000 empty-executor polls. This is not a CPU-contention or real-time deadline benchmark.",
+      "request_count": 101,
+      "computed_payloads": [
+        0,
+        100
+      ],
+      "stats": {
+        "generation": 101,
+        "submitted": 101,
+        "computed": 2,
+        "replaced": 99,
+        "stale": 1,
+        "failures": 0,
+        "queued": 0,
+        "running": false
+      },
+      "timeline": "Schematic event order; horizontal spacing does not represent elapsed time"
+    },
+    "experiment_rerun": false,
+    "sequence": [
+      {
+        "id": "start",
+        "title": "Start payload 0",
+        "explanation": "Calculation stays active.\nA thread event holds its result.",
+        "role": "accent"
+      },
+      {
+        "id": "replace",
+        "title": "Requests 1 to 100 arrive",
+        "explanation": "One waiting slot.\n99 requests replaced.",
+        "role": "warning"
+      },
+      {
+        "id": "reject",
+        "title": "Release the first calculation",
+        "explanation": "Payload 0 completes.\nIts obsolete result is rejected.",
+        "role": "error"
+      },
+      {
+        "id": "publish",
+        "title": "Compute payload 100",
+        "explanation": "Current result kept:\npayload 100, revision 101.",
+        "role": "success"
+      }
+    ],
+    "spacing": "Event order only, not elapsed time",
+    "separate_trace_report_evaluated_revision": null
+  },
+  "renderer": {
+    "matplotlib": "3.11.1",
+    "backend": "Agg"
+  },
+  "layout": {
+    "clair": {
+      "width": 960,
+      "height": 2240,
+      "labels_within_canvas": 16,
+      "minimum_font_points": 12.0
+    },
+    "obscur": {
+      "width": 960,
+      "height": 2240,
+      "labels_within_canvas": 16,
+      "minimum_font_points": 12.0
+    }
+  },
+  "typography": {
+    "files": {
+      "Regular": {
+        "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
+        "postscript": "Inter-Regular",
+        "weight": 400,
+        "italic": false
+      },
+      "SemiBold": {
+        "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3",
+        "postscript": "Inter-SemiBold",
+        "weight": 600,
+        "italic": false
+      },
+      "Bold": {
+        "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "postscript": "Inter-Bold",
+        "weight": 700,
+        "italic": false
+      },
+      "Italic": {
+        "sha256": "bbc051dd204b5019a1aa0bc0ae2aa8a05ab13e7a3f979fa357631dc7feb6833a",
+        "postscript": "Inter-Italic",
+        "weight": 400,
+        "italic": true
+      },
+      "SemiBoldItalic": {
+        "sha256": "eff2930c3d3b35d3fcf5f76252b6baef4c3e907d9d2fde1d16cf5d417f8deef4",
+        "postscript": "Inter-SemiBoldItalic",
+        "weight": 600,
+        "italic": true
+      },
+      "BoldItalic": {
+        "sha256": "948405a16cdc62701da5f4005ed068ca5f4d27061d98f7974ccfc37831d9581d",
+        "postscript": "Inter-BoldItalic",
+        "weight": 700,
+        "italic": true
+      }
+    },
+    "painted_faces": [
+      "Regular",
+      "SemiBold",
+      "Bold",
+      "Italic"
+    ],
+    "png": "Glyphs rasterized from explicit Inter files",
+    "svg": "Labels outlined from the same Inter files. Selectable text and source data accompany the figure"
+  },
+  "inputs_sha256_lf": {
+    "docs/visual-example-data.json": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429",
+    "adaptive_timing/presentation.json": "2f1373a5d89213471e42212732de56368c5f8225760d633073599f8e4032e5f0",
+    "tools/render_worker_figure.py": "247e2327c657daa2856cb660404ffcea1d2d17f10f6b43276723b02021d9e512"
+  },
+  "outputs_sha256": {
+    "docs/adaptive-timing-clair.png": "9456d4cc4b47e0f0d70ca78dc687998917217a4d54487b7d1a7e0a276863ad6b",
+    "docs/adaptive-timing-clair.svg": "e42eb49d1a012cfd6b4831ae183df66cfc530870fc19dfa2e7a487188ecdbee8",
+    "docs/adaptive-timing-obscur.png": "3455de812f37edc3a79f1718b0dda73ebc7772a4e6079d60817bf0c80a9ed70b",
+    "docs/adaptive-timing-obscur.svg": "488e17e252a872ce9a3831f5b3c2706627c616fef3dcd34a57b903961fc32bb7"
+  }
+}

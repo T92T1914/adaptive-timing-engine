@@ -1,6 +1,12 @@
 # Read the visual example
 
-![A controlled worker experiment reduces 101 requests to two calculations and rejects one obsolete result.](adaptive-timing-example.png)
+<a href="visual-example-data.json">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="adaptive-timing-obscur.png">
+    <source media="(prefers-color-scheme: light)" srcset="adaptive-timing-clair.png">
+    <img src="adaptive-timing-clair.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="480">
+  </picture>
+</a>
 
 One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
 
@@ -32,6 +38,37 @@ validated model of human performance.
 ## Inspect the source
 
 The [underlying values](visual-example-data.json) include the source and
-conditions. A [vector copy](adaptive-timing-example.svg) is available for a closer look.
+conditions. The new [Clair SVG](adaptive-timing-clair.svg) and [Obscur SVG](adaptive-timing-obscur.svg) carry outlined Inter labels. The [original PNG](adaptive-timing-example.png) and [original SVG](adaptive-timing-example.svg) retain their recorded bytes.
 The figure is a visual explanation of the public implementation, not a
 screenshot of an external application.
+
+## Rebuild the figure without another experiment
+
+The maintained renderer reads the saved counters. It does not run the worker,
+planner or timing experiment. Supply the six official static Inter TTF files
+from one release in a local directory:
+
+```sh
+python -m pip install -r requirements-figures.txt
+python tools/render_worker_figure.py --font-dir /path/to/Inter/extras/ttf
+python tools/render_worker_figure.py --check
+```
+
+Each font's name, weight, italic flag and Latin glyph coverage are checked.
+Regular, Semibold, Bold and genuine Italic supply this diagram's labels. The
+[rendering receipt](adaptive-timing-figure.json) records all six input hashes,
+retained values, tokens and output identities. No font files are distributed or
+downloaded. PNGs rasterize the intended Inter glyphs. SVGs outline those same
+labels, with selectable explanations and JSON available here.
+
+The figure follows the site's effective Auto, Clair or Obscur choice. GitHub
+uses light/dark picture sources and a Clair fallback. Print uses Clair. The
+compact vertical sequence keeps labels readable inside a narrow README.
+Rendering checks reject cropped labels, and site builds verify the committed
+images without font dependencies or a silent rebuild.
+
+The source string calls the hundred later arrivals replacements. More precisely,
+the first arrival occupies the empty waiting slot and the next 99 replace it.
+The stored counters and source JSON are unchanged. Source `6e12229` belongs to
+this controlled worker example. It does not establish the unknown evaluated
+revision of the separate 48 case trace report.
