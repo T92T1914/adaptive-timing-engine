@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from adaptive_timing.presentation import ROOT as PRESENTATION_ROOT, appearance_css
 from tools.render_saved_viewer import render
+from tools.render_worker_figure import check_outputs
 OUT = ROOT / "_site"
 FILES = {
     "site/index.html": "index.html",
@@ -16,6 +17,11 @@ FILES = {
     "site/app.js": "app.js",
     "docs/visual-example-data.json": "data.json",
     "docs/adaptive-timing-example.svg": "example.svg",
+    "docs/adaptive-timing-clair.png": "worker-clair.png",
+    "docs/adaptive-timing-obscur.png": "worker-obscur.png",
+    "docs/adaptive-timing-clair.svg": "worker-clair.svg",
+    "docs/adaptive-timing-obscur.svg": "worker-obscur.svg",
+    "docs/adaptive-timing-figure.json": "worker-figure.json",
 }
 
 
@@ -23,6 +29,7 @@ def main():
     data = json.loads((ROOT / "docs/visual-example-data.json").read_text())
     if not data.get("source_commit"):
         raise ValueError("Example data must retain its source revision.")
+    check_outputs()
     OUT.mkdir(exist_ok=True)
     for source, target in FILES.items():
         path = ROOT / source

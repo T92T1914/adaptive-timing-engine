@@ -44,7 +44,13 @@ Installation is optional when running from a checkout. The wheel includes the vi
 
 ## Measured examples
 
-[![A controlled worker experiment reduces 101 requests to two calculations and rejects one obsolete result.](docs/adaptive-timing-example.png)](docs/visual-example.md)
+<a href="docs/visual-example.md">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/adaptive-timing-obscur.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/adaptive-timing-clair.png">
+    <img src="docs/adaptive-timing-clair.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="480">
+  </picture>
+</a>
 
 One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
 [Reproduce and inspect the values](docs/visual-example.md).

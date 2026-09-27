@@ -45,3 +45,9 @@ Open this repository in Codespaces or use VS Code Dev Containers. The container 
 Run `python tools/build_site.py` to assemble the public page in `_site`, then `python -m http.server 8080 --directory _site` to preview it. The builder copies only the listed example files. The page reads saved evidence; it does not silently rerun the experiment or claim current results. Pages deploys from `main` after the site and development environment checks pass.
 
 For presentation changes, also run the state and isolated browser checks in [the presentation contract](docs/presentation.md). The site build renders the retained trace payload with the current viewer, preserves historical evidence and records presentation provenance. `Project access` tests that generated site before publishing its same-run artifact. The browser dependency is for development only.
+
+The [worker figure instructions](docs/visual-example.md#rebuild-the-figure-without-another-experiment)
+cover optional authoring dependencies and the retained source. Use
+`python tools/render_worker_figure.py --check` to validate committed images
+without fonts or another worker experiment. Keep original evidence separate
+from new presentation editions.
