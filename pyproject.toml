@@ -23,4 +23,4 @@ adaptive-timing = "adaptive_timing.__main__:main"
 include = ["adaptive_timing*"]
 
 [tool.setuptools.package-data]
-adaptive_timing = ["viewer.html", "py.typed"]
+adaptive_timing = ["viewer.html", "appearance.js", "presentation.json", "py.typed"]

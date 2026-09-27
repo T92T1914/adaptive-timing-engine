@@ -203,8 +203,6 @@ def write_report(report: dict, directory: Path) -> None:
 
 
 def write_viewer(report: dict, output: Path) -> None:
-    template = Path(__file__).with_name("viewer.html").read_text(encoding="utf-8")
-    # Even a caller-supplied event name must not end a script element.
-    payload = json.dumps(report, separators=(",", ":")).replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(template.replace("__REPORT_DATA__", payload), encoding="utf-8")
+    # Keep presentation outside planner/executor work and retain this public API.
+    from .presentation import write_viewer as render
+    render(report, output)

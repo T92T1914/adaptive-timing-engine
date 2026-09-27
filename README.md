@@ -23,7 +23,15 @@ python -m unittest discover -s tests -v
 
 Open `reports/demo.html` in a browser. It is a self contained trace explorer: choose a workload, disable an individual mechanism, switch the paired seed, zoom into a time interval, and export the selected trace. It works offline and makes no network requests.
 
-The [committed demonstration](docs/evidence/demo.html) can also be downloaded and opened directly. [Results](docs/evidence/results.md), [summary JSON](docs/evidence/results.json), and [compressed full traces](docs/evidence/traces.json.gz) are available without running the project.
+The [current explorer](https://t92t1914.github.io/adaptive-timing-engine/explorer.html) presents the saved traces with Auto, Clair and Obscur appearances. Download its HTML file to keep using it offline. Switching appearance preserves the workload, policy, seed and visible time window. Planned, constrained and rejected tasks use different marks as well as colors. Inter uses installed local faces with a system fallback, without downloading fonts.
+
+The [committed demonstration](docs/evidence/demo.html) remains an unchanged historical artifact. [Results](docs/evidence/results.md), [summary JSON](docs/evidence/results.json), and [compressed full traces](docs/evidence/traces.json.gz) are available without running the project. To render those same values with the current presentation, without running another experiment:
+
+```sh
+python tools/render_saved_viewer.py --output reports/retained
+```
+
+Open `reports/retained/explorer.html`. Its provenance records the trace archive hash, renderer identity and theme source. The retained experiment did not record an evaluated Git revision, so that field remains unknown. A new rendering does not supply missing experimental provenance. See [the presentation contract](docs/presentation.md) for font, data and verification boundaries.
 
 ```sh
 python -m adaptive_timing benchmark --events 240 --output reports/comparison
@@ -32,7 +40,7 @@ pip install .
 adaptive-timing demo --events 120
 ```
 
-Installation is optional when running from a checkout. The wheel includes the viewer template. Tests use only the standard library; CI runs them on Python 3.11, 3.12, and 3.13.
+Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. Python tests use only the standard library, and CI runs them on Python 3.11, 3.12, and 3.13. Separate development-only browser checks exercise the generated viewer.
 
 ## Measured examples
 
