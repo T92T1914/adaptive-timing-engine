@@ -114,8 +114,8 @@ def markdown(summary, raw_hash):
         "start, without a separate poll emission timestamp.", "",
         "The study ran synchronously in one process, with virtual polls every 20 ms and a candidate budget of 32. "
         "No external device was controlled. Stale and delayed planner results are tested with deterministic gates "
-        "outside this comparison. Lower offset is not a human realism score, and synthetic workloads do not "
-        "establish behavior on an unseen production stream.", "",
+        "outside this comparison. Lower offset alone does not establish a better scheduling policy, and "
+        "synthetic workloads do not establish behavior on an unseen production stream.", "",
         f"Raw archive SHA-256: `{raw_hash}`. The original 48 case batch study and its figures remain unchanged. "
         "Its evaluated revision was not recorded and remains unknown.", ""]
     return "\n".join(lines)
@@ -172,7 +172,7 @@ The exact evaluated revision is <a href="{source_at}"><code>{evaluated}</code></
 <p>Planned entries count schedules across all installed calculations. Admitted counts distinct IDs admitted at least once. These counts can include tasks later canceled, rejected or expired.</p>
 <p>Rejected means no feasible interval was admitted. Expired means an admitted task missed its completion window at polling. Dispatched means a record was emitted. Canceled means cancellation became terminal before dispatch. Unknown means no final state was available at the horizon. Those five states partition each stream.</p>
 <p>Completed is unknown because no external completion was observed. Modeled service finish, available in the summary, only means the assumed finish time elapsed.</p></section>
-<h2>Limits and reproduction</h2><p>This is one process with synchronous planning and virtual polls every 20 ms. It does not measure operating system wakeups, process scaling or human performance. The offline comparator has unavailable future information, while the causal policy also changes effort history and replanning. The comparison does not isolate one mechanism.</p>
+<h2>Limits and reproduction</h2><p>This is one process with synchronous planning and virtual polls every 20 ms. It does not measure operating system wakeups or process scaling. Synthetic streams do not establish behavior on unseen production work. The offline comparator has unavailable future information, while the causal policy also changes effort history and replanning. The comparison does not isolate one mechanism.</p>
 <p>Other figure unit checks were active during the run. Calculation durations are retained as diagnostic values and are not compared. Expiration records retain the executor's attempted service start, without a separate poll emission timestamp.</p>
 <p>Every stream, plan, event version and execution record is in the raw archive. Use a new output directory to reproduce the committed protocol. Rendering this report reads retained values and runs no experiment.</p>
 <pre><code>python tools/run_causal_study.py --output /path/to/new/causal-run
