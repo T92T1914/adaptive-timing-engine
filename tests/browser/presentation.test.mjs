@@ -233,3 +233,58 @@ test('worker figure follows effective appearance, prints Clair and downloads exa
     assert.equal(await noJS.locator('.worker-'+(colorScheme==='light'?'clair':'obscur')).isVisible(),true);
   }
 });
+
+test('causal report preserves every result across appearance and offline summary export',async t=>{
+  const summary=JSON.parse(await readFile(path.join(root,'causal-summary.json'),'utf8'));
+  const page=await fixture(t,{colorScheme:'dark'});await ready(page,'/causal.html');
+  assert.equal(await background(page),'rgb(9, 9, 9)');
+  assert.deepEqual(JSON.parse(await page.locator('#causal-data').textContent()),summary);
+  assert.equal(await page.locator('#table-0 tbody tr').count(),24);
+  assert.equal(await page.locator('#table-1 tbody tr').count(),48);
+  assert.equal(await page.locator('#table-2 tbody tr').count(),48);
+  const rows=await page.locator('table').allTextContents();
+  for(const mode of ['clair','obscur']){
+    await page.locator('#appearance').selectOption(mode);
+    assert.deepEqual(await page.locator('table').allTextContents(),rows);
+    const pending=page.waitForEvent('download');await page.locator('#download-summary').click();
+    assert.deepEqual(JSON.parse(await readFile(await (await pending).path(),'utf8')),summary);
+    await page.setViewportSize({width:390,height:844});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    if(process.env.TIMING_SCREENSHOT_DIR){
+      await mkdir(process.env.TIMING_SCREENSHOT_DIR,{recursive:true});
+      await page.evaluate(()=>window.scrollTo(0,0));
+      await page.screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,'causal-'+mode+'-mobile.png')});
+      await page.locator('#table-0').scrollIntoViewIfNeeded();
+      await page.screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,'causal-'+mode+'-table.png')});
+    }
+    if(process.env.TIMING_REQUIRE_INTER==='1'){
+      for(const [selector,name]of [['h1','Bold'],['.font-note','Regular'],['label[for="appearance"]','SemiBold']]){
+        const providers=await fonts(page,selector);
+        assert.ok(providers.some(f=>f.postScriptName==='Inter-'+name),JSON.stringify({mode,selector,providers}));
+        console.log('Causal report glyphs:',JSON.stringify({mode,selector,providers}));
+      }
+    }
+  }
+  await page.addStyleTag({content:'body{font-size:34px!important}'});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  await page.emulateMedia({media:'print'});assert.equal(await background(page),'rgb(248, 247, 243)');
+  await page.emulateMedia({media:'screen'});assert.equal(await background(page),'rgb(9, 9, 9)');
+  const noJS=await fixture(t,{javaScriptEnabled:false,colorScheme:'dark'});await noJS.goto(base+'/causal.html');
+  assert.equal(await noJS.locator('#table-0 tbody tr').count(),24);
+  assert.equal(await noJS.locator('#appearance').isDisabled(),true);
+  const blocked=await fixture(t,{},true);await ready(blocked,'/causal.html');
+  await blocked.locator('#appearance').selectOption('obscur');assert.equal(await background(blocked),'rgb(9, 9, 9)');
+  await page.goto(base+'/');await page.getByRole('link',{name:'Read the causal study',exact:true}).click();
+  assert.equal(new URL(page.url()).pathname,'/causal.html');
+  await page.goto(base+'/');
+  const rawPending=page.waitForEvent('download');
+  await page.getByRole('link',{name:'Download the full causal traces',exact:true}).click();
+  assert.deepEqual(await readFile(await (await rawPending).path()),await readFile(path.join(root,'causal-raw.json.gz')));
+  const context=await browser.newContext();t.after(()=>context.close());
+  const offline=await context.newPage(),requests=[];
+  await context.route('http**://**',route=>{requests.push(route.request().url());return route.abort();});
+  await offline.goto(pathToFileURL(path.join(root,'causal.html')).href);
+  await offline.locator('#appearance:not([disabled])').waitFor();
+  assert.deepEqual(JSON.parse(await offline.locator('#causal-data').textContent()),summary);
+  assert.deepEqual(requests,[]);
+});

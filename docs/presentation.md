@@ -22,6 +22,22 @@ revision of the trace archive above.
 
 ## Typography
 
+The separate causal report is built by `tools/render_causal_report.py` from
+`docs/causal-evidence/summary.json` and `raw.json.gz`. It checks that the summary
+matches the raw evidence and uses the same appearance, typography and page
+styles. The site builder exposes it at `causal.html`, with summary and full
+trace downloads linked from the project page. The HTML embeds its summary for
+offline export and includes every pair and outcome as text tables.
+
+Its evaluated implementation revision is recorded in the saved evidence. The
+renderer records its own source revision, hashes and dirty state separately.
+Rendering performs no comparison. Browser checks preserve all 24 pairs and 48
+run summaries across both appearances, no JavaScript, blocked storage, print,
+narrow layouts and embedded summary download. Local rendered glyph checks
+cover its actual headings, labels and body text when strict Inter checking is
+enabled. Original batch evidence and its unknown evaluated revision remain
+unchanged.
+
 The HTML viewer uses six local Inter lookups that cover Regular 400, SemiBold 600, Bold 700 and their genuine italics. No font files are embedded or downloaded. Visitors without those faces use a system fallback. Code stays monospace, and unsupported characters use normal language or symbol fallbacks. Local rendered-glyph checks establish the tested environment only, not every visitor's font installation or native application acceptance.
 
 The fixed worker figures use verified Inter files during authoring. Their PNG
