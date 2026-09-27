@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "evidence": {
     "retained_worker_example": {
       "source_commit": "6e12229",
@@ -70,6 +70,20 @@
       "minimum_font_points": 12.0
     }
   },
+  "wide_layout": {
+    "clair": {
+      "width": 1800,
+      "height": 1280,
+      "labels_within_canvas": 14,
+      "minimum_font_points": 12.0
+    },
+    "obscur": {
+      "width": 1800,
+      "height": 1280,
+      "labels_within_canvas": 14,
+      "minimum_font_points": 12.0
+    }
+  },
   "typography": {
     "files": {
       "Regular": {
@@ -121,11 +135,15 @@
   "inputs_sha256_lf": {
     "docs/visual-example-data.json": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429",
     "adaptive_timing/presentation.json": "2f1373a5d89213471e42212732de56368c5f8225760d633073599f8e4032e5f0",
-    "tools/render_worker_figure.py": "247e2327c657daa2856cb660404ffcea1d2d17f10f6b43276723b02021d9e512"
+    "tools/render_worker_figure.py": "7210426b667954edacc4d9bf34be5577ac5586c2936319f8b991abf1ddcf940c"
   },
   "outputs_sha256": {
+    "docs/adaptive-timing-clair-wide.png": "4737d92741721d4be3ff56548c6373e4710554dd2fada7cdca81acba8fdc9d03",
+    "docs/adaptive-timing-clair-wide.svg": "c3bb038cfd3327fe4859d374d026a00bec3dab9176b577618eadb9a59a05d8c7",
     "docs/adaptive-timing-clair.png": "9456d4cc4b47e0f0d70ca78dc687998917217a4d54487b7d1a7e0a276863ad6b",
     "docs/adaptive-timing-clair.svg": "e42eb49d1a012cfd6b4831ae183df66cfc530870fc19dfa2e7a487188ecdbee8",
+    "docs/adaptive-timing-obscur-wide.png": "a7e0c5904f06e94175c4d016f5621011589c7d901f57758a7b67f4ceac86ab74",
+    "docs/adaptive-timing-obscur-wide.svg": "ca3206191554510942e8fa4c46cf04d22b211932bb3b67643282d5dfabd73b1d",
     "docs/adaptive-timing-obscur.png": "3455de812f37edc3a79f1718b0dda73ebc7772a4e6079d60817bf0c80a9ed70b",
     "docs/adaptive-timing-obscur.svg": "488e17e252a872ce9a3831f5b3c2706627c616fef3dcd34a57b903961fc32bb7"
   }

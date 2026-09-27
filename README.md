@@ -46,9 +46,11 @@ Installation is optional when running from a checkout. The wheel includes the vi
 
 <a href="docs/visual-example.md">
   <picture>
+    <source media="(min-width: 1024px) and (prefers-color-scheme: dark)" srcset="docs/adaptive-timing-obscur-wide.png">
+    <source media="(min-width: 1024px) and (prefers-color-scheme: light)" srcset="docs/adaptive-timing-clair-wide.png">
     <source media="(prefers-color-scheme: dark)" srcset="docs/adaptive-timing-obscur.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/adaptive-timing-clair.png">
-    <img src="docs/adaptive-timing-clair.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="480">
+    <img src="docs/adaptive-timing-clair.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="900">
   </picture>
 </a>
 

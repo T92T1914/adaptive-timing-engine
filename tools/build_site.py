@@ -13,6 +13,10 @@ from tools.render_worker_figure import check_outputs
 from tools.render_causal_report import render as render_causal
 OUT = ROOT / "_site"
 FILES = {
+    "docs/adaptive-timing-clair-wide.png": "worker-clair-wide.png",
+    "docs/adaptive-timing-clair-wide.svg": "worker-clair-wide.svg",
+    "docs/adaptive-timing-obscur-wide.png": "worker-obscur-wide.png",
+    "docs/adaptive-timing-obscur-wide.svg": "worker-obscur-wide.svg",
     "site/index.html": "index.html",
     "site/style.css": "style.css",
     "site/app.js": "app.js",
