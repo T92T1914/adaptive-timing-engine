@@ -1,0 +1,19 @@
+{
+  "repo": "adaptive-timing-engine",
+  "title": "Adaptive Timing",
+  "subtitle": "Keep the newest result",
+  "description": "Inspect a controlled worker example and saved scheduling traces. Follow requests, obsolete results and virtual dispatch without claiming external completion or real time guarantees.",
+  "helper": "render_worker_figure",
+  "tokens": "adaptive_timing/presentation.json",
+  "source": "docs/visual-example-data.json",
+  "pages": [
+    "site/index.html"
+  ],
+  "kind": "timing",
+  "output": "site/share-preview.png",
+  "image_url": "https://t92t1914.github.io/adaptive-timing-engine/share-preview.png",
+  "page_urls": {
+    "site/index.html": "https://t92t1914.github.io/adaptive-timing-engine/"
+  },
+  "alt": "Adaptive Timing. Keep the newest result. Authored summary of the linked evidence."
+}

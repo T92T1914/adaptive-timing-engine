@@ -146,3 +146,5 @@ I use this project to study what happens when new work arrives before the old ca
 - **Controlled experiments.** Compare the same workload and seed with one mechanism disabled. [Inspect the work](docs/evidence/results.md).
 
 These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real-time guarantees or a calibrated human-performance model.
+
+See [sharing previews](docs/sharing-preview.md) for the maintained link image and its source.

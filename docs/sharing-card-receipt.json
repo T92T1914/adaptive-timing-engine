@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "content": {
+    "title": "Adaptive Timing",
+    "subtitle": "Keep the newest result",
+    "panels": [
+      [
+        "Requests",
+        "101",
+        "submitted"
+      ],
+      [
+        "Calculations",
+        "2",
+        "executed"
+      ]
+    ],
+    "context": "Controlled worker example",
+    "footer": "99 waiting requests replaced. 1 obsolete result rejected.",
+    "source_sha256": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429"
+  },
+  "inputs_sha256_lf": {
+    "tools/render_share_preview.py": "659aed220e79634e83c6b465b77bb4aea894f4a20d3a53deb888bfca917254e2",
+    "docs/sharing-card.json": "fd4bb794714d9b56d7e7fca995e8f62546b06e13c9d2b13d9053c8dad487709c",
+    "docs/visual-example-data.json": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429",
+    "adaptive_timing/presentation.json": "2f1373a5d89213471e42212732de56368c5f8225760d633073599f8e4032e5f0",
+    "tools/render_worker_figure.py": "7210426b667954edacc4d9bf34be5577ac5586c2936319f8b991abf1ddcf940c"
+  },
+  "png_sha256": "3880c57edd36b86d20e48723857a741381fbd6d1bc36dc794ba893444ac67a60",
+  "dimensions": [
+    1280,
+    640
+  ],
+  "appearance": "obscur",
+  "opaque": true,
+  "renderer": {
+    "Pillow": "12.3.0"
+  },
+  "font_files": {
+    "Regular": {
+      "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
+      "postscript": "Inter-Regular",
+      "weight": 400,
+      "italic": false
+    },
+    "SemiBold": {
+      "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3",
+      "postscript": "Inter-SemiBold",
+      "weight": 600,
+      "italic": false
+    },
+    "Bold": {
+      "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+      "postscript": "Inter-Bold",
+      "weight": 700,
+      "italic": false
+    },
+    "Italic": {
+      "sha256": "bbc051dd204b5019a1aa0bc0ae2aa8a05ab13e7a3f979fa357631dc7feb6833a",
+      "postscript": "Inter-Italic",
+      "weight": 400,
+      "italic": true
+    },
+    "SemiBoldItalic": {
+      "sha256": "eff2930c3d3b35d3fcf5f76252b6baef4c3e907d9d2fde1d16cf5d417f8deef4",
+      "postscript": "Inter-SemiBoldItalic",
+      "weight": 600,
+      "italic": true
+    },
+    "BoldItalic": {
+      "sha256": "948405a16cdc62701da5f4005ed068ca5f4d27061d98f7974ccfc37831d9581d",
+      "postscript": "Inter-BoldItalic",
+      "weight": 700,
+      "italic": true
+    }
+  },
+  "painted_labels": [
+    {
+      "text": "Adaptive Timing",
+      "face": "Inter-Bold",
+      "bounds": [
+        68,
+        52,
+        580,
+        115
+      ],
+      "size": 64
+    },
+    {
+      "text": "Keep the newest result",
+      "face": "Inter-SemiBold",
+      "bounds": [
+        68,
+        136,
+        532,
+        174
+      ],
+      "size": 42
+    },
+    {
+      "text": "Controlled worker example",
+      "face": "Inter-Regular",
+      "bounds": [
+        68,
+        208,
+        449,
+        236
+      ],
+      "size": 30
+    },
+    {
+      "text": "Requests",
+      "face": "Inter-SemiBold",
+      "bounds": [
+        94,
+        298,
+        238,
+        329
+      ],
+      "size": 32
+    },
+    {
+      "text": "101",
+      "face": "Inter-Bold",
+      "bounds": [
+        94,
+        350,
+        198,
+        402
+      ],
+      "size": 68
+    },
+    {
+      "text": "submitted",
+      "face": "Inter-Regular",
+      "bounds": [
+        94,
+        451,
+        235,
+        475
+      ],
+      "size": 30
+    },
+    {
+      "text": "Calculations",
+      "face": "Inter-SemiBold",
+      "bounds": [
+        682,
+        298,
+        874,
+        323
+      ],
+      "size": 32
+    },
+    {
+      "text": "2",
+      "face": "Inter-Bold",
+      "bounds": [
+        682,
+        350,
+        725,
+        401
+      ],
+      "size": 68
+    },
+    {
+      "text": "executed",
+      "face": "Inter-Regular",
+      "bounds": [
+        682,
+        451,
+        812,
+        473
+      ],
+      "size": 30
+    },
+    {
+      "text": "99 waiting requests replaced. 1 obsolete result rejected.",
+      "face": "Inter-Italic",
+      "bounds": [
+        68,
+        548,
+        860,
+        578
+      ],
+      "size": 30
+    }
+  ],
+  "experimental_work_rerun": false,
+  "kind": "authored summary, not an application screenshot"
+}
