@@ -13,6 +13,7 @@ from tools.render_worker_figure import check_outputs
 from tools.render_causal_report import render as render_causal
 OUT = ROOT / "_site"
 FILES = {
+    "site/share-preview.png": "share-preview.png",
     "docs/adaptive-timing-clair-wide.png": "worker-clair-wide.png",
     "docs/adaptive-timing-clair-wide.svg": "worker-clair-wide.svg",
     "docs/adaptive-timing-obscur-wide.png": "worker-obscur-wide.png",
@@ -33,6 +34,9 @@ FILES = {
 
 
 def main():
+    from tools.render_share_preview import check as check_share_preview
+
+    check_share_preview()
     data = json.loads((ROOT / "docs/visual-example-data.json").read_text())
     if not data.get("source_commit"):
         raise ValueError("Example data must retain its source revision.")

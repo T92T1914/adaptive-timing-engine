@@ -1,3 +1,7 @@
 # Rendering receipts identify exact SVG bytes on Windows and Linux.
 docs/adaptive-timing-clair.svg text eol=lf
 docs/adaptive-timing-obscur.svg text eol=lf
+
+# Wide figure receipts require the same bytes on Windows checkouts.
+docs/adaptive-timing-clair-wide.svg text eol=lf
+docs/adaptive-timing-obscur-wide.svg text eol=lf
