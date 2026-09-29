@@ -94,6 +94,25 @@ distinct admissions, rejection, expiration, dispatch and cancellation remain
 separate. External completion is unknown. This study does not rerun or supply
 a missing evaluated revision for the original batch experiment.
 
+### Optional real execution
+
+The default explorer and historical comparisons remain simulations. An optional
+[`RealExecutor`](docs/real-execution.md) can accept their dispatch records and
+run synchronous callables. It records actual start, completion and owner
+reconciliation on a separate monotonic wall clock. Cancellation requests and
+stale results remain distinct from physical completion. A resource stays
+reserved until its callable has returned and its result has been reconciled.
+
+```sh
+python examples/real_execution.py --output reports/real-execution.json
+```
+
+This example executes and checks two real CPU sums. It adds no runtime
+dependencies and makes no throughput or real deadline claim. The
+[execution contract](docs/real-execution.md) explains input ownership, bounded
+submission, cooperative cancellation and the synchronization a future device
+adapter must provide.
+
 ## Architecture
 
 ```mermaid
@@ -114,6 +133,7 @@ flowchart LR
 | [`causal.py`](adaptive_timing/causal.py) | Delivered information, incremental planning and result adoption | A result must match the current immutable request and generation before it can change the session. |
 | [`worker.py`](adaptive_timing/worker.py) | Latest request computation and versioned outcomes | A new request invalidates already completed pending output immediately, not only when its replacement finishes. |
 | [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning; the poll budget also counts duplicates and deferred tasks. |
+| [`execution.py`](adaptive_timing/execution.py) | Optional callable execution and observed completion | A cancellation request or stale result does not release a running operation's resource. |
 | [`experiment.py`](adaptive_timing/experiment.py) | Generated data and paired comparisons | Full traces accompany measurements, and execution expiration is separate from planning rejection. |
 | [`tests/test_engine.py`](tests/test_engine.py) | Failure cases and independent invariants | Deterministic thread gates expose stale output races without relying on convenient sleep timing. |
 
@@ -126,7 +146,7 @@ An event has an immutable ID, target time, earliest start, completion deadline, 
 * The causal session uses one complete delivery group per timestamp. Rejected, expired, dispatched and canceled IDs are terminal. It clears unissued work when new information arrives, which can lose opportunities while replacement planning is delayed. See the [causal contract](docs/causal-policy.md) before integrating an asynchronous caller.
 * The background worker is a thread. It keeps planning out of the polling method but does not isolate CPU bound Python work from the GIL. It cannot forcibly cancel an in progress calculation.
 * Polling processes at most its candidate budget. Plan validation happens during construction, before adoption. Python reference cleanup, allocation, garbage collection, locking, and OS scheduling still prevent a hard real time latency guarantee.
-* The executor returns records; it does not actuate devices or an external application. Service durations are assumed inputs, not measurements of a real device. Event IDs cannot be reused during an executor session; its issued ID set grows until that session is discarded.
+* The default executor returns virtual dispatch records. Service durations are assumed inputs, not measurements of a real device. The optional callable executor records actual completion separately and requires synchronous completion from every adapter. Event IDs cannot be reused during either executor session. Its issued ID set grows until that session is discarded.
 * The tests and experiments demonstrate this independent implementation. They do not transfer validation or performance results from the private application.
 
 ## License
