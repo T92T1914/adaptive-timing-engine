@@ -113,6 +113,11 @@ dependencies and makes no throughput or real deadline claim. The
 submission, cooperative cancellation and the synchronization a future device
 adapter must provide.
 
+An [optional native CPU example](docs/real-execution.md#explicit-native-cpu-example)
+uses the separately installed numerical runtime for reduction, tiled histograms
+and a stencil. It verifies submission snapshots and actual completed results
+without changing the default dependencies or historical comparisons.
+
 ## Architecture
 
 ```mermaid

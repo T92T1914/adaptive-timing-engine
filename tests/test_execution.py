@@ -218,13 +218,67 @@ class ExecutionTests(unittest.TestCase):
                 self.assertEqual(results[1].value, 42)
 
     def test_submission_failure_is_recorded_and_reconciled(self):
+        for error in (RuntimeError("unavailable"), ExitWhileFormatting("formatter exited")):
+            with self.subTest(error=type(error).__name__), RealExecutor() as executor:
+                with patch.object(executor._pool, "submit", side_effect=error):
+                    executor.submit(dispatch("a"), 1, lambda cancel: 0)
+                result, = executor.reconcile(1)
+                self.assertEqual(result.status, "failed")
+                self.assertIsNone(result.started_at)
+                self.assertIn("unavailable", result.error)
+                self.assertEqual(executor.reserved_resources, ())
+
+    def test_post_enqueue_thread_start_failure_cannot_invoke_rejected_work(self):
+        entered, release, next_started = threading.Event(), threading.Event(), threading.Event()
+        calls = []
+
+        def first(cancel):
+            entered.set()
+            if not release.wait(2):
+                raise TimeoutError("test gate")
+            calls.append("first")
+
+        executor = RealExecutor(max_workers=2)
+        try:
+            executor.submit(dispatch("first", "first-resource"), 1, first)
+            self.assertTrue(entered.wait(1))
+            # This is the real CPython enqueue path. Only its later thread
+            # startup fails, so the rejected work item remains in the queue.
+            with patch("threading.Thread.start", side_effect=RuntimeError("thread unavailable")):
+                executor.submit(dispatch("rejected", "reused-resource"), 1,
+                                lambda cancel: calls.append("forbidden"))
+            failed, = executor.reconcile(1)
+            self.assertEqual((failed.dispatch.id, failed.status), ("rejected", "failed"))
+            self.assertNotIn("reused-resource", executor.reserved_resources)
+
+            def following(cancel):
+                calls.append("following")
+                next_started.set()
+
+            # Keep the original worker as the sole queue consumer. The reused
+            # resource belongs to following when it reaches the rejected item.
+            with patch.object(executor._pool, "_adjust_thread_count"):
+                executor.submit(dispatch("following", "reused-resource"), 1, following)
+            self.assertIn("reused-resource", executor.reserved_resources)
+            release.set()
+            self.assertTrue(next_started.wait(1))
+            while executor.outstanding:
+                self.assertTrue(executor.wait(1, timeout=1))
+            self.assertEqual(calls, ["first", "following"])
+            rejected_rows = [row.kind for row in executor.observations() if row.id == "rejected"]
+            self.assertEqual(rejected_rows, ["submitted", "failed", "reconciled"])
+        finally:
+            release.set()
+            executor.close()
+
+    def test_owner_interrupt_during_submit_preserves_failure_and_still_propagates(self):
         with RealExecutor() as executor:
-            with patch.object(executor._pool, "submit", side_effect=RuntimeError("unavailable")):
-                executor.submit(dispatch("a"), 1, lambda cancel: 0)
-            result, = executor.reconcile(1)
-            self.assertEqual(result.status, "failed")
-            self.assertIsNone(result.started_at)
-            self.assertIn("unavailable", result.error)
+            with patch.object(executor._pool, "submit", side_effect=KeyboardInterrupt("stop")):
+                with self.assertRaises(KeyboardInterrupt):
+                    executor.submit(dispatch("a"), 1, lambda cancel: self.fail("interrupted work ran"))
+            failed, = executor.reconcile(1)
+            self.assertEqual(failed.status, "failed")
+            self.assertIn("KeyboardInterrupt", failed.error)
             self.assertEqual(executor.reserved_resources, ())
 
     def test_nonwaiting_shutdown_retains_inputs_until_physical_completion(self):

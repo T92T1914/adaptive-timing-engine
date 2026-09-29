@@ -25,6 +25,12 @@ that created the executor. A thread pool runs only the supplied operations.
 that has not yet been reconciled. A full executor rejects another submission
 without consuming its ID. The caller can reconcile and retry that dispatch.
 
+Worker admission has a separate gate. A thread pool can enqueue work before
+thread startup raises an exception. The gate opens only after submission
+returns successfully. If submission fails, an existing worker may remove the
+queued item later, but it cannot invoke that rejected callable after the
+resource has been released. Error formatting also cannot interrupt cleanup.
+
 Each named resource has one reservation. If the virtual plan estimates that a
 task finishes after 10 milliseconds but its callable is still running, another
 callable for that resource remains queued. Other resources may run when a
@@ -43,6 +49,35 @@ must wait for its submitted device work and finish any required copy before
 returning. That also applies when cancellation or an error occurs. Returning a
 launch handle while device work continues violates the adapter contract. No
 GPU backend is imported, required or claimed by this module.
+
+### Explicit native CPU example
+
+With the separately built `heterogeneous-batch-runtime` package installed in
+the selected environment, run:
+
+```sh
+python examples/native_workloads.py --output reports/native-execution.json
+```
+
+This optional example runs real `masked_reduce`, `tile_histogram` and
+`stencil3x3` calls through one executor worker, with two native kernel threads.
+NumPy and the runtime are imported only when the example is explicitly run.
+They remain absent from the default package dependencies.
+
+The owner makes private array copies before submission. A thread gate holds
+the queue while the caller's original arrays are changed, then releases the
+three operations. Independent small oracles check the reduction, all histogram
+bins including partial edge tiles, and the stencil's interior and copied border.
+The returned arrays must own their storage. A failed or stale result fails the
+example rather than producing a successful receipt.
+
+The native Python binding takes its own additional snapshot when the callable
+actually starts. That later copy alone would not preserve submission values
+if the callable captured mutable caller arrays. These are two distinct copy
+boundaries. The example's copies and intentional queue gate belong in the
+reported execution path and are not evidence of a performance improvement.
+This integration uses the synchronous CPU interface. It does not establish GPU
+execution or make future asynchronous backends safe without synchronization.
 
 ## Distinct states
 

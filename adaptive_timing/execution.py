@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import threading
 import time
 from typing import Any, Callable
@@ -13,6 +13,13 @@ from .runtime import Dispatch
 def _positive_integer(value: int, name: str) -> None:
     if not isinstance(value, int) or isinstance(value, bool) or value < 1:
         raise ValueError(f"{name} must be a positive integer")
+
+
+def _error_text(exc: BaseException) -> str:
+    try:
+        return f"{type(exc).__name__}: {exc}"
+    except BaseException:
+        return f"{type(exc).__name__}: diagnostic unavailable"
 
 
 class OperationCancelled(Exception):
@@ -67,6 +74,8 @@ class _Job:
     submitted_at: float
     future: Future | None = None
     completion: _Completion | None = None
+    admission: threading.Event = field(default_factory=threading.Event)
+    admitted: bool = False
 
 
 class RealExecutor:
@@ -156,6 +165,13 @@ class RealExecutor:
         self._start_ready()
 
     def _execute(self, job: _Job) -> _Completion:
+        # ThreadPoolExecutor can enqueue a work item before starting a thread.
+        # If thread startup raises, that item may still reach an existing worker.
+        # It must not invoke work the owner has already recorded as failed.
+        job.admission.wait()
+        if not job.admitted:
+            assert job.completion is not None
+            return job.completion
         started = self._record(job, "started")
         try:
             value = job.operation(job.cancellation)
@@ -167,13 +183,8 @@ class RealExecutor:
             return _Completion("failed", started, completed,
                                error="OperationCancelled without a cancellation request")
         except BaseException as exc:
-            # Diagnostic formatting must not strand a reservation either.
-            try:
-                error = f"{type(exc).__name__}: {exc}"
-            except BaseException:
-                error = f"{type(exc).__name__}: diagnostic unavailable"
             completed = self._record(job, "failed")
-            return _Completion("failed", started, completed, error=error)
+            return _Completion("failed", started, completed, error=_error_text(exc))
         completed = self._record(job, "completed")
         return _Completion("completed", started, completed, value=value)
 
@@ -191,11 +202,16 @@ class RealExecutor:
             self._active[resource] = ident
             try:
                 job.future = self._pool.submit(self._execute, job)
-            except Exception as exc:
+                job.admitted = True
+            except BaseException as exc:
                 # Submission failure is an outcome, never an invisible lost ID.
                 completed = self._record(job, "failed")
                 job.completion = _Completion("failed", None, completed,
-                                             error=f"{type(exc).__name__}: {exc}")
+                                             error=_error_text(exc))
+                if not isinstance(exc, Exception):
+                    raise
+            finally:
+                job.admission.set()
 
     def cancel(self, ident: str) -> bool:
         """Request cancellation. Return true only when no callable can still run.
