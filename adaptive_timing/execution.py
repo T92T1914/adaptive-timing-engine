@@ -296,3 +296,49 @@ class RealExecutor:
 
     def __exit__(self, exc_type, exc, traceback) -> None:
         self.close()
+
+
+class OwnerExecutor(RealExecutor):
+    """One worker owns an explicitly closed resource for this session.
+
+    Factory, operations, close and reference release run on the same worker.
+    This adapter does not add GPU concurrency. Submission and reconciliation
+    still belong to the creating thread and use RealExecutor's physical states.
+    """
+
+    def __init__(self, factory: Callable[[], Any], *, capacity: int = 64):
+        super().__init__(max_workers=1, capacity=capacity)
+        try:
+            self._resource = self._pool.submit(factory).result()
+        except BaseException:
+            self._pool.shutdown(wait=True)
+            self._closed = True
+            raise
+        self._resource_closed = False
+
+    def submit_owned(self, dispatch: Dispatch, generation: int,
+                     operation: Callable[[Any, threading.Event], Any]) -> None:
+        if not callable(operation):
+            raise TypeError("operation must be callable")
+        self.submit(dispatch, generation, lambda cancel: operation(self._resource, cancel))
+
+    def _close_resource(self):
+        try:
+            self._resource.close()
+        finally:
+            self._resource = None
+
+    def close(self, *, wait_for_completion: bool = True) -> None:
+        self._assert_owner()
+        if not wait_for_completion:
+            raise ValueError("owner-resource shutdown must wait for physical completion")
+        if self._resource_closed:
+            return
+        self._closed = True
+        for ident in tuple(self._jobs):
+            self.cancel(ident)
+        try:
+            self._pool.submit(self._close_resource).result()
+        finally:
+            self._pool.shutdown(wait=True)
+            self._resource_closed = True
