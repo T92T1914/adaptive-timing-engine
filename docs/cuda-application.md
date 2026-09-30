@@ -11,6 +11,7 @@ Install the runtime using its [optional CUDA build instructions](https://github.
 ```sh
 python -m pip install .
 python examples/cuda_histogram.py --output reports/cuda-application.json
+python tools/check_cuda_trace.py reports/cuda-application.json
 ```
 
 The example uses only synthetic images. It checks every output bin against an
@@ -59,3 +60,22 @@ runs on the owner. Arbitrary interpreter termination and hardware loss are not
 supported recovery cases. Host ownership tests and host sanitizers do not
 establish GPU safety. GPU counters and WDDM sanitizer initialization are separate
 unpassed diagnostic gates.
+
+## Retained execution
+
+The [full actual trace](cuda-application-trace.json) records the runtime source
+`fa7afb4b798a1481ffa34a85248ba63d2ea029a2` and this application's source
+`3ce1b6571899faed99fc7a2eabdf5862cf5639ad`. Its published LF-byte SHA-256 is
+`da83bf0e4fdd0190fbcdb936b785d175e8a6a18befc2530424dc3b42d43065f9`.
+The trace retains both synthetic input arrays and all four completed GPU output
+arrays. The independent scalar checker inspects those arrays and seven physical
+outcomes without NumPy, CUDA or rerunning work. Its regression also rejects a
+changed bin even when total pixel count remains constant.
+
+Windows fresh CPU and optional CUDA environments passed the Adaptive suite.
+The native runtime's [verification report](https://github.com/T92T1914/heterogeneous-batch-runtime/blob/main/docs/python-cuda-results.md)
+records actual RTX 4090 contracts, fresh packages, successful hosted Clang host
+TSan and a separate WSL TSan initialization restriction. It preserves both
+results and makes no GPU sanitizer claim. The existing Inter/Clair/Obscur
+explorers and all historical study artifacts are unchanged. This application
+adds inspectable JSON and a command-line checker without a presentation redesign.
