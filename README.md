@@ -96,6 +96,13 @@ a missing evaluated revision for the original batch experiment.
 
 ### Optional real execution
 
+The [optional CUDA application](docs/cuda-application.md) connects owned Python
+submission snapshots to the runtime's reusable histogram. A single resource
+owner handles repeated calls and explicit close. The runnable example checks
+full outputs, cancellation requests, obsolete generations and bounded capacity.
+It requires an explicitly CUDA-enabled runtime package. Default imports and
+simulation studies keep their existing dependencies and behavior.
+
 The default explorer and historical comparisons remain simulations. An optional
 [`RealExecutor`](docs/real-execution.md) can accept their dispatch records and
 run synchronous callables. It records actual start, completion and owner
