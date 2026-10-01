@@ -32,7 +32,9 @@ class CudaHistogramExecutor(OwnerExecutor):
 
         # Reject full or closed sessions before allocating a submission copy.
         # This check reserves nothing. Submit checks again after copying, since
-        # an array subclass can run owner-thread code from its copy method.
+        # validation or allocation can run owner-thread code before admission.
         self._validate_submission(dispatch, generation, execute)
-        owned = image.copy(order="C")
+        # Strip subclass overrides before copying. A subclass copy method may
+        # return itself or a view sharing the caller's mutable storage.
+        owned = np.asarray(image).copy(order="C")
         self.submit_owned(dispatch, generation, execute)

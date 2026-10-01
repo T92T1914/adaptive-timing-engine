@@ -31,7 +31,9 @@ resource after admitted running work returns. It preserves RealExecutor's IDs,
 physical states and creating-thread reconciliation.
 
 `submit_image` requires an exact uint8 NumPy array with the configured shape
-and C contiguous layout. The submission copy finishes before successful return.
+and C contiguous layout. Array subclasses are accepted, but copying first
+uses a base NumPy array so an overridden copy cannot retain shared caller data.
+The submission copy finishes before successful return.
 Caller mutation after that return cannot change admitted data. The caller must
 exclude external native writers during the copy. The GIL alone does not provide
 that exclusion. A rejected submission is not admitted and may be retried with

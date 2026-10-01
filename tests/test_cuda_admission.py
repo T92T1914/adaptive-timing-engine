@@ -57,6 +57,16 @@ class AdmissionTests(unittest.TestCase):
         numpy = ModuleType("numpy")
         numpy.ndarray = Image
         numpy.dtype = lambda name: name
+        class Allocator:
+            # Controlled allocation seam for admission, allocation failure and
+            # reentrancy. The real NumPy ownership contract has separate tests.
+            def __init__(self, image):
+                self.image = image
+
+            def copy(self, *, order):
+                return self.image.copy(order=order)
+
+        numpy.asarray = Allocator
         runtime = ModuleType("heterogeneous_batch_runtime")
         runtime.__path__ = []
         cuda = ModuleType("heterogeneous_batch_runtime.cuda")
