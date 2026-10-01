@@ -135,14 +135,9 @@ class RealExecutor:
             self._observations.clear()
             return rows
 
-    def submit(self, dispatch: Dispatch, generation: int,
-               operation: Callable[[threading.Event], Any]) -> None:
-        """Accept a virtual dispatch and an owned callable, without sleeping to its time.
-
-        The caller decides when to submit. Dispatch times remain virtual planner
-        metadata. Observation times use a separate monotonic wall clock.
-        Capacity includes completed jobs that the owner has not reconciled.
-        """
+    def _validate_submission(self, dispatch: Dispatch, generation: int,
+                             operation: Callable) -> None:
+        """Check admission without reserving capacity or consuming the event ID."""
         self._assert_owner()
         if self._closed:
             raise RuntimeError("real executor is closed")
@@ -157,6 +152,16 @@ class RealExecutor:
             raise ValueError("an event ID cannot be submitted twice in this session")
         if len(self._jobs) >= self._capacity:
             raise RuntimeError("execution capacity is full, reconcile before submitting")
+
+    def submit(self, dispatch: Dispatch, generation: int,
+               operation: Callable[[threading.Event], Any]) -> None:
+        """Accept a virtual dispatch and an owned callable, without sleeping to its time.
+
+        The caller decides when to submit. Dispatch times remain virtual planner
+        metadata. Observation times use a separate monotonic wall clock.
+        Capacity includes completed jobs that the owner has not reconciled.
+        """
+        self._validate_submission(dispatch, generation, operation)
         job = _Job(dispatch, generation, operation, threading.Event(), 0.0)
         job.submitted_at = self._record(job, "submitted")
         self._jobs[dispatch.id] = job

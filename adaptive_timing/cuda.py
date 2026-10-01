@@ -24,12 +24,15 @@ class CudaHistogramExecutor(OwnerExecutor):
             raise TypeError("exact uint8 NumPy array required")
         if image.ndim != 2 or image.shape != self._shape or not image.flags.c_contiguous:
             raise ValueError("fixed C contiguous two-dimensional shape required")
-        owned = image.copy(order="C")
-
         def execute(context, cancel):
             if gate is not None:
                 # Optional deterministic host gate for inspection, not a device gate.
                 gate(cancel)
             return context.run(owned)
 
+        # Reject full or closed sessions before allocating a submission copy.
+        # This check reserves nothing. Submit checks again after copying, since
+        # an array subclass can run owner-thread code from its copy method.
+        self._validate_submission(dispatch, generation, execute)
+        owned = image.copy(order="C")
         self.submit_owned(dispatch, generation, execute)
