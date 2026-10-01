@@ -36,7 +36,10 @@ Caller mutation after that return cannot change admitted data. The caller must
 exclude external native writers during the copy. The GIL alone does not provide
 that exclusion. A rejected submission is not admitted and may be retried with
 the same ID. Capacity includes running, queued and completed unreconciled work.
-It bounds retained image jobs, not lifetime ID history or all process memory.
+Full, closed or invalid submissions are rejected before allocating the image
+snapshot. Admission is checked again after copying, and a copy failure consumes
+neither the ID nor capacity. The first check does not reserve a slot.
+Capacity bounds retained image jobs, not lifetime ID history or all process memory.
 
 The synchronous CUDA call returns only after upload, computation, download and
 stream synchronization. A cancellation request cannot free that live snapshot
