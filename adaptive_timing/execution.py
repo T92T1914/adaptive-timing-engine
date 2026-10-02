@@ -5,6 +5,7 @@ from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from dataclasses import dataclass, field
 import threading
 import time
+from traceback import clear_frames
 from typing import Any, Callable
 
 from .runtime import Dispatch
@@ -20,6 +21,20 @@ def _error_text(exc: BaseException) -> str:
         return f"{type(exc).__name__}: {exc}"
     except BaseException:
         return f"{type(exc).__name__}: diagnostic unavailable"
+
+
+def _clear_cleanup_frames(error: BaseException) -> None:
+    """Release unwound cleanup locals, including chained exception frames."""
+    pending = [error]
+    seen = set()
+    while pending:
+        current = pending.pop()
+        if id(current) in seen:
+            continue
+        seen.add(id(current))
+        clear_frames(current.__traceback__)
+        pending.extend(link for link in (current.__cause__, current.__context__)
+                       if link is not None)
 
 
 class OperationCancelled(Exception):
@@ -306,7 +321,9 @@ class RealExecutor:
 class OwnerExecutor(RealExecutor):
     """One worker owns an explicitly closed resource for this session.
 
-    Factory, operations, close and reference release run on the same worker.
+    Factory, operations, close and the executor's resource reference release run
+    on the same worker. Resource methods must not retain external aliases or
+    cyclic exception graphs when destruction also requires that worker.
     This adapter does not add GPU concurrency. Submission and reconciliation
     still belong to the creating thread and use RealExecutor's physical states.
     """
@@ -331,7 +348,7 @@ class OwnerExecutor(RealExecutor):
             self._closed = True
             try:
                 try:
-                    cleanup_error = self._pool.submit(self._retire_initialization).result()
+                    cleanup_error = self._pool.submit(self._retire_resource).result()
                     if cleanup_error is not None:
                         error.add_note(f"Owner initialization cleanup failed: {cleanup_error}")
                 except Exception as cleanup_error:
@@ -348,15 +365,17 @@ class OwnerExecutor(RealExecutor):
             self._resource = factory()
             self._resource_initialized = True
 
-    def _retire_initialization(self) -> str | None:
+    def _retire_resource(self) -> str | None:
         if not self._resource_initialized:
             return None
         try:
             self._close_resource()
         except BaseException as error:
             # Keep a diagnostic without carrying resource-owning traceback
-            # frames back to the caller during failed construction.
-            return _error_text(error)
+            # frames back to the caller during initialization or shutdown.
+            diagnostic = _error_text(error)
+            _clear_cleanup_frames(error)
+            return diagnostic
         finally:
             self._resource = None
             self._resource_initialized = False
@@ -375,6 +394,7 @@ class OwnerExecutor(RealExecutor):
             self._resource = None
 
     def close(self, *, wait_for_completion: bool = True) -> None:
+        """Retire owned work, reporting resource cleanup failures as RuntimeError."""
         self._assert_owner()
         if not wait_for_completion:
             raise ValueError("owner-resource shutdown must wait for physical completion")
@@ -384,7 +404,9 @@ class OwnerExecutor(RealExecutor):
         for ident in tuple(self._jobs):
             self.cancel(ident)
         try:
-            self._pool.submit(self._close_resource).result()
+            cleanup_error = self._pool.submit(self._retire_resource).result()
         finally:
             self._pool.shutdown(wait=True)
             self._resource_closed = True
+        if cleanup_error is not None:
+            raise RuntimeError(f"Owner resource cleanup failed: {cleanup_error}")
