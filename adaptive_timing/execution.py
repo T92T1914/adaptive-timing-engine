@@ -313,13 +313,54 @@ class OwnerExecutor(RealExecutor):
 
     def __init__(self, factory: Callable[[], Any], *, capacity: int = 64):
         super().__init__(max_workers=1, capacity=capacity)
-        try:
-            self._resource = self._pool.submit(factory).result()
-        except BaseException:
-            self._pool.shutdown(wait=True)
-            self._closed = True
-            raise
+        self._resource = None
+        self._resource_initialized = False
         self._resource_closed = False
+        self._initialization_admitted = False
+        admission = threading.Event()
+        try:
+            try:
+                initialization = self._pool.submit(self._initialize_resource, factory, admission)
+                self._initialization_admitted = True
+            finally:
+                # A failed submit may already have enqueued the initializer.
+                # Such an item must not construct a rejected resource later.
+                admission.set()
+            initialization.result()
+        except BaseException as error:
+            self._closed = True
+            try:
+                try:
+                    cleanup_error = self._pool.submit(self._retire_initialization).result()
+                    if cleanup_error is not None:
+                        error.add_note(f"Owner initialization cleanup failed: {cleanup_error}")
+                except Exception as cleanup_error:
+                    error.add_note(f"Owner initialization cleanup failed: {_error_text(cleanup_error)}")
+            finally:
+                self._pool.shutdown(wait=True)
+                self._resource_closed = True
+            raise
+
+    def _initialize_resource(self, factory: Callable[[], Any], admission: threading.Event) -> None:
+        admission.wait()
+        if self._initialization_admitted:
+            # The Future returns no resource reference to the creating thread.
+            self._resource = factory()
+            self._resource_initialized = True
+
+    def _retire_initialization(self) -> str | None:
+        if not self._resource_initialized:
+            return None
+        try:
+            self._close_resource()
+        except BaseException as error:
+            # Keep a diagnostic without carrying resource-owning traceback
+            # frames back to the caller during failed construction.
+            return _error_text(error)
+        finally:
+            self._resource = None
+            self._resource_initialized = False
+        return None
 
     def submit_owned(self, dispatch: Dispatch, generation: int,
                      operation: Callable[[Any, threading.Event], Any]) -> None:
