@@ -50,6 +50,22 @@ returning. That also applies when cancellation or an error occurs. Returning a
 launch handle while device work continues violates the adapter contract. No
 GPU backend is imported, required or claimed by this module.
 
+`OwnerExecutor` adds one explicitly closed resource on one worker. The worker
+creates and retains the resource directly. The initialization future carries no
+resource reference back to the caller. If the caller interrupts initialization
+after creation, the worker closes and releases that resource before shutdown
+returns, then the original interruption propagates. A failed submission cannot
+later construct a rejected resource through an already queued initializer.
+Consumer cleanup overrides still run on the owner worker. A cleanup exception
+adds a diagnostic note to the initial failure without transferring its resource
+references or traceback to the caller.
+
+A factory remains responsible for partial resources when it raises before
+returning them. Cleanup also depends on being able to queue work to the owner
+worker. A second interruption or a factory or close operation that never returns
+can prevent completed retirement. This adapter does not force thread termination
+or establish a bounded shutdown time.
+
 ### Explicit native CPU example
 
 With the separately built `heterogeneous-batch-runtime` package installed in
