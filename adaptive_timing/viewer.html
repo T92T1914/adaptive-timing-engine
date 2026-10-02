@@ -20,6 +20,7 @@ h1,h2{font-weight:700}label,th{font-weight:600}code,pre{font-family:Consolas,mon
 .legend [data-state="planned"]{color:var(--state-planned)}.legend [data-state="constrained"]{color:var(--state-constrained)}.legend [data-state="rejected"]{color:var(--state-rejected)}
 .provenance{margin:20px 0}.provenance pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:var(--code);padding:16px}summary{cursor:pointer}
 .selection-link{display:inline-flex;align-items:center;min-height:44px;overflow-wrap:anywhere}.selection-note{font-size:14px}
+.selection-link[aria-disabled=true]{color:var(--muted)}
 @media print{.controls,.range,.appearance-control{display:none}.panel,.card{break-inside:avoid}.tablewrap{max-height:none}}
 @media(forced-colors:active){:root,:root[data-appearance]{--canvas:Canvas;--panel:Canvas;--text:CanvasText;--muted:CanvasText;--divider:CanvasText;--accent:LinkText;--control:Canvas;--state-planned:CanvasText;--state-constrained:CanvasText;--state-rejected:CanvasText}select,button{border-color:ButtonText}}
 </style></head><body>
@@ -82,7 +83,7 @@ function readTraceSelection(search,report){
 function traceSelectionHref(href,state){
  const url=new URL(href);
  for(const key of ['scenario','variant','seed','start','span'])url.searchParams.set(key,state[key]);
- return url.href;
+ return url.search.length<=4096?url.href:null;
 }
 </script>
 <script>
@@ -91,6 +92,7 @@ const $=id=>document.getElementById(id);
 for(const seed of report.conditions.seeds){const option=document.createElement('option');option.value=seed;option.textContent=seed;$('seed').append(option)}
 let current;
 const selectionKeys=['scenario','variant','seed','start','span'];
+const unavailableLinkMessage='This address is too long to save a selection link. Your current choices stay on this page. Shorten the address before sharing or reloading.';
 function selectedControls(){return Object.fromEntries(selectionKeys.map(id=>[id,$(id).value]))}
 function applySelection(selection){
  for(const id of selectionKeys)$(id).value=selection.state[id];
@@ -102,7 +104,8 @@ function restoreSelection(){applySelection(readTraceSelection(location.search,re
 function saveSelection(method){
  const search=new URLSearchParams(selectedControls()).toString();
  applySelection(readTraceSelection(search,report));
- const href=$('selection-link').href;
+ const href=$('selection-link').getAttribute('href');
+ if(href===null)return;
  if(href!==location.href){
   // A standalone file can still offer the link if its browser refuses history.
   try{history[method](null,'',href)}catch{
@@ -130,7 +133,14 @@ function render(){
  for(const row of visible){const px=x(row.target);if(row.status==='rejected'){ctx.strokeStyle=color('--state-rejected');ctx.beginPath();ctx.moveTo(px-3,t-5);ctx.lineTo(px+3,t+1);ctx.moveTo(px+3,t-5);ctx.lineTo(px-3,t+1);ctx.stroke()}else if(row.constrained){ctx.fillStyle=color('--state-constrained');ctx.fillRect(px-3,y((row.start-row.target)*1000)-3,6,6)}else{ctx.fillStyle=color('--state-planned');ctx.beginPath();ctx.arc(px,y((row.start-row.target)*1000),3,0,2*Math.PI);ctx.fill()}}
  $('rows').replaceChildren();for(const row of visible){const tr=document.createElement('tr');const values=[row.id,row.resource,row.target.toFixed(4),row.start?.toFixed(4)??'N/A',row.start===undefined?'N/A':((row.start-row.target)*1000).toFixed(2),row.fatigue?.toFixed(3)??'N/A',row.status==='rejected'?'rejected':row.constrained?'constrained':'planned'];for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('rows').append(tr)}
  $('table-summary').textContent=`${visible.length} of ${current.events} tasks. Squares indicate constrained timing requests. Crosses indicate rejected tasks. This table is also the text alternative to the plot.`;
- $('selection-link').href=traceSelectionHref(location.href,selectedControls());
+ const link=$('selection-link'),href=traceSelectionHref(location.href,selectedControls());
+ if(href===null){
+  link.removeAttribute('href');link.setAttribute('aria-disabled','true');link.textContent='Selection link unavailable';
+  $('selection-note').textContent=unavailableLinkMessage;$('selection-note').hidden=false;
+ }else{
+  link.href=href;link.removeAttribute('aria-disabled');link.textContent='Link to this selection';
+  if($('selection-note').textContent===unavailableLinkMessage){$('selection-note').textContent='';$('selection-note').hidden=true}
+ }
 }
 for(const id of ['scenario','variant','seed'])$(id).addEventListener('change',()=>saveSelection('pushState'));
 // Range movement replaces one entry rather than adding a history entry per step.

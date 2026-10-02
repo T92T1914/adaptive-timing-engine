@@ -156,6 +156,44 @@ test('selection query contract uses actual cases and bounded canonical window va
   const link=new URL(href('file:///tmp/explorer.html?ref=phone&seed=42&seed=999#evidence',valid));
   assert.equal(link.protocol,'file:');assert.equal(link.hash,'#evidence');assert.equal(link.searchParams.get('ref'),'phone');
   assert.deepEqual(link.searchParams.getAll('seed'),['73']);
+  const prefix='https://example.test/explorer.html?ref=';
+  const room=4096-new URL(href(prefix,valid)).search.length;
+  const boundary=href(prefix+'x'.repeat(room),valid);
+  assert.equal(new URL(boundary).search.length,4096);
+  assert.deepEqual(read(new URL(boundary).search),{state:valid,adjusted:false});
+  assert.equal(href(prefix+'x'.repeat(room+1),valid),null);
+  assert.equal(href(prefix+'x'.repeat(4097),valid),null);
+});
+
+test('mobile oversized address refuses unusable links and history without dropping fields',async t=>{
+  const {href}=await stateFunctions();
+  const state={scenario:'recovery',variant:'no_fatigue',seed:'73',start:'30',span:'20'};
+  const room=4096-new URL(href(base+'/explorer.html?ref=',state)).search.length;
+  const page=await fixture(t,{viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  for(const length of [4097,room+1]){
+    const initial='/explorer.html?ref='+'x'.repeat(length)+'&keep=1#evidence';
+    await ready(page,initial);
+    for(const [id,value] of Object.entries(state)){
+      const originalURL=page.url(),historySize=await page.evaluate(()=>history.length);
+      if(id==='start'||id==='span')await page.locator('#'+id).fill(value);else await page.locator('#'+id).selectOption(value);
+      if(await page.locator('#selection-link').getAttribute('href')===null){
+        assert.equal(page.url(),originalURL);assert.equal(await page.evaluate(()=>history.length),historySize);
+      }
+    }
+    assert.equal(await page.locator('#selection-link').getAttribute('href'),null);
+    assert.equal(await page.locator('#selection-link').getAttribute('aria-disabled'),'true');
+    assert.match(await page.locator('#selection-note').textContent(),/too long to save a selection link/);
+    assert.equal(await page.locator('#rows tr').count(),22);
+    const unchanged=new URL(page.url());assert.equal(unchanged.searchParams.get('ref'),'x'.repeat(length));
+    assert.equal(unchanged.searchParams.get('keep'),'1');assert.equal(unchanged.hash,'#evidence');
+    await page.locator('#selection-link').tap();assert.equal(page.url(),unchanged.href);
+    assert.deepEqual(JSON.parse(await page.locator('#data').textContent()),expected);
+    await page.evaluate(()=>{history.replaceState(null,'',location.pathname+'?ref=short&keep=1#evidence');dispatchEvent(new PopStateEvent('popstate'))});
+    const enabled=new URL(await page.locator('#selection-link').getAttribute('href'));
+    assert.equal(enabled.searchParams.get('ref'),'short');assert.equal(enabled.searchParams.get('keep'),'1');assert.equal(enabled.hash,'#evidence');
+    assert.equal(await page.locator('#selection-link').getAttribute('aria-disabled'),null);
+    assert.equal(await page.locator('#selection-note').isVisible(),false);
+  }
 });
 
 test('mobile invalid saved choices disclose supported fallback without altering evidence',async t=>{
@@ -202,6 +240,18 @@ test('mobile standalone export shares and restores without external dependencies
   assert.equal(new URL(shared).protocol,'file:');
   await offline.goto(shared);await offline.locator('#rows tr').first().waitFor();
   assert.equal(await offline.locator('#variant').inputValue(),'no_noise');assert.equal(await offline.locator('#span').inputValue(),'40');
+  await offline.goto(pathToFileURL(file).href+'?ref='+'x'.repeat(4097)+'&keep=1#evidence');
+  await offline.locator('#rows tr').first().waitFor();
+  const oversizedURL=offline.url();
+  await offline.locator('#scenario').selectOption('recovery');await offline.locator('#variant').selectOption('no_fatigue');
+  await offline.locator('#seed').selectOption('73');await offline.locator('#start').fill('30');await offline.locator('#span').fill('20');
+  assert.equal(await offline.locator('#selection-link').getAttribute('href'),null);assert.equal(offline.url(),oversizedURL);
+  assert.equal(await offline.locator('#rows tr').count(),22);
+  assert.match(await offline.locator('#selection-note').textContent(),/too long to save a selection link/);
+  await offline.goto(pathToFileURL(file).href+'?ref=short&scenario=recovery&variant=no_fatigue&seed=73&start=30&span=20#evidence');
+  await offline.locator('#rows tr').first().waitFor();
+  assert.equal(await offline.locator('#selection-link').getAttribute('aria-disabled'),null);
+  assert.equal(new URL(await offline.locator('#selection-link').getAttribute('href')).searchParams.get('ref'),'short');
   assert.deepEqual(JSON.parse(await offline.locator('#data').textContent()),expected);
   assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);
 });
