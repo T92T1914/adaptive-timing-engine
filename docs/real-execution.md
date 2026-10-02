@@ -60,6 +60,22 @@ Consumer cleanup overrides still run on the owner worker. A cleanup exception
 adds a diagnostic note to the initial failure without transferring its resource
 references or traceback to the caller.
 
+Normal `OwnerExecutor.close()` uses the same worker retirement path. A resource
+cleanup failure becomes a fresh `RuntimeError` after the worker has stopped,
+with the original exception type and message in its diagnostic. It does not
+transfer the resource's exception object, cause or worker traceback to the
+caller. Unwound cleanup traceback frames are cleared on the worker, including
+chained failures whose local variables could otherwise defer reference release.
+This also applies when the resource raises `KeyboardInterrupt` or
+`SystemExit`. An interruption raised on the calling thread still propagates.
+Repeated close does not invoke resource cleanup again, including after failure.
+
+The executor releases its own resource reference on the worker. Resource
+methods remain responsible for aliases they retain elsewhere and for cyclic
+exception graphs that can defer destruction until later garbage collection.
+The executor does not run global garbage collection or alter those exception
+objects to impose a destruction thread on references it does not own.
+
 A factory remains responsible for partial resources when it raises before
 returning them. Cleanup also depends on being able to queue work to the owner
 worker. A second interruption or a factory or close operation that never returns
