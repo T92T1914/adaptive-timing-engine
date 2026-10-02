@@ -9,6 +9,7 @@ __APPEARANCE_CSS__
 .controls{grid-template-columns:repeat(4,minmax(0,1fr))}
 .controls label,.controls select,.controls button,.card,.panel{min-width:0;max-width:100%}
 .controls select,.controls button{width:100%;min-height:44px}
+.controls select{white-space:normal;overflow-wrap:anywhere}.caption{overflow-wrap:anywhere}
 .tablewrap:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 input[type=range]{min-height:44px;margin:0}
 .scroll-hint{font-size:13px}
@@ -18,6 +19,7 @@ h1,h2{font-weight:700}label,th{font-weight:600}code,pre{font-family:Consolas,mon
 .appearance-control{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}.appearance-control label{font-size:14px}.appearance-control select{min-height:44px}
 .legend [data-state="planned"]{color:var(--state-planned)}.legend [data-state="constrained"]{color:var(--state-constrained)}.legend [data-state="rejected"]{color:var(--state-rejected)}
 .provenance{margin:20px 0}.provenance pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:var(--code);padding:16px}summary{cursor:pointer}
+.selection-link{display:inline-flex;align-items:center;min-height:44px;overflow-wrap:anywhere}.selection-note{font-size:14px}
 @media print{.controls,.range,.appearance-control{display:none}.panel,.card{break-inside:avoid}.tablewrap{max-height:none}}
 @media(forced-colors:active){:root,:root[data-appearance]{--canvas:Canvas;--panel:Canvas;--text:CanvasText;--muted:CanvasText;--divider:CanvasText;--accent:LinkText;--control:Canvas;--state-planned:CanvasText;--state-constrained:CanvasText;--state-rejected:CanvasText}select,button{border-color:ButtonText}}
 </style></head><body>
@@ -34,6 +36,8 @@ __APPEARANCE_CONTROL__
 <label>Paired seed<select id="seed"></select></label>
 <label>Export current evidence<button id="download">Download trace JSON</button></label>
 </section>
+<p class="interactive-only"><a id="selection-link" class="selection-link">Link to this selection</a></p>
+<p id="selection-note" class="selection-note interactive-only" role="status" hidden></p>
 <section class="metrics interactive-only" aria-label="Experiment results" aria-live="polite">
 <div class="card"><div class="value" id="planned"></div><div class="caption">tasks admitted</div></div>
 <div class="card"><div class="value" id="rejected"></div><div class="caption">no feasible interval</div></div>
@@ -53,12 +57,60 @@ __APPEARANCE_CONTROL__
 </main>
 <script type="application/json" id="presentation">__PRESENTATION_JSON__</script>
 <script type="application/json" id="data">__REPORT_DATA__</script>
+<script id="viewer-state-functions">
+// Query choices select retained evidence. They never generate another case.
+function readTraceSelection(search,report){
+ const cases=report.cases;
+ const fallback=cases.find(c=>c.scenario==='steady'&&c.variant==='full'&&c.seed===42)??cases[0];
+ const state={scenario:fallback.scenario,variant:fallback.variant,seed:String(fallback.seed),start:'0',span:'100'};
+ if(search.length>4096)return {state,adjusted:true};
+ const params=new URLSearchParams(search);let adjusted=false;
+ for(const key of ['scenario','variant','seed','start','span']){
+  const values=params.getAll(key);if(!values.length)continue;
+  if(values.length!==1){adjusted=true;continue}
+  const value=values[0];
+  const allowed=key==='start'||key==='span'?
+   /^(0|[1-9][0-9]*)$/.test(value)&&Number(value)>=(key==='start'?0:10)&&Number(value)<=(key==='start'?90:100):
+   cases.some(c=>String(c[key])===value);
+  if(allowed)state[key]=value;else adjusted=true;
+ }
+ if(!cases.some(c=>c.scenario===state.scenario&&c.variant===state.variant&&String(c.seed)===state.seed)){
+  state.scenario=fallback.scenario;state.variant=fallback.variant;state.seed=String(fallback.seed);adjusted=true;
+ }
+ return {state,adjusted};
+}
+function traceSelectionHref(href,state){
+ const url=new URL(href);
+ for(const key of ['scenario','variant','seed','start','span'])url.searchParams.set(key,state[key]);
+ return url.href;
+}
+</script>
 <script>
 const report=JSON.parse(document.getElementById('data').textContent);
 const $=id=>document.getElementById(id);
 for(const seed of report.conditions.seeds){const option=document.createElement('option');option.value=seed;option.textContent=seed;$('seed').append(option)}
-$('seed').value=String(report.conditions.seeds.includes(42)?42:report.conditions.seeds[0]);
 let current;
+const selectionKeys=['scenario','variant','seed','start','span'];
+function selectedControls(){return Object.fromEntries(selectionKeys.map(id=>[id,$(id).value]))}
+function applySelection(selection){
+ for(const id of selectionKeys)$(id).value=selection.state[id];
+ $('selection-note').textContent=selection.adjusted?'Some saved choices were unavailable. The controls show the supported values in use.':'';
+ $('selection-note').hidden=!selection.adjusted;
+ render();
+}
+function restoreSelection(){applySelection(readTraceSelection(location.search,report))}
+function saveSelection(method){
+ const search=new URLSearchParams(selectedControls()).toString();
+ applySelection(readTraceSelection(search,report));
+ const href=$('selection-link').href;
+ if(href!==location.href){
+  // A standalone file can still offer the link if its browser refuses history.
+  try{history[method](null,'',href)}catch{
+   $('selection-note').textContent='This browser could not update its address. Use the selection link to reopen these choices.';
+   $('selection-note').hidden=false;
+  }
+ }
+}
 function render(){
  current=report.cases.find(c=>c.scenario===$('scenario').value&&c.variant===$('variant').value&&c.seed===Number($('seed').value));
  $('planned').textContent=`${current.planned} / ${current.events}`;$('rejected').textContent=current.rejected;$('constrained').textContent=current.constrained;$('p95').textContent=current.absolute_offset_p95_ms.toFixed(2)+' ms';
@@ -78,13 +130,18 @@ function render(){
  for(const row of visible){const px=x(row.target);if(row.status==='rejected'){ctx.strokeStyle=color('--state-rejected');ctx.beginPath();ctx.moveTo(px-3,t-5);ctx.lineTo(px+3,t+1);ctx.moveTo(px+3,t-5);ctx.lineTo(px-3,t+1);ctx.stroke()}else if(row.constrained){ctx.fillStyle=color('--state-constrained');ctx.fillRect(px-3,y((row.start-row.target)*1000)-3,6,6)}else{ctx.fillStyle=color('--state-planned');ctx.beginPath();ctx.arc(px,y((row.start-row.target)*1000),3,0,2*Math.PI);ctx.fill()}}
  $('rows').replaceChildren();for(const row of visible){const tr=document.createElement('tr');const values=[row.id,row.resource,row.target.toFixed(4),row.start?.toFixed(4)??'N/A',row.start===undefined?'N/A':((row.start-row.target)*1000).toFixed(2),row.fatigue?.toFixed(3)??'N/A',row.status==='rejected'?'rejected':row.constrained?'constrained':'planned'];for(const value of values){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('rows').append(tr)}
  $('table-summary').textContent=`${visible.length} of ${current.events} tasks. Squares indicate constrained timing requests. Crosses indicate rejected tasks. This table is also the text alternative to the plot.`;
+ $('selection-link').href=traceSelectionHref(location.href,selectedControls());
 }
-for(const id of ['scenario','variant','seed','start','span'])$(id).addEventListener('input',render);
+for(const id of ['scenario','variant','seed'])$(id).addEventListener('change',()=>saveSelection('pushState'));
+// Range movement replaces one entry rather than adding a history entry per step.
+for(const id of ['start','span'])$(id).addEventListener('input',()=>saveSelection('replaceState'));
+window.addEventListener('popstate',restoreSelection);
+window.addEventListener('pageshow',restoreSelection);
 window.addEventListener('resize',render);
 document.addEventListener('appearancechange',render);
 for(const query of ['(prefers-color-scheme: dark)','(forced-colors: active)','print'])matchMedia(query).addEventListener('change',render);
 window.addEventListener('beforeprint',render);window.addEventListener('afterprint',render);
 document.fonts.ready.then(render);
 $('download').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`${current.scenario}-${current.variant}-${current.seed}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)});
-render();
+restoreSelection();
 </script></body></html>

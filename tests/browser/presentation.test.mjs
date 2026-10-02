@@ -6,7 +6,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {gunzipSync} from 'node:zlib';
-import {chromium} from 'playwright';
+import {runInNewContext} from 'node:vm';
+import {chromium,webkit} from 'playwright';
 
 // Owned loopback server, fresh headless contexts, sandbox requested. Never
 // connect to a running browser, launch a visible fallback or reuse a profile.
@@ -26,7 +27,10 @@ before(async()=>{
   base=`http://127.0.0.1:${server.address().port}`;
   const channel=process.env.TIMING_BROWSER_CHANNEL;
   if(channel&&!['chrome','chromium'].includes(channel))throw Error('Unsupported channel');
-  browser=await chromium.launch({headless:true,chromiumSandbox:true,...(channel?{channel}:{})});
+  const engine=process.env.TIMING_TOUCH_ENGINE??'chromium';
+  if(!['chromium','webkit'].includes(engine))throw Error('Unsupported engine');
+  browser=engine==='webkit'?await webkit.launch({headless:true}):
+    await chromium.launch({headless:true,chromiumSandbox:true,...(channel?{channel}:{})});
   console.log(`Fresh sandboxed headless browser ${browser.version()}`);
 });
 after(async()=>{if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));});
@@ -57,10 +61,150 @@ async function capture(page,name){
   await mkdir(process.env.TIMING_SCREENSHOT_DIR,{recursive:true});
   await page.screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,name+'.png'),fullPage:true});
 }
+async function enlargeText(page){
+  await page.evaluate(()=>{
+    const elements=[...document.querySelectorAll('h1,h2,h3,p,label,button,select,output,.kicker,.badge,.legend span,.value,.caption,th,td,summary,pre,a')];
+    const sizes=elements.map(element=>parseFloat(getComputedStyle(element).fontSize));
+    elements.forEach((element,index)=>element.style.fontSize=2*sizes[index]+'px');
+  });
+}
 const visibleState=page=>page.evaluate(()=>({scenario:document.querySelector('#scenario').value,
   variant:document.querySelector('#variant').value,seed:document.querySelector('#seed').value,
   start:document.querySelector('#start').value,span:document.querySelector('#span').value,
   metrics:document.querySelector('.metrics').textContent,rows:document.querySelector('#rows').textContent}));
+
+test('mobile saved selection survives reload and browser history',async t=>{
+  const page=await fixture(t,{viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  await ready(page,'/explorer.html?ref=phone#selection');
+  await page.locator('#scenario').selectOption('recovery');
+  await page.locator('#variant').selectOption('no_fatigue');
+  await page.locator('#seed').selectOption('73');
+  const historySize=await page.evaluate(()=>history.length);
+  await page.locator('#start').fill('30');await page.locator('#span').fill('20');
+  await page.locator('#start').fill('31');await page.locator('#start').fill('30');
+  assert.equal(await page.evaluate(()=>history.length),historySize);
+  const original=await visibleState(page);
+  const shared=await page.locator('#selection-link').getAttribute('href'),url=new URL(shared);
+  assert.equal(url.searchParams.get('ref'),'phone');assert.equal(url.hash,'#selection');
+  assert.deepEqual([...url.searchParams.keys()].sort(),['ref','scenario','seed','span','start','variant']);
+  await page.locator('#selection-link').tap();await page.locator('#rows tr').first().waitFor();
+  assert.deepEqual(await visibleState(page),original);
+  await page.locator('#appearance').selectOption('clair');
+  await page.reload();await page.locator('#rows tr').first().waitFor();
+  assert.deepEqual(await visibleState(page),original);
+  assert.equal(await page.locator('#appearance').inputValue(),'clair');
+  await page.goto(base+'/causal.html');await page.goBack();
+  await page.locator('#rows tr').first().waitFor();
+  assert.deepEqual(await visibleState(page),original);
+  await page.locator('#variant').selectOption('no_noise');
+  const second=await visibleState(page);
+  await page.goBack();await page.waitForFunction(()=>document.querySelector('#variant').value==='no_fatigue');
+  assert.deepEqual(await visibleState(page),original);
+  await page.goForward();await page.waitForFunction(()=>document.querySelector('#variant').value==='no_noise');
+  assert.deepEqual(await visibleState(page),second);
+  await page.goto(shared);await page.locator('#rows tr').first().waitFor();
+  assert.deepEqual(await visibleState(page),original);
+  for(const viewport of [{width:844,height:390},{width:320,height:740},{width:1280,height:900}]){
+    await page.setViewportSize(viewport);
+    assert.deepEqual(await visibleState(page),original);
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth)<=viewport.width);
+  }
+  const pending=page.waitForEvent('download');await page.locator('#download').tap();
+  assert.deepEqual(JSON.parse(await readFile(await (await pending).path(),'utf8')),
+    expected.cases.find(c=>c.scenario==='recovery'&&c.variant==='no_fatigue'&&c.seed===73));
+  assert.equal(await page.locator('#rows tr').count(),22);
+  await capture(page,'mobile-saved-selection');
+});
+
+test('mobile enlarged causal headings reflow without page overflow',async t=>{
+  const page=await fixture(t,{viewport:{width:320,height:740},hasTouch:true,isMobile:true});
+  await ready(page,'/causal.html');
+  const headingSize=await page.locator('h1').evaluate(e=>parseFloat(getComputedStyle(e).fontSize));
+  await enlargeText(page);
+  assert.equal(await page.locator('h1').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)),2*headingSize);
+  const geometry=await page.evaluate(()=>({width:document.documentElement.scrollWidth,viewport:innerWidth}));
+  assert.ok(geometry.width<=320,JSON.stringify(geometry));
+  // Genuine two-dimensional evidence remains in its own scroll region.
+  assert.ok(await page.locator('.table-wrap').first().evaluate(e=>e.scrollWidth>e.clientWidth));
+  await capture(page,'mobile-causal-enlarged');
+});
+
+async function stateFunctions(){
+  const template=await readFile(new URL('../../adaptive_timing/viewer.html',import.meta.url),'utf8');
+  const source=template.match(/<script id="viewer-state-functions">([\s\S]*?)<\/script>/);
+  assert.ok(source,'Selection functions ship inside the standalone template');
+  const exports=runInNewContext(source[1]+';({readTraceSelection,traceSelectionHref})',{URL,URLSearchParams});
+  return {read:(query,report=expected)=>JSON.parse(JSON.stringify(exports.readTraceSelection(query,report))),href:exports.traceSelectionHref};
+}
+
+test('selection query contract uses actual cases and bounded canonical window values',async()=>{
+  const {read,href}=await stateFunctions();
+  const valid={scenario:'recovery',variant:'no_fatigue',seed:'73',start:'30',span:'20'};
+  assert.deepEqual(read(new URLSearchParams(valid).toString()),{state:valid,adjusted:false});
+  const defaults={scenario:'steady',variant:'full',seed:'42',start:'0',span:'100'};
+  assert.deepEqual(read(''),{state:defaults,adjusted:false});
+  for(const query of ['seed=999','seed=073','seed=Infinity','seed=42&seed=73',
+    'scenario=missing','variant=missing','start=-1','start=91','start=1.5','start=1e1',
+    'span=9','span=101','span=100&span=10','start=','start=%3Cscript%3E']){
+    assert.deepEqual(read(query),{state:defaults,adjusted:true},query);
+  }
+  assert.deepEqual(read('ref='+'x'.repeat(4093)),{state:defaults,adjusted:true});
+  assert.deepEqual(read('ref=phone'),{state:defaults,adjusted:false});
+  const sparse={cases:[{scenario:'burst',variant:'no_load',seed:17},{scenario:'recovery',variant:'full',seed:73}]};
+  assert.deepEqual(read('scenario=burst&variant=full&seed=73',sparse),{
+    state:{scenario:'burst',variant:'no_load',seed:'17',start:'0',span:'100'},adjusted:true});
+  const link=new URL(href('file:///tmp/explorer.html?ref=phone&seed=42&seed=999#evidence',valid));
+  assert.equal(link.protocol,'file:');assert.equal(link.hash,'#evidence');assert.equal(link.searchParams.get('ref'),'phone');
+  assert.deepEqual(link.searchParams.getAll('seed'),['73']);
+});
+
+test('mobile invalid saved choices disclose supported fallback without altering evidence',async t=>{
+  const page=await fixture(t,{viewport:{width:320,height:740},hasTouch:true,isMobile:true});
+  await ready(page,'/explorer.html?scenario=recovery&variant=no_fatigue&seed=999&start=91&span=1.5&ref=keep');
+  assert.equal(await page.locator('#selection-note').isVisible(),true);
+  assert.equal(await page.locator('#seed').inputValue(),'42');
+  assert.equal(await page.locator('#start').inputValue(),'0');assert.equal(await page.locator('#span').inputValue(),'100');
+  const share=new URL(await page.locator('#selection-link').getAttribute('href'));
+  assert.equal(share.searchParams.get('ref'),'keep');assert.equal(share.searchParams.get('seed'),'42');
+  assert.deepEqual(JSON.parse(await page.locator('#data').textContent()),expected);
+  await page.locator('#seed').selectOption('73');assert.equal(await page.locator('#selection-note').isVisible(),false);
+  await enlargeText(page);
+  const reflow=await page.evaluate(()=>({width:document.documentElement.scrollWidth,
+    overflow:[...document.querySelectorAll('body *')].filter(e=>{
+      const box=e.getBoundingClientRect();return box.right>320||e.scrollWidth>e.clientWidth+1;
+    }).filter(e=>!e.closest('.tablewrap')).map(e=>({tag:e.tagName,id:e.id,class:e.className,
+      width:e.clientWidth,scroll:e.scrollWidth,text:e.textContent.slice(0,80)}))}));
+  assert.ok(reflow.width<=320,JSON.stringify(reflow));
+  await capture(page,'mobile-explorer-enlarged');
+});
+
+test('mobile standalone export shares and restores without external dependencies or history access',async t=>{
+  const page=await fixture(t,{viewport:{width:390,height:844},hasTouch:true,isMobile:true});await ready(page,'/');
+  const pending=page.waitForEvent('download');await page.getByRole('link',{name:'Download the offline explorer'}).click();
+  const dir=await mkdtemp(path.join(os.tmpdir(),'timing-offline-')),file=path.join(dir,'explorer.html');
+  await (await pending).saveAs(file);
+  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  const requests=[],errors=[];const offline=await context.newPage();
+  t.after(async()=>{await context.close();assert.equal(path.dirname(path.resolve(dir)),path.resolve(os.tmpdir()));
+    assert.ok(path.basename(dir).startsWith('timing-offline-'));await rm(dir,{recursive:true,force:true});});
+  await context.route('http**://**',route=>{requests.push(route.request().url());return route.abort();});
+  await context.addInitScript(()=>{
+    for(const name of ['pushState','replaceState'])history[name]=()=>{throw new DOMException('Blocked','SecurityError')};
+    Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Blocked','SecurityError')}});
+  });
+  offline.on('pageerror',e=>errors.push(e.message));
+  await offline.goto(pathToFileURL(file).href+'?scenario=recovery&variant=no_fatigue&seed=73&start=30&span=20');
+  await offline.locator('#rows tr').first().waitFor();
+  assert.equal(await offline.locator('#seed').inputValue(),'73');assert.equal(await offline.locator('#rows tr').count(),22);
+  await offline.locator('#variant').selectOption('no_noise');await offline.locator('#span').fill('40');
+  assert.match(await offline.locator('#selection-note').textContent(),/could not update its address/);
+  const shared=await offline.locator('#selection-link').getAttribute('href');
+  assert.equal(new URL(shared).protocol,'file:');
+  await offline.goto(shared);await offline.locator('#rows tr').first().waitFor();
+  assert.equal(await offline.locator('#variant').inputValue(),'no_noise');assert.equal(await offline.locator('#span').inputValue(),'40');
+  assert.deepEqual(JSON.parse(await offline.locator('#data').textContent()),expected);
+  assert.deepEqual(requests,[]);assert.deepEqual(errors,[]);
+});
 
 test('Auto, overrides and redraw preserve the selected case and time window',async t=>{
   const page=await fixture(t,{colorScheme:'dark'});await ready(page);
