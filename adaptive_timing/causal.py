@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import math
 import threading
 
-from .model import Event, Plan, Policy, Rejected, Scheduled, finite, noise
+from .model import Event, Plan, Policy, Rejected, Scheduled, finite, noise, start_bound
 from .runtime import Dispatch, Executor
 
 
@@ -142,7 +142,7 @@ def build_causal_plan(request: CausalRequest) -> CausalResult:
         sigma *= 1 + policy.fatigue_gain * fatigue if policy.use_fatigue else 1
         requested = event.target + (sigma * noise(request.seed, event.id) if policy.use_noise else 0)
         lower = max(request.now, event.earliest, ready.get(event.resource, 0.0))
-        upper = event.deadline - event.duration
+        upper = start_bound(event.deadline, event.duration)
         if lower > upper:
             rejected.append(Rejected(event, "no feasible interval on known resource"))
             effort[event.resource] = (at, fatigue)

@@ -1,6 +1,8 @@
 """Offline planning with explicit windows and one serial server per resource.
 
-Time values are seconds on the caller's clock. Events are processed by target
+Time values are seconds on the caller's clock. Endpoints use forward addition,
+and positive intervals must be resolvable throughout their event window.
+Events are processed by target
 time, then ID; this preserves a stable sequence but is not an optimal admission
 algorithm. Workload uses lookahead because this planner receives a known batch.
 """
@@ -13,9 +15,27 @@ import math
 import random
 
 
+DEADLINE_ALLOWANCE = 1e-12
+
+
 def finite(value: float, name: str, minimum: float = 0.0) -> None:
     if not math.isfinite(value) or value < minimum:
         raise ValueError(f"{name} must be finite and >= {minimum}")
+
+
+def clock_resolution(deadline: float, interval: float, name: str) -> None:
+    """Cover the window and the existing permitted late-finish allowance."""
+    if 0 < interval < math.ulp(deadline + DEADLINE_ALLOWANCE):
+        raise ValueError(f"{name} is below clock resolution at deadline; "
+                         "use relative session seconds or a resolvable interval")
+
+
+def start_bound(deadline: float, duration: float) -> float:
+    """A subtraction-rounded bound must also fit under forward addition."""
+    upper = deadline - duration
+    if upper + duration > deadline:
+        upper = math.nextafter(upper, -math.inf)
+    return upper
 
 
 @dataclass(frozen=True)
@@ -36,6 +56,7 @@ class Event:
             finite(getattr(self, name), name)
         if not self.earliest <= self.target <= self.deadline:
             raise ValueError("require earliest <= target <= deadline")
+        clock_resolution(self.deadline, self.duration, "duration")
 
 
 @dataclass(frozen=True)
@@ -104,10 +125,11 @@ class Plan:
                 finite(getattr(item, name), name)
             finite(item.start, "start")
             finite(item.finish, "finish")
+            clock_resolution(event.deadline, self.resource_gap, "resource_gap")
             if (event.id in seen or (item.start, event.id) < previous
                     or item.start < event.earliest
-                    or item.finish > event.deadline + 1e-12
-                    or abs(item.finish - item.start - event.duration) > 1e-9
+                    or item.finish > event.deadline + DEADLINE_ALLOWANCE
+                    or item.finish != item.start + event.duration
                     or item.start + 1e-12 < ready.get(event.resource, 0.0)):
                 raise ValueError("invalid, duplicate, unsorted, or overlapping plan entry")
             seen.add(event.id)
@@ -156,7 +178,7 @@ def build_plan(events: tuple[Event, ...], policy: Policy = Policy(), *,
         sigma *= 1 + policy.fatigue_gain * fatigue if policy.use_fatigue else 1
         requested = event.target + (sigma * noise(seed, event.id) if policy.use_noise else 0)
         lower = max(now, event.earliest, ready.get(event.resource, 0.0))
-        upper = event.deadline - event.duration
+        upper = start_bound(event.deadline, event.duration)
         if lower > upper:
             rejected.append(Rejected(event, "no feasible interval on resource"))
             # A rejected request consumes no resource time or new effort.
