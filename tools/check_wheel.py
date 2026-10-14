@@ -25,6 +25,7 @@ from adaptive_timing.experiment import write_viewer
 from adaptive_timing.presentation import tokens
 from adaptive_timing.execution import RealExecutor
 from adaptive_timing.runtime import Dispatch
+from adaptive_timing.revised_analysis import demonstration
 output = Path('viewer.html')
 write_viewer({'cases': []}, output)
 text = output.read_text(encoding='utf-8')
@@ -35,7 +36,13 @@ with RealExecutor() as executor:
     executor.submit(Dispatch('wheel', 'cpu', 0, 0.1, 'dispatched'), 1, lambda cancel: 42)
     result, = executor.wait(1, timeout=2)
     assert result.usable and result.value == 42
+revised = demonstration()
+assert revised['complete'] and revised['current']['total'] == 142336
+assert revised['metrics']['admitted'] == 2
+assert revised['metrics']['physical_values'] == 10240
+assert revised['metrics']['stale'] == 1
 print('Unpacked wheel resources, isolated offline rendering and callable execution passed')
+print('Unpacked wheel revised analysis, bounded refusal and current-result adoption passed')
 """
         subprocess.run([sys.executable, "-I", "-c", source, str(root / "package")],
                        cwd=root, check=True)
