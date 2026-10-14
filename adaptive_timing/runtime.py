@@ -6,7 +6,7 @@ import heapq
 import threading
 from typing import Callable
 
-from .model import Event, Plan, Policy, Scheduled, build_plan, finite
+from .model import DEADLINE_ALLOWANCE, Event, Plan, Policy, Scheduled, build_plan, finite
 from .worker import LatestWorker
 
 
@@ -84,7 +84,7 @@ class Executor:
                 continue
             start = max(now, self._busy.get(event.resource, 0.0))
             finish = start + event.duration
-            if finish > event.deadline + 1e-12:
+            if finish > event.deadline + DEADLINE_ALLOWANCE:
                 self._issued.add(event.id)
                 output.append(Dispatch(event.id, event.resource, start, finish, "expired"))
             elif start > now:
