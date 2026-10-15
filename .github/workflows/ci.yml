@@ -4,18 +4,80 @@ permissions:
   contents: read
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    # Preserve the existing required Ubuntu check names.
+    name: ${{ matrix.os == 'ubuntu-latest' && format('tests ({0})', matrix.python) || format('tests ({0}, {1})', matrix.python, matrix.os) }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     strategy:
+      fail-fast: false
+      max-parallel: 3
       matrix:
-        python: ['3.11', '3.12', '3.13']
+        python: ['3.11', '3.12', '3.13', '3.14', '3.15']
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ matrix.python }}
+          allow-prereleases: false
       - run: python -m unittest discover -s tests -v
+      - name: Install the optional NumPy wheel
+        run: python -m pip install --only-binary=:all: numpy
       - name: Optional NumPy snapshot contract
-        run: |
-          python -m pip install numpy
-          python -m unittest discover -s tests -p test_cuda_snapshot.py -v
+        run: python -m unittest discover -s tests -p test_cuda_snapshot.py -v
       - run: python -m adaptive_timing benchmark --events 60 --output reports/ci
+      - name: Build the package wheel
+        run: python -m pip wheel . --no-deps --wheel-dir reports/wheel
+      - name: Check packaged resources and execution
+        run: python tools/check_wheel.py reports/wheel/adaptive_timing_engine-0.1.0-py3-none-any.whl
+      - name: Run the installed consumer outside the checkout
+        shell: python {0}
+        run: |
+          import json
+          import os
+          from pathlib import Path
+          import platform
+          import subprocess
+          import sys
+          import tempfile
+
+          checkout = Path.cwd().resolve()
+          wheel = (checkout / "reports/wheel/adaptive_timing_engine-0.1.0-py3-none-any.whl").resolve()
+          with tempfile.TemporaryDirectory(prefix="adaptive-installed-") as directory:
+              outside = Path(directory).resolve()
+              assert not outside.is_relative_to(checkout)
+              environment = outside / "venv"
+              subprocess.run([sys.executable, "-I", "-m", "venv", str(environment)],
+                             cwd=outside, check=True, timeout=120)
+              interpreter = environment / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+              subprocess.run([str(interpreter), "-I", "-m", "pip", "install",
+                              "--no-index", "--no-deps", str(wheel)],
+                             cwd=outside, check=True, timeout=120)
+              receipt_path = outside / "installed-revised-analysis.json"
+              subprocess.run([str(interpreter), "-I", "-m", "adaptive_timing.revised_analysis",
+                              "--output", str(receipt_path)],
+                             cwd=outside, check=True, timeout=60)
+              receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+              installed_package = Path(receipt["source_identity"]["package_directory"]).resolve()
+              assert installed_package.is_relative_to(environment.resolve())
+              assert receipt["complete"] is True
+              assert receipt["current"]["total"] == 142336
+              assert receipt["current"]["count"] == 2048
+              assert receipt["metrics"]["admitted"] == 2
+              assert receipt["metrics"]["physical_completed"] == 2
+              assert receipt["metrics"]["physical_values"] == 10240
+              assert receipt["metrics"]["stale"] == 1
+              assert receipt["metrics"]["usable"] == 1
+              assert receipt["closed"] is True and receipt["planner_stopped"] is True
+              assert receipt["outstanding"] == 0
+              assert receipt["reserved_resources"] == []
+              assert receipt["pending_revision"] is None and receipt["stop_reason"] is None
+              print(json.dumps({"python": sys.version, "platform": platform.platform(),
+                                "installed_package": str(installed_package),
+                                "complete": receipt["complete"],
+                                "current_total": receipt["current"]["total"],
+                                "metrics": receipt["metrics"],
+                                "cleanup": {key: receipt[key] for key in
+                                            ("closed", "planner_stopped", "outstanding",
+                                             "reserved_resources", "pending_revision")}},
+                               sort_keys=True))
