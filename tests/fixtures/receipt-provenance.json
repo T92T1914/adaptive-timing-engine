@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "scope": "Public test fixture provenance, without private absolute paths or account details",
+  "fixtures": [
+    {
+      "fixture": "receipt-complete-demo.json",
+      "origin": "Retained installed three-revision demonstration",
+      "source_filename": "installed-demo.json",
+      "source_record": "root",
+      "source_file_sha256": "be59ab9aadc607c172ae1b4ef366c8ed6aab0622f430fe68540ba4a90341d337",
+      "fixture_sha256": "2b0b24ac31602f40a214875a2eca57f2f7c3bb8bd43d17e181bd8803f6ed5c40",
+      "kind": "sanitized derivative of retained execution receipt",
+      "changes": [
+        "Extract the documented receipt object from its wrapper when present.",
+        "Replace source_identity.package_directory with the synthetic relative location example-package/adaptive_timing.",
+        "Serialize as indented UTF-8 JSON with LF newlines."
+      ],
+      "limits": "This derivative preserves recorded claims. It does not authenticate execution or reproduce the original private file bytes."
+    },
+    {
+      "fixture": "receipt-historical-adoptions.json",
+      "origin": "Retained finite 256-value operating-range point",
+      "source_filename": "values-256.json",
+      "source_record": "consumer",
+      "source_file_sha256": "bcd9dceb5717ea6919e5345b8dd34c0005125c0edfa9148e8f807404cf387450",
+      "fixture_sha256": "ee58757bea8d645ad1b8411a48ee640202fb0cdb5c7052ef17965ef8ad5753ff",
+      "kind": "sanitized derivative of retained execution receipt",
+      "changes": [
+        "Extract the documented receipt object from its wrapper when present.",
+        "Replace source_identity.package_directory with the synthetic relative location example-package/adaptive_timing.",
+        "Serialize as indented UTF-8 JSON with LF newlines."
+      ],
+      "limits": "This derivative preserves recorded claims. It does not authenticate execution or reproduce the original private file bytes."
+    },
+    {
+      "fixture": "receipt-legacy-incomplete.json",
+      "origin": "Retained initial coarse-clock demonstration failure",
+      "source_filename": "source-demo.json",
+      "source_record": "root",
+      "source_file_sha256": "2235c2795365c77cf8d1a27a14a4c9f5586b1b542c8f441d341f584877edff7b",
+      "fixture_sha256": "28e0f5b4d7d6e0b9d8f9932b259b5a653bdcd903f615ca5c68f8834c3547aefd",
+      "kind": "sanitized derivative of retained execution receipt from earlier schema-1 producer",
+      "changes": [
+        "Replace source_identity.package_directory with the synthetic relative location example-package/adaptive_timing.",
+        "Serialize as indented UTF-8 JSON with LF newlines."
+      ],
+      "limits": "Historical incomplete execution. Modern clock identity, source capture scope/time and timeout metadata are absent in the original. This is not a synthetic timeout or an independently executed current-producer receipt."
+    }
+  ]
+}
