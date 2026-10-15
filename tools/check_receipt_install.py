@@ -105,7 +105,8 @@ print(json.dumps({"installed_passive_check": "passed", "input_unchanged": True,
 
 
 def main() -> None:
-    interpreter = Path(sys.argv[1]).resolve()
+    # Preserve a POSIX venv's interpreter symlink so Python keeps that environment.
+    interpreter = Path(sys.argv[1]).absolute()
     source = Path(sys.argv[2]).resolve()
     before = hashlib.sha256(source.read_bytes()).hexdigest()
     positive = json.loads(source.read_bytes())
