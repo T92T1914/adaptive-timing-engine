@@ -72,6 +72,9 @@ jobs:
               assert receipt["outstanding"] == 0
               assert receipt["reserved_resources"] == []
               assert receipt["pending_revision"] is None and receipt["stop_reason"] is None
+              subprocess.run([sys.executable, str(checkout / "tools/check_receipt_install.py"),
+                              str(interpreter), str(receipt_path)],
+                             cwd=outside, check=True, timeout=45)
               print(json.dumps({"python": sys.version, "platform": platform.platform(),
                                 "installed_package": str(installed_package),
                                 "complete": receipt["complete"],

@@ -26,6 +26,7 @@ from adaptive_timing.presentation import tokens
 from adaptive_timing.execution import RealExecutor
 from adaptive_timing.runtime import Dispatch
 from adaptive_timing.revised_analysis import demonstration
+from adaptive_timing.receipt_check import inspect_bytes
 output = Path('viewer.html')
 write_viewer({'cases': []}, output)
 text = output.read_text(encoding='utf-8')
@@ -41,8 +42,19 @@ assert revised['complete'] and revised['current']['total'] == 142336
 assert revised['metrics']['admitted'] == 2
 assert revised['metrics']['physical_values'] == 10240
 assert revised['metrics']['stale'] == 1
+inspection = inspect_bytes(json.dumps(revised).encode('utf-8'))
+assert inspection['admission'] == 'accepted'
+assert inspection['consistency'] == 'consistent'
+assert inspection['completion'] == 'complete'
+assert inspection['execution_authenticated'] is False
+changed = json.loads(json.dumps(revised))
+changed['results'][0]['value']['digest'] = '0' * 64
+rejected = inspect_bytes(json.dumps(changed).encode('utf-8'))
+assert rejected['consistency'] == 'contradictory'
+assert any(issue['path'].endswith('.value.digest') for issue in rejected['issues'])
 print('Unpacked wheel resources, isolated offline rendering and callable execution passed')
 print('Unpacked wheel revised analysis, bounded refusal and current-result adoption passed')
+print('Unpacked wheel passive receipt inspection and digest contradiction passed')
 """
         subprocess.run([sys.executable, "-I", "-c", source, str(root / "package")],
                        cwd=root, check=True)
