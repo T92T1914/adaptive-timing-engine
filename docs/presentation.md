@@ -20,6 +20,21 @@ source revision and event order without running work. The original figure
 remains available. Its recorded source is separate from the unknown evaluated
 revision of the trace archive above.
 
+The landing page also links the installed [caller-manifest runner](revision-file.md),
+[revised-analysis session](revised-work.md) and [passive receipt checker](receipt-check.md).
+Its literal two-revision recipe is distinct from the retained controlled
+three-revision lifecycle figure. That figure explains physical ownership,
+waiting replacement, stale completion, reconciliation and current adoption.
+Spacing means event order, not elapsed time. Its [figure provenance](revised-lifecycle-figure.json)
+records the retained source and presentation separately. The adjacent ordered
+text provides the same lifecycle meaning without relying on the image or its colors.
+
+Clair and Obscur lifecycle PNG/SVG editions follow the same effective appearance
+as the worker figure, including no-script Auto and Clair print. They add no new
+appearance preference or default. Original worker figures and experiment evidence
+remain unchanged. A readable recipe, guide links and the lifecycle text stay
+available with JavaScript disabled, blocked storage or fallback fonts.
+
 ## Typography
 
 The separate causal report is built by `tools/render_causal_report.py` from

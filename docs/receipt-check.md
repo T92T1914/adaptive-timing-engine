@@ -29,6 +29,12 @@ python -m adaptive_timing.receipt_check client.json --record session --json
 python -m adaptive_timing.receipt_check operating.json --record consumer --json
 ```
 
+The [caller-manifest runner](revision-file.md) also wraps its receipt under
+`session`. Select it with `--record session`. The verdict checks that session's
+supported claims, not every runner wrapper field or whether its execution happened.
+The [revised-analysis guide](revised-work.md) explains the producer's controlled
+demonstration and programmatic session.
+
 The whole file must pass bounded JSON admission before wrapper selection. The
 checker never searches arbitrary nested records. An unsupported version, profile
 or value is distinct from a contradiction in an admitted record.

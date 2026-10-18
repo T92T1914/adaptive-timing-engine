@@ -506,3 +506,72 @@ test('wide figure follows its container and preserves every delivered file', asy
     }
   }
 });
+
+test('landing real-work recipe stays distinct, readable and linked across appearances', async t => {
+  const page=await fixture(t,{viewport:{width:390,height:844},colorScheme:'dark'},true);
+  await ready(page,'/');
+  const literal={schema_version:1,revisions:[
+    {not_before:0,values:[9]},
+    {not_before:0.01,values:[1,2,255,2]}
+  ]};
+  const readManifest=target=>target.locator('#revision-manifest').textContent().then(JSON.parse);
+  assert.deepEqual(await readManifest(page),literal);
+  const commands=await page.locator('#revision-commands').textContent();
+  assert.match(commands,/python -m adaptive_timing\.revision_file revisions\.json --output receipt\.json/);
+  assert.match(commands,/python -m adaptive_timing\.receipt_check receipt\.json --record session --json/);
+  assert.match(await page.locator('#recipe-outcome').textContent(),/If the runner reports complete: true.*count 4 and total 260/);
+  const links=await page.locator('#real-work .guide-links a').evaluateAll(items=>items.map(a=>[a.textContent,a.href]));
+  assert.deepEqual(links,[
+    ['Caller-manifest guide','https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/revision-file.md'],
+    ['Revised-analysis guide','https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/revised-work.md'],
+    ['Passive receipt-checking guide','https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/receipt-check.md']
+  ]);
+  const entry=page.getByRole('link',{name:'Run revised inputs',exact:true});
+  await entry.focus();await page.keyboard.press('Enter');
+  assert.equal(new URL(page.url()).hash,'#real-work');
+  const guide=page.getByRole('link',{name:'Caller-manifest guide',exact:true});
+  await guide.focus();await page.keyboard.press('Tab');
+  assert.equal(await page.evaluate(()=>document.activeElement.textContent),'Revised-analysis guide');
+  assert.equal(await page.locator('#revised-lifecycle-figure').getAttribute('aria-labelledby'),'lifecycle-caption');
+  assert.match(await page.locator('#lifecycle-caption').textContent(),/three-revision demonstration is separate from the two-revision recipe/);
+  assert.match(await page.locator('#lifecycle-caption').textContent(),/event order, not elapsed time/);
+  assert.equal(await page.locator('.lifecycle-steps li').count(),4);
+  assert.match(await page.locator('.lifecycle-steps').textContent(),/owns its input and resource.*Reconciliation retains its outcome and releases its physical ownership/s);
+  const edition=async(target,mode)=>{
+    const image=target.locator('#revised-lifecycle-figure img:visible');
+    assert.equal(await image.count(),1);
+    assert.equal(await image.getAttribute('src'),`lifecycle-${mode}.png`);
+    assert.match(await image.getAttribute('alt'),/physical return and reconciliation.*Event order, not elapsed time/);
+    await image.scrollIntoViewIfNeeded();await image.evaluate(element=>element.decode());
+    assert.deepEqual(await image.evaluate(element=>[element.naturalWidth,element.naturalHeight]),[1520,4400]);
+    assert.equal(await target.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  };
+  await edition(page,'obscur');
+  if(process.env.TIMING_SCREENSHOT_DIR){
+    await mkdir(process.env.TIMING_SCREENSHOT_DIR,{recursive:true});
+    await page.locator('#real-work').screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,'real-work-obscur-mobile.png')});
+  }
+  for(const width of [390,1280]){
+    await page.setViewportSize({width,height:844});
+    for(const mode of ['clair','obscur']){
+      await page.locator('#appearance').selectOption(mode);await edition(page,mode);
+    }
+  }
+  if(process.env.TIMING_SCREENSHOT_DIR){
+    await page.locator('#real-work').screenshot({path:path.join(process.env.TIMING_SCREENSHOT_DIR,'real-work-obscur-desktop.png')});
+  }
+  await page.emulateMedia({media:'print'});await edition(page,'clair');
+  await page.emulateMedia({media:'screen'});await edition(page,'obscur');
+  await page.setViewportSize({width:390,height:844});
+  await page.addStyleTag({content:'body{font-family:"Timing unavailable face",Arial,sans-serif}'});
+  await enlargeText(page);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(await readManifest(page),literal);
+  for(const colorScheme of ['light','dark']){
+    const noJS=await fixture(t,{viewport:{width:390,height:844},javaScriptEnabled:false,colorScheme});
+    await noJS.goto(base+'/');await edition(noJS,colorScheme==='light'?'clair':'obscur');
+    assert.deepEqual(await readManifest(noJS),literal);
+    assert.equal(await noJS.locator('#real-work .guide-links a').count(),3);
+    assert.equal(await noJS.locator('.lifecycle-steps li').count(),4);
+  }
+});
