@@ -2,13 +2,13 @@
 
 [![CI](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml)
 
-**A way to inspect timing variation and what happens when plans change.** Pure Python 3.11+, with no runtime dependencies.
+Planning over revised inputs, bounded CPU execution and inspectable lifecycle evidence. Pure Python 3.11+, with no runtime dependencies.
 
-I wanted to see how workload, recovery and timing variation affect which tasks can actually run. This package makes those interactions visible in an offline trace explorer. It also handles a problem that comes up when planning happens in the background: an old calculation finishing after a newer request has made it obsolete.
+An older calculation can finish correctly after its input has changed. Adaptive Timing Engine keeps planning, physical completion and current-result adoption separate. The result stays in the record, but it cannot become the current answer. An offline trace explorer also makes synthetic workload and timing comparisons visible.
 
-I generalized the request mailbox from a larger private application, then built an independent event model, executor and experiment around it. Everything needed to run this version is here. The workloads and parameters are synthetic, so the results describe this simulation rather than validated human performance.
+I generalized the request mailbox from a larger private application, then built an independent event model, executor and experiment around it. Everything needed to run this version is here. The offline experiment's workloads and parameters are synthetic, so those results describe the simulation rather than validated human performance.
 
-[Run it](#run-it) · [Measured examples](#measured-examples) · [Architecture](#architecture) · [Design decisions](docs/design-decisions.md) · [API example](examples/replanning.py)
+[Run revised inputs](#analyze-local-revisions) · [Simulation and saved traces](#run-it) · [Measured examples](#measured-examples) · [Architecture](#architecture) · [Design decisions](docs/design-decisions.md)
 
 [Explore the browser demo](https://t92t1914.github.io/adaptive-timing-engine/) · [Open in Codespaces](https://codespaces.new/T92T1914/adaptive-timing-engine)
 
@@ -40,7 +40,7 @@ pip install .
 adaptive-timing demo --events 120
 ```
 
-Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. Python tests use only the standard library, and CI runs them on Python 3.11, 3.12, and 3.13. Separate development-only browser checks exercise the generated viewer.
+Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, including the source suite, wheel resources, a fresh installed revised-analysis consumer and passive receipt inspection. The caller-manifest runner has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate development-only browser checks exercise the generated viewer.
 
 ## Measured examples
 
@@ -132,9 +132,28 @@ analyzer. It admits the complete manifest before workers start, keeps physically
 work owned until completion and reconciliation and adopts an answer only for the current
 data revision.
 
+After cloning the repository, install the package with `python -m pip install .`.
+Save this input as `revisions.json` and choose an unused receipt filename:
+
+```json
+{"schema_version": 1, "revisions": [
+  {"not_before": 0, "values": [9]},
+  {"not_before": 0.01, "values": [1, 2, 255, 2]}
+]}
+```
+
 ```sh
 python -m adaptive_timing.revision_file revisions.json --output receipt.json
+python -m adaptive_timing.receipt_check receipt.json --record session --json
 ```
+
+If the runner reports complete work, the final current summary has count 4 and
+total 260. Intermediate physical outcomes can vary with the schedule. Requested
+offsets do not promise exact delivery, physical start or completion times.
+
+The checker inspects the embedded session, while the runner wrapper records its
+own outcome and requested deliveries. A consistent session can be incomplete.
+Read represented completion separately from the checker's exit status.
 
 See the [input and API contract](docs/revision-file.md),
 [session lifecycle](docs/revised-work.md) and
@@ -142,6 +161,10 @@ See the [input and API contract](docs/revision-file.md),
 budget followed by waiting cleanup. A consistent saved receipt does not
 authenticate its producer or prove that execution occurred. This adds no hard
 real time or throughput guarantee.
+
+The [revised-work lifecycle](docs/revised-work.md#recorded-lifecycle) explains a
+separate retained three-revision demonstration. Its figure shows event order,
+not measured timing, and preserves the original 101-request example above.
 
 ## Architecture
 
@@ -164,6 +187,9 @@ flowchart LR
 | [`worker.py`](adaptive_timing/worker.py) | Latest request computation and versioned outcomes | A new request invalidates already completed pending output immediately, not only when its replacement finishes. |
 | [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning; the poll budget also counts duplicates and deferred tasks. |
 | [`execution.py`](adaptive_timing/execution.py) | Optional callable execution and observed completion | A cancellation request or stale result does not release a running operation's resource. |
+| [`revised_analysis.py`](adaptive_timing/revised_analysis.py) | Finite revised numeric work and current adoption | Data revisions, planning generations and physical outcomes stay separate. |
+| [`revision_file.py`](adaptive_timing/revision_file.py) | Caller-provided manifests and runner outcomes | Admit the bounded input before workers start; record requested offsets separately from actual deliveries. |
+| [`receipt_check.py`](adaptive_timing/receipt_check.py) | Passive inspection of supported saved claims | Check internal agreement without following receipt paths, replaying work or authenticating execution. |
 | [`experiment.py`](adaptive_timing/experiment.py) | Generated data and paired comparisons | Full traces accompany measurements, and execution expiration is separate from planning rejection. |
 | [`tests/test_engine.py`](tests/test_engine.py) | Failure cases and independent invariants | Deterministic thread gates expose stale output races without relying on convenient sleep timing. |
 

@@ -27,3 +27,21 @@ h1,h2,h3{font-weight:700}label,summary{font-weight:600}.appearance-control{displ
 #worker-figure img{width:100%}
 .figure-wide{display:none}
 @container(min-width:560px){.figure-narrow{display:none}.figure-wide{display:block}}
+
+/* The real-work recipe and retained lifecycle share the existing appearance state. */
+.guide-links{display:flex;flex-wrap:wrap;gap:8px 24px;list-style:none;padding:0;margin:20px 0 28px}
+.guide-links a{display:inline-flex;align-items:center;min-height:44px}
+.real-work-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:start}
+.real-work-recipe,#revised-lifecycle-figure{min-width:0}
+#revised-lifecycle-figure{width:100%;margin:0 auto;max-width:600px}
+#revised-lifecycle-figure img{width:100%}
+.lifecycle-obscur{display:none}
+@media(prefers-color-scheme:dark){:root:not([data-appearance="clair"]) .lifecycle-clair{display:none}:root:not([data-appearance="clair"]) .lifecycle-obscur{display:block}}
+:root[data-appearance="obscur"] .lifecycle-clair{display:none}
+:root[data-appearance="obscur"] .lifecycle-obscur{display:block}
+:root[data-appearance="clair"] .lifecycle-clair{display:block}
+:root[data-appearance="clair"] .lifecycle-obscur{display:none}
+.lifecycle-steps{padding-left:1.5em}.lifecycle-steps li{margin-block:10px}
+@media(max-width:850px){.real-work-grid{grid-template-columns:minmax(0,1fr);gap:24px}#revised-lifecycle-figure{max-width:500px}.guide-links{display:block}.guide-links li{margin-block:4px}}
+@media(max-width:700px){#revised-lifecycle-figure{width:calc(100% + 36px);max-width:none;margin-inline:-18px}#revised-lifecycle-figure figcaption{padding-inline:18px}}
+@media print{.real-work-grid{display:block}#revised-lifecycle-figure{max-width:400px}:root .lifecycle-clair,:root[data-appearance] .lifecycle-clair{display:block}:root .lifecycle-obscur,:root[data-appearance] .lifecycle-obscur{display:none}}

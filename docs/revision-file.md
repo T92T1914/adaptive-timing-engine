@@ -10,10 +10,16 @@ An input file has this shape:
 
 ```json
 {"schema_version": 1, "revisions": [
-  {"not_before": 0, "values": [1, 2, 255]},
-  {"not_before": 0.01, "values": []}
+  {"not_before": 0, "values": [9]},
+  {"not_before": 0.01, "values": [1, 2, 255, 2]}
 ]}
 ```
+
+Choose an unused output filename. If the runner reports `complete: true`, this
+literal example's final current summary has count 4 and total 260. Its physical
+completion count and timing depend on the schedule. The separate
+[revised-analysis demonstration](revised-work.md) uses three controlled revisions
+to expose capacity refusal, waiting replacement and a stale physical result.
 
 The whole local regular UTF-8 file is admitted before workers start. It is at
 most 4 MiB, contains 1 through 64 revisions, and permits only the fields above.
@@ -35,7 +41,8 @@ start or completion time. Every accepted revision remains recorded in order.
 
 The output wraps the unchanged schema-1 session receipt under `session`, plus
 the input-byte digest, requested/actual deliveries and runner outcome. It omits
-the input arrays. Inspect supported saved session claims with:
+the input arrays. Inspect supported saved session claims with the
+[passive receipt checker](receipt-check.md):
 
 ```sh
 python -m adaptive_timing.receipt_check receipt.json --record session --json

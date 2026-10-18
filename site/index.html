@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Timing variation, workload and recovery affect which tasks can actually run. The trace explorer makes those interactions visible and lets you compare policies under the same generated workload."><title>Adaptive Timing Engine | Trinidy Farris</title><script src="appearance.js"></script><link rel="stylesheet" href="appearance.css"><link rel="stylesheet" href="style.css">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Plan over revised inputs, run bounded CPU work and inspect saved lifecycle claims. Explore synthetic timing comparisons separately in the offline trace explorer."><title>Adaptive Timing Engine | Trinidy Farris</title><script src="appearance.js"></script><link rel="stylesheet" href="appearance.css"><link rel="stylesheet" href="style.css">
 <link rel="canonical" href="https://t92t1914.github.io/adaptive-timing-engine/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Adaptive Timing">
@@ -13,7 +13,44 @@
 <meta property="og:image:alt" content="Adaptive Timing. Keep the newest result. Authored summary of the linked evidence.">
 <meta name="twitter:card" content="summary_large_image">
 </head>
-<body data-project="adaptive-timing-engine"><a class="skip" href="#main">Skip to the example</a><div class="wrap"><nav aria-label="Project navigation"><a href="https://github.com/T92T1914/adaptive-timing-engine">Source on GitHub</a><a href="https://github.com/T92T1914">More projects</a></nav><main id="main"><div class="appearance-control"><label for="appearance">Appearance</label><select id="appearance" disabled><option value="auto">Auto</option><option value="clair">Clair</option><option value="obscur">Obscur</option></select><noscript><small>Auto follows your system appearance.</small></noscript></div><p class="eyebrow">Scheduling and concurrency</p><h1>Explore what changes when work gets harder.</h1><p class="lead">Timing variation, workload and recovery affect which tasks can actually run. The trace explorer makes those interactions visible and lets you compare policies under the same generated workload.</p><div class="actions"><a class="button" href="https://github.com/T92T1914/adaptive-timing-engine#run-it">Run the Python project</a><a class="button" href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/evidence/results.md">Inspect the evidence</a></div>
+<body data-project="adaptive-timing-engine"><a class="skip" href="#main">Skip to the example</a><div class="wrap"><nav aria-label="Project navigation"><a href="https://github.com/T92T1914/adaptive-timing-engine">Source on GitHub</a><a href="https://github.com/T92T1914">More projects</a></nav><main id="main"><div class="appearance-control"><label for="appearance">Appearance</label><select id="appearance" disabled><option value="auto">Auto</option><option value="clair">Clair</option><option value="obscur">Obscur</option></select><noscript><small>Auto follows your system appearance.</small></noscript></div><p class="eyebrow">Scheduling and concurrency</p><h1>Keep the current answer as inputs change.</h1><p class="lead">A calculation can finish correctly after its input has changed. Adaptive Timing Engine keeps planning, physical completion and current-result adoption separate. Run bounded CPU work on revised inputs, or explore saved synthetic timing comparisons.</p><div class="actions"><a class="button primary" href="#real-work">Run revised inputs</a><a class="button" href="explorer.html">Explore saved traces</a></div>
+<section class="panel" id="real-work" aria-labelledby="real-work-title">
+<h2 id="real-work-title">Run changing inputs through real CPU work</h2>
+<p>The standard-library consumer computes count, sum, a 256-bin histogram and a SHA256 input digest. The existing planner and executor keep accepted work owned until return and reconciliation, even when a newer input makes its result obsolete.</p>
+<ul class="guide-links" aria-label="Real execution guides">
+<li><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/revision-file.md">Caller-manifest guide</a></li>
+<li><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/revised-work.md">Revised-analysis guide</a></li>
+<li><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/receipt-check.md">Passive receipt-checking guide</a></li>
+</ul>
+<div class="real-work-grid">
+<div class="real-work-recipe">
+<h3>Try two input revisions</h3>
+<p>After <a href="https://github.com/T92T1914/adaptive-timing-engine#run-it">cloning and installing the package</a>, save this literal input as <code>revisions.json</code>:</p>
+<pre id="manifest-example" tabindex="0" aria-label="Example two-revision manifest"><code id="revision-manifest">{"schema_version": 1, "revisions": [
+  {"not_before": 0, "values": [9]},
+  {"not_before": 0.01, "values": [1, 2, 255, 2]}
+]}</code></pre>
+<p>Choose an unused receipt filename, then run and inspect it:</p>
+<pre id="revision-commands" tabindex="0" aria-label="Run revisions and inspect the embedded session"><code>python -m adaptive_timing.revision_file revisions.json --output receipt.json
+python -m adaptive_timing.receipt_check receipt.json --record session --json</code></pre>
+<p id="recipe-outcome">If the runner reports <code>complete: true</code>, the final current summary has count 4 and total 260. Requested offsets do not promise exact delivery or physical start/completion times. Which intermediate work completes can vary.</p>
+<p>The file runner accepts at most 64 revisions and 65,536 byte-valued integers per input, in a file up to 4 MiB. Its timeout is a soft observation budget followed by waiting cleanup. No native package or GPU is needed.</p>
+<h3>Physical completion and current answers are different facts</h3>
+<ol class="lifecycle-steps">
+<li>In the controlled demonstration, the first revision is physically accepted and owns its input and resource.</li>
+<li>The second revision waits for physical capacity with its dispatch identity retained. The third revision replaces that unsubmitted work.</li>
+<li>The first operation returns as stale work. Reconciliation retains its outcome and releases its physical ownership. Its obsolete answer cannot become current.</li>
+<li>The third operation completes, is reconciled and supplies the current answer. A later offer would clear that answer's currency while preserving its history.</li>
+</ol>
+<p class="fine muted">The checker selects the embedded session with <code>--record session</code>. Exit 0 means its supported recorded claims agree, including valid incomplete sessions. Read the runner outcome and session completion separately. It does not certify every wrapper field, authenticate execution or establish a hard real-time guarantee.</p>
+</div>
+<figure id="revised-lifecycle-figure" aria-labelledby="lifecycle-caption">
+<div class="lifecycle-clair"><img src="lifecycle-clair.png" alt="Controlled three-revision execution: the first accepted operation finishes stale, the second waiting dispatch is superseded, and the third result becomes current after reconciliation. Resources stay owned until physical return and reconciliation. Event order, not elapsed time." width="1520" height="4400" loading="lazy"></div>
+<div class="lifecycle-obscur"><img src="lifecycle-obscur.png" alt="Controlled three-revision execution: the first accepted operation finishes stale, the second waiting dispatch is superseded, and the third result becomes current after reconciliation. Resources stay owned until physical return and reconciliation. Event order, not elapsed time." width="1520" height="4400" loading="lazy"></div>
+<figcaption id="lifecycle-caption">The retained controlled three-revision demonstration is separate from the two-revision recipe. Spacing shows event order, not elapsed time. <a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/revised-work.md">Read the controlled schedule</a> and <a href="lifecycle-figure.json">figure provenance</a>. Download <a href="lifecycle-clair.svg" download>Clair lifecycle SVG</a> or <a href="lifecycle-obscur.svg" download>Obscur lifecycle SVG</a>.</figcaption>
+</figure>
+</div>
+</section>
 <section class="panel"><h2>Compare the timing policies</h2><p>Choose a workload, switch the paired seed and disable one mechanism at a time. Inspect admitted tasks, rejected work and the trace behind the result.</p><a class="button primary" href="explorer.html">Open the trace explorer</a><p class="fine muted">48 recorded paired cases. The explorer works entirely in your browser. This is a new presentation of the saved report, without another experiment. <a href="explorer.html" download>Download the offline explorer</a>. <a href="presentation.json">Inspect presentation provenance</a>.</p></section><p id="load-error" class="error" hidden></p><noscript><p>The recorded diagram and source data are available below. Enable JavaScript to use the interactive example.</p></noscript>
 <section class="panel" id="causal-study"><h2>Planning as information arrives</h2><p>The causal mode receives announcements, updates and cancellations over time. A separate 24 pair comparison keeps admission, expiration and dispatch visible, including cases where the causal policy dispatches fewer tasks.</p><a class="button primary" href="causal.html">Read the causal study</a><p class="fine muted"><a href="causal-summary.json" download>Download the causal summary</a>. <a href="causal-raw.json.gz" download>Download the full causal traces</a>. The original batch study above remains separate.</p></section>
 <figure id="worker-figure">

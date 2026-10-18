@@ -22,6 +22,36 @@ reconciliation releases capacity, the third calculation supplies the current
 answer. These gates establish a correctness schedule. They do not measure
 service time, throughput or responsiveness.
 
+To supply your own finite input revisions, use the [caller-manifest guide](revision-file.md).
+The [passive checker](receipt-check.md) can inspect a saved report without running
+the analysis again. The caller runner wraps the session under `session`, which
+requires the explicit `--record session` selector.
+
+## Recorded lifecycle
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="revised-lifecycle-obscur.png">
+  <source media="(prefers-color-scheme: light)" srcset="revised-lifecycle-clair.png">
+  <img src="revised-lifecycle-clair.png" alt="Controlled three-revision execution: an accepted operation returns stale, the next waiting dispatch is superseded, and the third result becomes current after reconciliation. Physical ownership lasts through return and reconciliation. Event order, not elapsed time." width="640">
+</picture>
+
+This retained controlled demonstration is separate from the two-revision
+caller-manifest recipe. Spacing shows event order, not elapsed time. The
+[figure provenance](revised-lifecycle-figure.json) records its source and rendering.
+The same sequence in text is:
+
+1. The first revision is physically accepted and owns its input and resource.
+2. The second revision waits with its refused dispatch identity retained. The
+   third revision supersedes that unsubmitted work.
+3. The first operation returns as stale work. Its physical outcome is retained,
+   and reconciliation releases its ownership. Its obsolete answer is not adopted.
+4. The third operation completes and is reconciled before its answer becomes current.
+   A later offer would clear that currency while preserving the adopted result's history.
+
+Download the [Obscur SVG](revised-lifecycle-obscur.svg) or
+[Clair SVG](revised-lifecycle-clair.svg). The original
+[101-request worker figure](visual-example.md) remains a separate historical example.
+
 ## Programmatic consumer
 
 `AnalysisSession` supports one logical analysis in a finite session. Offer an

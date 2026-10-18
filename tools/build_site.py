@@ -10,9 +10,15 @@ sys.path.insert(0, str(ROOT))
 from adaptive_timing.presentation import ROOT as PRESENTATION_ROOT, appearance_css
 from tools.render_saved_viewer import render
 from tools.render_worker_figure import check_outputs
+from tools.render_revised_lifecycle import check_outputs as check_revised_lifecycle
 from tools.render_causal_report import render as render_causal
 OUT = ROOT / "_site"
 FILES = {
+    "docs/revised-lifecycle-obscur.png": "lifecycle-obscur.png",
+    "docs/revised-lifecycle-obscur.svg": "lifecycle-obscur.svg",
+    "docs/revised-lifecycle-clair.png": "lifecycle-clair.png",
+    "docs/revised-lifecycle-clair.svg": "lifecycle-clair.svg",
+    "docs/revised-lifecycle-figure.json": "lifecycle-figure.json",
     "site/share-preview.png": "share-preview.png",
     "docs/adaptive-timing-clair-wide.png": "worker-clair-wide.png",
     "docs/adaptive-timing-clair-wide.svg": "worker-clair-wide.svg",
@@ -41,6 +47,7 @@ def main():
     if not data.get("source_commit"):
         raise ValueError("Example data must retain its source revision.")
     check_outputs()
+    check_revised_lifecycle()
     OUT.mkdir(exist_ok=True)
     for source, target in FILES.items():
         path = ROOT / source
