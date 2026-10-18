@@ -125,6 +125,24 @@ uses the separately installed numerical runtime for reduction, tiled histograms
 and a stencil. It verifies submission snapshots and actual completed results
 without changing the default dependencies or historical comparisons.
 
+### Analyze local revisions
+
+The installed consumer runs finite local JSON revisions through the default CPU
+analyzer. It admits the complete manifest before workers start, keeps physically accepted
+work owned until completion and reconciliation and adopts an answer only for the current
+data revision.
+
+```sh
+python -m adaptive_timing.revision_file revisions.json --output receipt.json
+```
+
+See the [input and API contract](docs/revision-file.md),
+[session lifecycle](docs/revised-work.md) and
+[passive receipt checker](docs/receipt-check.md). The timeout is a soft observation
+budget followed by waiting cleanup. A consistent saved receipt does not
+authenticate its producer or prove that execution occurred. This adds no hard
+real time or throughput guarantee.
+
 ## Architecture
 
 ```mermaid
