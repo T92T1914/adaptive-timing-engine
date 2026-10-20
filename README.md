@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/T92T1914/adaptive-timing-engine/actions/workflows/ci.yml)
 
-Planning over revised inputs, bounded CPU execution and inspectable lifecycle evidence. Pure Python 3.11+, with no runtime dependencies.
+An older calculation can finish correctly after its input has changed. Adaptive Timing Engine records that completion without letting it replace the current answer. It keeps planning, physical execution and adoption of the result separate, with bounded background work and an offline trace explorer.
 
-An older calculation can finish correctly after its input has changed. Adaptive Timing Engine keeps planning, physical completion and current-result adoption separate. The result stays in the record, but it cannot become the current answer. An offline trace explorer also makes synthetic workload and timing comparisons visible.
+The default package uses Python 3.11 or newer with no runtime dependencies. Its historical workload studies are synthetic. Optional real execution and installed consumers have their own contracts and evidence.
 
 I generalized the request mailbox from a larger private application, then built an independent event model, executor and experiment around it. Everything needed to run this version is here. The offline experiment's workloads and parameters are synthetic, so those results describe the simulation rather than validated human performance.
 
@@ -40,7 +40,7 @@ pip install .
 adaptive-timing demo --events 120
 ```
 
-Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, including the source suite, wheel resources, a fresh installed revised-analysis consumer and passive receipt inspection. The caller-manifest runner has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate development-only browser checks exercise the generated viewer.
+Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, including the source suite, wheel resources, a fresh installed consumer for revised analysis and passive receipt inspection. The runner for caller manifests has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate browser checks used only in development exercise the generated viewer.
 
 ## Measured examples
 
@@ -100,7 +100,7 @@ The [optional CUDA application](docs/cuda-application.md) connects owned Python
 submission snapshots to the runtime's reusable histogram. A single resource
 owner handles repeated calls and explicit close. The runnable example checks
 full outputs, cancellation requests, obsolete generations and bounded capacity.
-It requires an explicitly CUDA-enabled runtime package. Default imports and
+It requires a runtime package built explicitly with CUDA support. Default imports and
 simulation studies keep their existing dependencies and behavior.
 
 The default explorer and historical comparisons remain simulations. An optional
@@ -162,9 +162,9 @@ budget followed by waiting cleanup. A consistent saved receipt does not
 authenticate its producer or prove that execution occurred. This adds no hard
 real time or throughput guarantee.
 
-The [revised-work lifecycle](docs/revised-work.md#recorded-lifecycle) explains a
-separate retained three-revision demonstration. Its figure shows event order,
-not measured timing, and preserves the original 101-request example above.
+The [lifecycle for revised work](docs/revised-work.md#recorded-lifecycle) explains a
+separate retained demonstration with three revisions. Its figure shows event order,
+not measured timing, and preserves the original example with 101 requests above.
 
 ## Architecture
 
@@ -188,7 +188,7 @@ flowchart LR
 | [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning; the poll budget also counts duplicates and deferred tasks. |
 | [`execution.py`](adaptive_timing/execution.py) | Optional callable execution and observed completion | A cancellation request or stale result does not release a running operation's resource. |
 | [`revised_analysis.py`](adaptive_timing/revised_analysis.py) | Finite revised numeric work and current adoption | Data revisions, planning generations and physical outcomes stay separate. |
-| [`revision_file.py`](adaptive_timing/revision_file.py) | Caller-provided manifests and runner outcomes | Admit the bounded input before workers start; record requested offsets separately from actual deliveries. |
+| [`revision_file.py`](adaptive_timing/revision_file.py) | Manifests supplied by the caller and runner outcomes | Admit the bounded input before workers start; record requested offsets separately from actual deliveries. |
 | [`receipt_check.py`](adaptive_timing/receipt_check.py) | Passive inspection of supported saved claims | Check internal agreement without following receipt paths, replaying work or authenticating execution. |
 | [`experiment.py`](adaptive_timing/experiment.py) | Generated data and paired comparisons | Full traces accompany measurements, and execution expiration is separate from planning rejection. |
 | [`tests/test_engine.py`](tests/test_engine.py) | Failure cases and independent invariants | Deterministic thread gates expose stale output races without relying on convenient sleep timing. |
@@ -221,6 +221,6 @@ I use this project to study what happens when new work arrives before the old ca
 - **Runtime state.** Follow plan adoption, resource reservations and bounded dispatch. [Inspect the work](adaptive_timing/runtime.py).
 - **Controlled experiments.** Compare the same workload and seed with one mechanism disabled. [Inspect the work](docs/evidence/results.md).
 
-These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real-time guarantees or a calibrated human-performance model.
+These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real time guarantees or a calibrated model of human performance.
 
 See [sharing previews](docs/sharing-preview.md) for the maintained link image and its source.
