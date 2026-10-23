@@ -25,15 +25,15 @@
 <div class="real-work-grid">
 <div class="real-work-recipe">
 <h3>Try two input revisions</h3>
-<p>After <a href="https://github.com/T92T1914/adaptive-timing-engine#run-it">cloning and installing the package</a>, save this literal input as <code>revisions.json</code>:</p>
-<pre id="manifest-example" tabindex="0" aria-label="Example two-revision manifest"><code id="revision-manifest">{"schema_version": 1, "revisions": [
+<p>After <a href="https://github.com/T92T1914/adaptive-timing-engine#run-it">cloning and installing the package</a>, save this literal input as <code translate="no">revisions.json</code>:</p>
+<pre id="manifest-example" tabindex="0" aria-label="Example two-revision manifest"><code translate="no" id="revision-manifest">{"schema_version": 1, "revisions": [
   {"not_before": 0, "values": [9]},
   {"not_before": 0.01, "values": [1, 2, 255, 2]}
 ]}</code></pre>
 <p>Choose an unused receipt filename, then run and inspect it:</p>
-<pre id="revision-commands" tabindex="0" aria-label="Run revisions and inspect the embedded session"><code>python -m adaptive_timing.revision_file revisions.json --output receipt.json
+<pre id="revision-commands" tabindex="0" aria-label="Run revisions and inspect the embedded session"><code translate="no">python -m adaptive_timing.revision_file revisions.json --output receipt.json
 python -m adaptive_timing.receipt_check receipt.json --record session --json</code></pre>
-<p id="recipe-outcome">If the runner reports <code>complete: true</code>, the final current summary has count 4 and total 260. Requested offsets do not promise exact delivery or physical start/completion times. Which intermediate work completes can vary.</p>
+<p id="recipe-outcome">If the runner reports <code translate="no">complete: true</code>, the final current summary has count 4 and total 260. Requested offsets do not promise exact delivery or physical start/completion times. Which intermediate work completes can vary.</p>
 <p>The file runner accepts at most 64 revisions and 65,536 byte-valued integers per input, in a file up to 4 MiB. Its timeout is a soft observation budget followed by waiting cleanup. No native package or GPU is needed.</p>
 <h3>Physical completion and current answers are different facts</h3>
 <ol class="lifecycle-steps">
@@ -42,7 +42,7 @@ python -m adaptive_timing.receipt_check receipt.json --record session --json</co
 <li>The first operation returns as stale work. Reconciliation retains its outcome and releases its physical ownership. Its obsolete answer cannot become current.</li>
 <li>The third operation completes, is reconciled and supplies the current answer. A later offer would clear that answer's currency while preserving its history.</li>
 </ol>
-<p class="fine muted">The checker selects the embedded session with <code>--record session</code>. Exit 0 means its supported recorded claims agree, including valid incomplete sessions. Read the runner outcome and session completion separately. It does not certify every wrapper field, authenticate execution or establish a hard real-time guarantee.</p>
+<p class="fine muted">The checker selects the embedded session with <code translate="no">--record session</code>. Exit 0 means its supported recorded claims agree, including valid incomplete sessions. Read the runner outcome and session completion separately. It does not certify every wrapper field, authenticate execution or establish a hard real-time guarantee.</p>
 </div>
 <figure id="revised-lifecycle-figure" aria-labelledby="lifecycle-caption">
 <div class="lifecycle-clair"><img src="lifecycle-clair.png" alt="Controlled three-revision execution: the first accepted operation finishes stale, the second waiting dispatch is superseded, and the third result becomes current after reconciliation. Resources stay owned until physical return and reconciliation. Event order, not elapsed time." width="1520" height="4400" loading="lazy"></div>
@@ -60,5 +60,5 @@ python -m adaptive_timing.receipt_check receipt.json --record session --json</co
 </figure>
 <section class="panel" id="engineering"><h2>Keeping background work relevant</h2><p>I use this project to study what happens when new work arrives before the old calculation finishes. It connects concurrency, scheduling and diagnostics in a small system where I can inspect the event trace.</p><div class="engineering-grid"><section><h3>Concurrency</h3><p>Inspect the worker that replaces waiting requests and rejects obsolete results.</p><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/adaptive_timing/worker.py">Inspect the work</a></section><section><h3>Runtime state</h3><p>Follow plan adoption, resource reservations and bounded dispatch.</p><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/adaptive_timing/runtime.py">Inspect the work</a></section><section><h3>Controlled experiments</h3><p>Compare the same workload and seed with one mechanism disabled.</p><a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/evidence/results.md">Inspect the work</a></section></div><p class="fine muted">These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real-time guarantees or a calibrated human-performance model.</p></section>
 <div class="two"><section><h2>What this shows</h2><p>The workloads and behavioral parameters are synthetic. The timing experiment does not validate a model of human performance. The worker illustration shows event order; its spacing is not a measurement of elapsed time.</p></section><section><h2>Follow it into the code</h2><p>Start with <a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/adaptive_timing/worker.py">the implementation</a>, then use the <a href="https://github.com/T92T1914/adaptive-timing-engine/blob/main/CONTRIBUTING.md">contribution guide</a> to set up the project and run its checks.</p></section></div>
-<details><summary>Commands after setup</summary><pre><code>python -m adaptive_timing demo
+<details><summary>Commands after setup</summary><pre><code translate="no">python -m adaptive_timing demo
 python examples/replanning.py</code></pre><p class="fine">Dependencies and setup instructions are in the repository. Codespaces uses your own account allowance.</p><a href="https://codespaces.new/T92T1914/adaptive-timing-engine">Open the Codespaces setup page</a></details></main><footer>Built by <a href="https://github.com/T92T1914">Trinidy Farris</a>. <a id="revision" href="data.json">Recorded source revision in the data</a>. Inter uses installed local faces with a system fallback. No fonts are downloaded.</footer></div><script type="module" src="app.js"></script></body></html>
