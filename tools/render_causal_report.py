@@ -161,7 +161,7 @@ td{{font-variant-numeric:tabular-nums}}p{{max-width:78ch}}button{{cursor:pointer
 <p>Each stream has 120 stable task IDs. Workloads are steady, burst, recovery and saturation. Delivery is rolling or includes updates, cancellations and late arrivals. Seeds are 7, 42 and 73.</p>
 <p><a href="{SOURCE}blob/{evaluated}/docs/causal-protocol.md">Read the committed protocol</a> and
 <a href="{SOURCE}blob/{evaluated}/docs/causal-policy.md">information contract</a>.
-The exact evaluated revision is <a href="{source_at}"><code>{evaluated}</code></a>.</p>
+The exact evaluated revision is <a href="{source_at}"><code translate="no">{evaluated}</code></a>.</p>
 <div class="actions"><button class="button" id="download-summary" hidden>Download embedded summary</button>
 <a class="button" href="{PUBLIC}causal-raw.json.gz" download>Download full raw traces</a>
 <a class="button" href="{PUBLIC}causal.html" download>Download this offline report</a></div>
@@ -175,10 +175,10 @@ The exact evaluated revision is <a href="{source_at}"><code>{evaluated}</code></
 <h2>Limits and reproduction</h2><p>This is one process with synchronous planning and virtual polls every 20 ms. It does not measure operating system wakeups or process scaling. Synthetic streams do not establish behavior on unseen production work. The offline comparator has unavailable future information, while the causal policy also changes effort history and replanning. The comparison does not isolate one mechanism.</p>
 <p>Other figure unit checks were active during the run. Calculation durations are retained as diagnostic values and are not compared. Expiration records retain the executor's attempted service start, without a separate poll emission timestamp.</p>
 <p>Every stream, plan, event version and execution record is in the raw archive. Use a new output directory to reproduce the committed protocol. Rendering this report reads retained values and runs no experiment.</p>
-<pre><code>python tools/run_causal_study.py --output /path/to/new/causal-run
+<pre><code translate="no">python tools/run_causal_study.py --output /path/to/new/causal-run
 python tools/render_causal_report.py --output reports/causal</code></pre>
 <p>The retained original 48 case batch study is separate. Its evaluated revision remains unknown. <a href="{PUBLIC}explorer.html">Read its unchanged evidence through the current explorer</a>.</p>
-<details><summary>Evidence and presentation identity</summary><pre id="identity">{html.escape(json.dumps(identity, indent=2))}</pre></details>
+<details><summary>Evidence and presentation identity</summary><pre translate="no" id="identity">{html.escape(json.dumps(identity, indent=2))}</pre></details>
 </main><footer><p class="font-note">Inter uses installed local faces with a system fallback. No font files or external resources are fetched by this report. Headless checks do not establish physical display or native application acceptance.</p></footer></div>
 <script type="application/json" id="causal-data">{safe_json(summary)}</script>
 <script type="application/json" id="causal-presentation">{safe_json(identity)}</script>

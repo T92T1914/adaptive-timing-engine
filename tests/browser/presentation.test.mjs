@@ -362,6 +362,12 @@ test('print redraw and forced colors leave screen preference and trace intact',a
 });
 
 async function fonts(page,selector){
+  // Glyph providers describe rendered text, not just a declared font family.
+  await page.locator(selector).scrollIntoViewIfNeeded();
+  await page.evaluate(async()=>{
+    await document.fonts.ready;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  });
   const session=await page.context().newCDPSession(page);
   try{
     await session.send('DOM.enable');await session.send('CSS.enable');const {root}=await session.send('DOM.getDocument');
