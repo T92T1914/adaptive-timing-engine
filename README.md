@@ -12,6 +12,8 @@ I generalized the request mailbox from a larger private application, then built 
 
 [Explore the browser demo](https://t92t1914.github.io/adaptive-timing-engine/) · [Open in Codespaces](https://codespaces.new/T92T1914/adaptive-timing-engine)
 
+Reading in another language? [Translation help](https://github.com/T92T1914/T92T1914/blob/main/TRANSLATION.md).
+
 ## Run it
 
 ```sh
