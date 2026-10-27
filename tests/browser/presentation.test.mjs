@@ -579,7 +579,8 @@ test('landing real-work recipe stays distinct, readable and linked across appear
   assert.deepEqual(await readManifest(page),literal);
   for(const colorScheme of ['light','dark']){
     const noJS=await fixture(t,{viewport:{width:390,height:844},javaScriptEnabled:false,colorScheme});
-    await noJS.goto(base+'/');await edition(noJS,colorScheme==='light'?'clair':'obscur');
+    await noJS.goto(base+'/');await edition(noJS,'obscur');
+    assert.equal(await noJS.locator('#appearance').isDisabled(),true);
     assert.deepEqual(await readManifest(noJS),literal);
     assert.equal(await noJS.locator('#real-work .guide-links a').count(),3);
     assert.equal(await noJS.locator('.lifecycle-steps li').count(),4);
