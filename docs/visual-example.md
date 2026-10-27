@@ -9,6 +9,10 @@
 
 One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
 
+The entry graphic remains Obscur. The same retained values are available in the
+Clair [stacked PNG](adaptive-timing-clair.png) and
+[wide PNG](adaptive-timing-clair-wide.png) alternates.
+
 ## Reproduce the values
 
 Run from this repository using its documented Python environment.
