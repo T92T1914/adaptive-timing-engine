@@ -42,7 +42,7 @@ class PresentationTests(unittest.TestCase):
         self.assertNotIn('url(', css)
         for face in ['Regular', 'SemiBold', 'Bold', 'Italic', 'SemiBoldItalic', 'BoldItalic']:
             self.assertIn(f'local("Inter-{face}")', css)
-        self.assertIn(':root:not([data-appearance="clair"])', css)
+        self.assertIn(':root[data-appearance="auto"]', css)
         self.assertIn('@media print{:root,:root[data-appearance]', css)
         data = tokens()
         self.assertEqual(data['source']['revision'], '7a57fe750ff50205a17e1d342106a0d3f2777159')

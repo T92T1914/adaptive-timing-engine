@@ -1,6 +1,16 @@
 # Reading saved traces
 
-The trace explorer and public page use the Clair/Obscur family. Clair has warm light surfaces, and Obscur uses near-black surfaces. Auto follows the browser's system preference. An explicit choice takes precedence until Auto is selected again. The preference is stored under `adaptive-timing-engine.appearance.v1`. If storage is unavailable, switching still works for that page.
+The trace explorer and public page open in Obscur, including without JavaScript.
+Clair remains available, and explicit Auto follows the browser's system
+preference. All three choices are saved under `adaptive-timing-engine.appearance.v1`.
+If storage is unavailable, Obscur remains the default and switching still works
+for that page without changing the selected trace or time window.
+
+Earlier versions removed the preference when Auto was selected. An old Auto
+choice and a first visit therefore look identical and receive the new default.
+Saved Clair and Obscur remain effective; selecting Auto again now preserves it
+through reload. The README's entry diagram stays Obscur in either GitHub
+appearance, with Clair editions retained as direct alternatives.
 
 The adapter pins [the source tokens](https://github.com/T92T1914/clair-obscur-themes/blob/7a57fe750ff50205a17e1d342106a0d3f2777159/tokens.json). It runs during report generation, outside the planner, worker and executor. Runtime timing behavior is unchanged.
 

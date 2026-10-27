@@ -271,6 +271,10 @@ test('Auto, overrides and redraw preserve the selected case and time window',asy
   await page.locator('#appearance').selectOption('auto');assert.equal(await background(page),'rgb(9, 9, 9)');
   await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(248, 247, 243)');
   assert.deepEqual(await visibleState(page),original);
+  await page.reload();await page.locator('#rows tr').first().waitFor();
+  assert.equal(await page.locator('#appearance').inputValue(),'auto');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('adaptive-timing-engine.appearance.v1')),'auto');
+  assert.deepEqual(await visibleState(page),original);
   await page.locator('#appearance').selectOption('obscur');await page.reload();
   assert.equal(await page.locator('#appearance').inputValue(),'obscur');
 });
@@ -297,16 +301,16 @@ test('all 48 retained cases export unchanged and preserve statuses and identitie
 test('blocked storage does not disable controls or alter trace data',async t=>{
   const page=await fixture(t,{colorScheme:'light'},true);await ready(page);
   await page.locator('#appearance').selectOption('obscur');assert.equal(await background(page),'rgb(9, 9, 9)');
-  await page.reload();assert.equal(await background(page),'rgb(248, 247, 243)');
+  await page.reload();assert.equal(await background(page),'rgb(9, 9, 9)');
   assert.deepEqual(JSON.parse(await page.locator('#data').textContent()),expected);
 });
 
-test('without JavaScript Auto and all saved case summaries remain readable',async t=>{
+test('without JavaScript Obscur and all saved case summaries remain readable',async t=>{
   const page=await fixture(t,{javaScriptEnabled:false,colorScheme:'dark'});await page.goto(base+'/explorer.html');
   assert.equal(await background(page),'rgb(9, 9, 9)');assert.equal(await page.locator('#appearance').isDisabled(),true);
   assert.equal(await page.locator('noscript tbody tr').count(),48);
   assert.equal(await page.locator('.controls').isVisible(),false);
-  await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(248, 247, 243)');
+  await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(9, 9, 9)');
 });
 
 for(const mode of ['obscur','clair'])test(`${mode} keyboard, narrow and enlarged text layouts`,async t=>{
@@ -430,7 +434,7 @@ test('worker figure follows effective appearance, prints Clair and downloads exa
   await page.emulateMedia({colorScheme:'dark'});await edition('obscur');
   for(const colorScheme of ['light','dark']){
     const noJS=await fixture(t,{javaScriptEnabled:false,colorScheme});await noJS.goto(base+'/');
-    assert.equal(await noJS.locator('.worker-'+(colorScheme==='light'?'clair':'obscur')).isVisible(),true);
+    assert.equal(await noJS.locator('.worker-obscur').isVisible(),true);
   }
 });
 

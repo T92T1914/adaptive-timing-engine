@@ -154,7 +154,7 @@ def render(output: Path):
 td{{font-variant-numeric:tabular-nums}}p{{max-width:78ch}}button{{cursor:pointer;font:inherit;background:var(--control);color:var(--text)}}
 </style></head><body><a class="skip" href="#main">Skip to results</a><div class="wrap">
 <nav aria-label="Report navigation"><a href="{PUBLIC}">Project page</a><a href="{source_at}">Evaluated source</a></nav>
-<main id="main">{appearance_control()}<noscript><p>Auto follows your system. All recorded results remain available below.</p></noscript>
+<main id="main">{appearance_control()}<noscript><p>Obscur is the no-script appearance. All recorded results remain available below.</p></noscript>
 <p class="eyebrow">Causal information study</p><h1>Planning after information arrives.</h1>
 <p class="lead">24 paired synthetic streams compare delivered information with a complete batch that knows final versions and cancellations.</p>
 <section class="panel"><h2>What happened</h2>{paragraphs}</section>

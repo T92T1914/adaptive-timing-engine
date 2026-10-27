@@ -14,10 +14,12 @@ summary{min-height:44px;padding-block:10px}
 @media(forced-colors:active){.panel,.button,select,.metric{border-color:CanvasText}a,.button.primary{color:LinkText}.button.primary{background:Canvas}}
 h1,h2,h3{font-weight:700}label,summary{font-weight:600}.appearance-control{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;margin:20px 0}.appearance-control label{margin:0}.appearance-control select{min-width:0}.appearance-control small{max-width:100%}nav{flex-wrap:wrap}pre{white-space:pre-wrap;overflow-wrap:anywhere}.panel,.two>section{min-width:0}a{overflow-wrap:anywhere}@media print{.appearance-control{display:none}}@media(forced-colors:active){:root,:root[data-appearance]{--canvas:Canvas;--panel:Canvas;--text:CanvasText;--muted:CanvasText;--accent:LinkText;--divider:CanvasText;--control:Canvas;--focus:Highlight;--code:Canvas}}
 
-/* The image follows the effective setting, including no-script Auto and print. */
+/* The image follows the effective setting, including no-script Obscur and light print. */
 #worker-figure{max-width:960px;container-type:inline-size;margin-inline:auto}
-.worker-obscur{display:none}
-@media(prefers-color-scheme:dark){:root:not([data-appearance="clair"]) .worker-clair{display:none}:root:not([data-appearance="clair"]) .worker-obscur{display:block}}
+.worker-clair{display:none}
+:root[data-appearance="auto"] .worker-clair{display:block}
+:root[data-appearance="auto"] .worker-obscur{display:none}
+@media(prefers-color-scheme:dark){:root[data-appearance="auto"] .worker-clair{display:none}:root[data-appearance="auto"] .worker-obscur{display:block}}
 :root[data-appearance="obscur"] .worker-clair{display:none}
 :root[data-appearance="obscur"] .worker-obscur{display:block}
 :root[data-appearance="clair"] .worker-clair{display:block}
@@ -35,8 +37,10 @@ h1,h2,h3{font-weight:700}label,summary{font-weight:600}.appearance-control{displ
 .real-work-recipe,#revised-lifecycle-figure{min-width:0}
 #revised-lifecycle-figure{width:100%;margin:0 auto;max-width:600px}
 #revised-lifecycle-figure img{width:100%}
-.lifecycle-obscur{display:none}
-@media(prefers-color-scheme:dark){:root:not([data-appearance="clair"]) .lifecycle-clair{display:none}:root:not([data-appearance="clair"]) .lifecycle-obscur{display:block}}
+.lifecycle-clair{display:none}
+:root[data-appearance="auto"] .lifecycle-clair{display:block}
+:root[data-appearance="auto"] .lifecycle-obscur{display:none}
+@media(prefers-color-scheme:dark){:root[data-appearance="auto"] .lifecycle-clair{display:none}:root[data-appearance="auto"] .lifecycle-obscur{display:block}}
 :root[data-appearance="obscur"] .lifecycle-clair{display:none}
 :root[data-appearance="obscur"] .lifecycle-obscur{display:block}
 :root[data-appearance="clair"] .lifecycle-clair{display:block}
