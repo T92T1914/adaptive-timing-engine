@@ -16,15 +16,19 @@ function run(saved, blocked=false) {
   return {root,control,state,ready:()=>events.get('DOMContentLoaded')(),
     choose:value=>{control.value=value;events.get('change')();}};
 }
-for(const saved of [null,'invalid','auto']) test(`unrecognized or absent preference ${saved} uses Auto before paint`,()=>{
-  const f=run(saved);assert.equal(f.root.dataset.appearance,'auto');f.ready();assert.equal(f.control.disabled,false);
+for(const saved of [null,'invalid']) test(`unrecognized or absent preference ${saved} uses Obscur before paint`,()=>{
+  const f=run(saved);assert.equal(f.root.dataset.appearance,'obscur');f.ready();assert.equal(f.control.disabled,false);
+});
+test('an explicit Auto choice survives a fresh document',()=>{
+  const f=run('clair');f.ready();f.choose('auto');
+  assert.equal(f.state.saved,'auto');assert.equal(run(f.state.saved).root.dataset.appearance,'auto');
 });
 test('explicit saved mode is resolved before DOM readiness',()=>{
   const f=run('obscur');assert.equal(f.root.dataset.appearance,'obscur');f.ready();assert.equal(f.control.value,'obscur');
   f.choose('clair');assert.equal(f.state.saved,'clair');assert.equal(f.state.notifications,1);
-  f.choose('auto');assert.equal(f.state.saved,null);assert.equal(f.root.dataset.appearance,'auto');
+  f.choose('auto');assert.equal(f.state.saved,'auto');assert.equal(f.root.dataset.appearance,'auto');
 });
 test('blocked reads and writes do not prevent in-memory switching',()=>{
-  const f=run('obscur',true);f.ready();assert.equal(f.root.dataset.appearance,'auto');f.choose('clair');
+  const f=run('clair',true);f.ready();assert.equal(f.root.dataset.appearance,'obscur');f.choose('clair');
   assert.equal(f.root.dataset.appearance,'clair');assert.equal(f.state.notifications,1);
 });

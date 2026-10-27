@@ -271,6 +271,10 @@ test('Auto, overrides and redraw preserve the selected case and time window',asy
   await page.locator('#appearance').selectOption('auto');assert.equal(await background(page),'rgb(9, 9, 9)');
   await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(248, 247, 243)');
   assert.deepEqual(await visibleState(page),original);
+  await page.reload();await page.locator('#rows tr').first().waitFor();
+  assert.equal(await page.locator('#appearance').inputValue(),'auto');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('adaptive-timing-engine.appearance.v1')),'auto');
+  assert.deepEqual(await visibleState(page),original);
   await page.locator('#appearance').selectOption('obscur');await page.reload();
   assert.equal(await page.locator('#appearance').inputValue(),'obscur');
 });
@@ -297,16 +301,16 @@ test('all 48 retained cases export unchanged and preserve statuses and identitie
 test('blocked storage does not disable controls or alter trace data',async t=>{
   const page=await fixture(t,{colorScheme:'light'},true);await ready(page);
   await page.locator('#appearance').selectOption('obscur');assert.equal(await background(page),'rgb(9, 9, 9)');
-  await page.reload();assert.equal(await background(page),'rgb(248, 247, 243)');
+  await page.reload();assert.equal(await background(page),'rgb(9, 9, 9)');
   assert.deepEqual(JSON.parse(await page.locator('#data').textContent()),expected);
 });
 
-test('without JavaScript Auto and all saved case summaries remain readable',async t=>{
+test('without JavaScript Obscur and all saved case summaries remain readable',async t=>{
   const page=await fixture(t,{javaScriptEnabled:false,colorScheme:'dark'});await page.goto(base+'/explorer.html');
   assert.equal(await background(page),'rgb(9, 9, 9)');assert.equal(await page.locator('#appearance').isDisabled(),true);
   assert.equal(await page.locator('noscript tbody tr').count(),48);
   assert.equal(await page.locator('.controls').isVisible(),false);
-  await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(248, 247, 243)');
+  await page.emulateMedia({colorScheme:'light'});assert.equal(await background(page),'rgb(9, 9, 9)');
 });
 
 for(const mode of ['obscur','clair'])test(`${mode} keyboard, narrow and enlarged text layouts`,async t=>{
@@ -430,7 +434,7 @@ test('worker figure follows effective appearance, prints Clair and downloads exa
   await page.emulateMedia({colorScheme:'dark'});await edition('obscur');
   for(const colorScheme of ['light','dark']){
     const noJS=await fixture(t,{javaScriptEnabled:false,colorScheme});await noJS.goto(base+'/');
-    assert.equal(await noJS.locator('.worker-'+(colorScheme==='light'?'clair':'obscur')).isVisible(),true);
+    assert.equal(await noJS.locator('.worker-obscur').isVisible(),true);
   }
 });
 
@@ -533,7 +537,12 @@ test('landing real-work recipe stays distinct, readable and linked across appear
     ['Passive receipt-checking guide','https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/receipt-check.md']
   ]);
   const entry=page.getByRole('link',{name:'Run revised inputs',exact:true});
-  await entry.focus();await page.keyboard.press('Enter');
+  await entry.focus();
+  assert.equal(await entry.evaluate(element=>element===document.activeElement),true);
+  await Promise.all([
+    page.waitForURL(url=>url.hash==='#real-work'),
+    page.keyboard.press('Enter')
+  ]);
   assert.equal(new URL(page.url()).hash,'#real-work');
   const guide=page.getByRole('link',{name:'Caller-manifest guide',exact:true});
   await guide.focus();await page.keyboard.press('Tab');
@@ -575,7 +584,8 @@ test('landing real-work recipe stays distinct, readable and linked across appear
   assert.deepEqual(await readManifest(page),literal);
   for(const colorScheme of ['light','dark']){
     const noJS=await fixture(t,{viewport:{width:390,height:844},javaScriptEnabled:false,colorScheme});
-    await noJS.goto(base+'/');await edition(noJS,colorScheme==='light'?'clair':'obscur');
+    await noJS.goto(base+'/');await edition(noJS,'obscur');
+    assert.equal(await noJS.locator('#appearance').isDisabled(),true);
     assert.deepEqual(await readManifest(noJS),literal);
     assert.equal(await noJS.locator('#real-work .guide-links a').count(),3);
     assert.equal(await noJS.locator('.lifecycle-steps li').count(),4);

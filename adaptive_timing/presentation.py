@@ -44,8 +44,9 @@ def appearance_css():
         )
 
     light, dark = declarations("clair"), declarations("obscur")
-    return (faces + f"\n:root{{{light}}}\n"
-            + '@media(prefers-color-scheme:dark){:root:not([data-appearance="clair"])'
+    return (faces + f"\n:root{{{dark}}}\n"
+            + f':root[data-appearance="auto"]{{{light}}}\n'
+            + '@media(prefers-color-scheme:dark){:root[data-appearance="auto"]'
             + f"{{{dark}}}}}\n"
             + f':root[data-appearance="obscur"]{{{dark}}}\n'
             + f':root[data-appearance="clair"]{{{light}}}\n'
@@ -54,8 +55,8 @@ def appearance_css():
 
 def appearance_control():
     return ('<div class="appearance-control"><label for="appearance">Appearance</label>'
-            '<select id="appearance" disabled><option value="auto">Auto</option>'
-            '<option value="clair">Clair</option><option value="obscur">Obscur</option>'
+            '<select id="appearance" disabled><option value="obscur" selected>Obscur</option>'
+            '<option value="clair">Clair</option><option value="auto">Auto</option>'
             '</select></div>')
 
 
@@ -81,7 +82,7 @@ def summary(report):
         values = [case.get(key, "not recorded") for key in
                   ("scenario", "variant", "seed", "events", "planned", "rejected", "constrained")]
         rows.append("<tr>" + "".join(f"<td>{html.escape(str(value))}</td>" for value in values) + "</tr>")
-    return ('<p>JavaScript is disabled. Auto follows your system appearance. The saved '
+    return ('<p>JavaScript is disabled. Obscur remains the reading appearance. The saved '
             'case summaries are below. The full report remains embedded in this file.</p>'
             '<div class="tablewrap" tabindex="0" role="region" aria-label="Saved case summaries">'
             '<table><caption>Saved cases, without a new evaluation</caption><thead><tr>'

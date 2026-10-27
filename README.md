@@ -48,16 +48,15 @@ Installation is optional when running from a checkout. The wheel includes the vi
 
 <a href="docs/visual-example.md">
   <picture>
-    <source media="(min-width: 1024px) and (prefers-color-scheme: dark)" srcset="docs/adaptive-timing-obscur-wide.png">
-    <source media="(min-width: 1024px) and (prefers-color-scheme: light)" srcset="docs/adaptive-timing-clair-wide.png">
-    <source media="(prefers-color-scheme: dark)" srcset="docs/adaptive-timing-obscur.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/adaptive-timing-clair.png">
-    <img src="docs/adaptive-timing-clair.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="900">
+    <source media="(min-width: 1024px)" srcset="docs/adaptive-timing-obscur-wide.png">
+    <img src="docs/adaptive-timing-obscur.png" alt="Recorded worker example: 101 submitted requests produce two calculations, 99 waiting requests are replaced and one stale result is rejected. The retained result is payload 100, revision 101. Spacing shows event order, not elapsed time." width="900">
   </picture>
 </a>
 
 One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
-[Reproduce and inspect the values](docs/visual-example.md).
+[Reproduce and inspect the values](docs/visual-example.md), or open the retained
+Clair [stacked](docs/adaptive-timing-clair.png) or
+[wide](docs/adaptive-timing-clair-wide.png) alternate. The entry graphic remains Obscur.
 
 The committed experiment compares **4 workloads × 4 policy variants × 3 seeds**, with 240 tasks per case. Policies receive identical events and identical per event random draws. Seeds are 7, 42, and 73; all parameters and interpreter details are recorded alongside the results.
 
