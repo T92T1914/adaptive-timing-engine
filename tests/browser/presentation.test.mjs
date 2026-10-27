@@ -537,7 +537,12 @@ test('landing real-work recipe stays distinct, readable and linked across appear
     ['Passive receipt-checking guide','https://github.com/T92T1914/adaptive-timing-engine/blob/main/docs/receipt-check.md']
   ]);
   const entry=page.getByRole('link',{name:'Run revised inputs',exact:true});
-  await entry.focus();await page.keyboard.press('Enter');
+  await entry.focus();
+  assert.equal(await entry.evaluate(element=>element===document.activeElement),true);
+  await Promise.all([
+    page.waitForURL(url=>url.hash==='#real-work'),
+    page.keyboard.press('Enter')
+  ]);
   assert.equal(new URL(page.url()).hash,'#real-work');
   const guide=page.getByRole('link',{name:'Caller-manifest guide',exact:true});
   await guide.focus();await page.keyboard.press('Tab');
