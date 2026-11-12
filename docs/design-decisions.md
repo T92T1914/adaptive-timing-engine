@@ -6,13 +6,13 @@ The original request mailbox design solves a concrete failure: an older calculat
 
 The public version generalizes the payload and result types, adds an explicit shutdown path, records errors and counters, and keeps a persistent waiting worker. A result whose value is `None` is distinct from a failed computation.
 
-The low level mailbox's `take()` is atomic, but validity at consumption is not a perpetual guarantee. A new request could arrive just afterward. `Controller` therefore owns both submission and adoption on one thread. Other threads cannot submit through that controller; the worker only computes immutable snapshots. The caller must also avoid sharing mutable payloads through the low level generic worker.
+The low level mailbox's `take()` is atomic, but validity at consumption is not a perpetual guarantee. A new request could arrive just afterward. `Controller` therefore owns both submission and adoption on one thread. Other threads cannot submit through that controller, and the worker only computes immutable snapshots. The caller must also avoid sharing mutable payloads through the low level generic worker.
 
-The controller accepts a `PlanningRequest` containing `Event` and `Policy` records and an integer seed. Policy switches require actual booleans, so a mutable container cannot change their truth value while a request waits. `Plan` requires `Scheduled` and `Rejected` records containing `Event` snapshots. Matching field names on a mutable object are not enough: changing one after validation could move a task before its earliest start or alter a queued calculation. Invalid request types are rejected before invalidating an existing ready result. These checks enforce the declared record contract; they do not protect against deliberately bypassing Python's frozen dataclasses or modifying classes at runtime.
+The controller accepts a `PlanningRequest` containing `Event` and `Policy` records and an integer seed. Policy switches require actual booleans, so a mutable container cannot change their truth value while a request waits. `Plan` requires `Scheduled` and `Rejected` records containing `Event` snapshots. Matching field names on a mutable object are not enough: changing one after validation could move a task before its earliest start or alter a queued calculation. Invalid request types are rejected before invalidating an existing ready result. These checks enforce the declared record contract, but they do not protect against deliberately bypassing Python's frozen dataclasses or modifying classes at runtime.
 
 ## Bound waiting work instead of promising cancellation
 
-Running arbitrary Python code cannot be safely killed by this worker. The active calculation finishes, but its stale output is discarded; intermediate waiting requests are replaced. This bounds waiting slots rather than waiting time. A slow or stuck callback still delays the newest calculation. Shutdown with a finite timeout reports whether the worker actually stopped.
+Running arbitrary Python code cannot be safely killed by this worker. The active calculation finishes, but its stale output is discarded. Intermediate waiting requests are replaced. This bounds waiting slots rather than waiting time. A slow or stuck callback still delays the newest calculation. Shutdown with a finite timeout reports whether the worker actually stopped.
 
 A callback that raises `SystemExit`, `KeyboardInterrupt`, or another `BaseException` produces a failed outcome just like an ordinary exception. Otherwise the background thread could die while its mailbox kept accepting work and reporting itself as busy. The next waiting request can still run, and an obsolete failure cannot replace a newer result. This boundary is only around callback execution and diagnostic formatting. It does not intercept interrupts on the owner thread, forcibly cancel work, or replace `close()` as the shutdown path.
 
@@ -20,7 +20,7 @@ The gated worker experiment forces this situation and records two computed paylo
 
 ## Validate once, process incrementally
 
-`Plan` checks ordering, unique IDs, finite values, resource separation, and event windows when it is constructed. The executor can then adopt the immutable plan by replacing references instead of scanning it again on each tick. The first draft rebuilt a heap during adoption; that explicit O(n) work was removed because large replacements would enter the execution path.
+`Plan` checks ordering, unique IDs, finite values, resource separation, and event windows when it is constructed. The executor can then adopt the immutable plan by replacing references instead of scanning it again on each tick. The first draft rebuilt a heap during adoption. That explicit O(n) work was removed because large replacements would enter the execution path.
 
 The executor merges an index into the sorted plan with a heap containing only tasks deferred by resource occupancy. Each examined item consumes the poll budget, including already issued IDs. Otherwise, installing a plan with many previously issued tasks could turn one poll into an unbounded scan. Heap work is O(log n) per deferred task, while the issued ID set retains session history.
 
@@ -28,7 +28,7 @@ This is an algorithmic work bound, not a hard wall clock bound: releasing old Py
 
 ## Preserve execution facts across replanning
 
-A new plan replaces future intent. It cannot undo an event already emitted or a resource already reserved by a late dispatch. The executor retains issued IDs and resource availability. At dispatch time it checks whether the task can still complete before its deadline; if not, it emits an expiration record. Invalid plan adoption leaves the previous plan installed.
+A new plan replaces future intent. It cannot undo an event already emitted or a resource already reserved by a late dispatch. The executor retains issued IDs and resource availability. At dispatch time it checks whether the task can still complete before its deadline. If not, it emits an expiration record. Invalid plan adoption leaves the previous plan installed.
 
 A planner returning `None` is a failed result, not an empty schedule. The controller records that error and keeps the previous plan. A valid empty plan is an explicit request to clear future work. The regression test checks that a later valid result can still replace the plan and clear the error.
 
@@ -38,9 +38,9 @@ The resource gap belongs to the reservation made when a task is dispatched. A la
 
 A single sequential random generator is easy to disturb: reject one task, add a draw, and all subsequent tasks get different randomness. Here the seed and event ID determine a standardized Gaussian draw. Individual policy ablations change its scale without changing that underlying draw. Cross resource events can change their execution order, so comparisons join by ID rather than by output position.
 
-The model measures density separately for each resource. Extra work on an unrelated resource does not manufacture pressure on this one. Recovery uses the full elapsed interval rather than a capped time step; a long rest therefore actually dissipates the synthetic effort state.
+The model measures density separately for each resource. Extra work on an unrelated resource does not manufacture pressure on this one. Recovery uses the full elapsed interval rather than a capped time step, so a long rest actually dissipates the synthetic effort state.
 
-The defaults are illustrative parameters. Workload response, fatigue response, and noise can be disabled separately. Accumulated effort is still recorded in an ablation that disables its effect on timing; this keeps the state trajectory inspectable.
+The defaults are illustrative parameters. Workload response, fatigue response, and noise can be disabled separately. Accumulated effort is still recorded in an ablation that disables its effect on timing, which keeps the state trajectory inspectable.
 
 ## Make rejected and expired work visible
 

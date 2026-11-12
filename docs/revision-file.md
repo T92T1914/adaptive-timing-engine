@@ -1,4 +1,4 @@
-# Run caller-provided revisions
+# Run caller provided revisions
 
 The installed module command uses the existing session and default CPU analyzer:
 
@@ -18,7 +18,7 @@ An input file has this shape:
 Choose an unused output filename. If the runner reports `complete: true`, this
 literal example's final current summary has count 4 and total 260. Its physical
 completion count and timing depend on the schedule. The separate
-[revised-analysis demonstration](revised-work.md) uses three controlled revisions
+[revised analysis demonstration](revised-work.md) uses three controlled revisions
 to expose capacity refusal, waiting replacement and a stale physical result.
 
 The whole local regular UTF-8 file is admitted before workers start. It is at
@@ -26,7 +26,7 @@ most 4 MiB, contains 1 through 64 revisions, and permits only the fields above.
 Each input contains at most 65,536 integers from 0 through 255. Empty input is
 valid. Offsets strictly increase within zero through ten seconds. Duplicate
 keys, nonfinite numbers, booleans as numbers and excessive nesting are refused.
-There is no callback, path-loading, stdin, watch or network input mechanism.
+There is no callback, path loading, stdin, watch or network input mechanism.
 
 The callable APIs are `run_manifest(data: bytes, timeout=15.0)` and
 `run_file(path, timeout=15.0)`. Invalid admission raises `AdmissionError` without
@@ -34,13 +34,13 @@ creating a session. The timeout must be positive and at most thirty seconds.
 It is a soft observation budget followed by waiting cleanup, not a hard shutdown
 or execution deadline. The runner mutates the session only on its owner thread.
 
-Requested offsets use runner-relative `perf_counter` seconds. Actual deliveries
-are copied from the session's own offered-at values. Their separate origins
+Requested offsets use runner relative `perf_counter` seconds. Actual deliveries
+are copied from the session's own offered at values. Their separate origins
 are retained explicitly. Offsets promise neither exact delivery nor physical
 start or completion time. Every accepted revision remains recorded in order.
 
-The output wraps the unchanged schema-1 session receipt under `session`, plus
-the input-byte digest, requested/actual deliveries and runner outcome. It omits
+The output wraps the unchanged schema 1 session receipt under `session`, plus
+the input byte digest, requested/actual deliveries and runner outcome. It omits
 the input arrays. Inspect supported saved session claims with the
 [passive receipt checker](receipt-check.md):
 
@@ -49,8 +49,8 @@ python -m adaptive_timing.receipt_check receipt.json --record session --json
 ```
 
 CLI exits are zero for completed work, one for incomplete work and two for
-admission or output-delivery refusal/failure. Read the wrapper outcome and the
-session receipt separately. An interrupted or timed-out runner may preserve a
+admission or output delivery refusal/failure. Read the wrapper outcome and the
+session receipt separately. An interrupted or timed out runner may preserve a
 cleanly retired session without having delivered every requested revision.
 
 Receipts go to the requested file or stdout. Bounded admission/delivery
@@ -60,10 +60,10 @@ The standalone module retires failed standard streams before interpreter
 shutdown so another failed flush cannot replace the delivery status. Calling
 `main` from Python returns a status, including for help and argument errors,
 without closing the embedding caller's standard streams. Help and argument
-diagnostics use the same guarded write/flush boundary. Normal help returns zero;
-an unavailable or failed help-output channel returns two. These are bounded
+diagnostics use the same guarded write/flush boundary. Normal help returns zero,
+and an unavailable or failed help output channel returns two. These are bounded
 Python stream checks, not a guarantee about every shell or operating system.
 
 Output is reserved exclusively before work. Existing files, hard links and
-symlinks are refused. A write/close failure may leave a partial new file; no
-crash-durability claim is made. The old demonstration and commands are unchanged.
+symlinks are refused. A write/close failure may leave a partial new file, and no
+crash durability claim is made. The old demonstration and commands are unchanged.

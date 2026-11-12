@@ -7,7 +7,7 @@
   </picture>
 </a>
 
-One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
+One calculation can run while one request waits. New requests replace the waiting request, and an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
 
 The entry graphic remains Obscur. The same retained values are available in the
 Clair [stacked PNG](adaptive-timing-clair.png) and
@@ -30,7 +30,7 @@ print(result["stats"])
 The first calculation is deliberately held with a thread event. Payloads 1
 through 100 arrive while it is active. The waiting slot is replaced 99 times,
 and only payloads 0 and 100 are calculated. Payload 0's obsolete result is
-rejected. Payload numbers begin at zero; request revisions begin at one.
+rejected. Payload numbers begin at zero, and request revisions begin at one.
 The current retained result is payload 100, revision 101.
 
 The experiment does not establish a speedup, a CPU contention limit, or a
@@ -84,9 +84,9 @@ The website chooses its layout from the figure container at 560 pixels and keeps
 its existing Auto, Clair and Obscur appearance setting. The README uses a 1024
 pixel viewport breakpoint, while these notes use 768 pixels to account for their
 wider reading column. These choices follow measurements of the actual GitHub
-columns, not an assumption that viewport width equals image width. Signed-out
+columns, not an assumption that viewport width equals image width. Signed out
 system appearance was covered by the original width investigation. That older
 check is not acceptance of a later source change. GitHub controls its surrounding
-chrome; this project's image sources do not alter an account appearance setting.
+chrome, and this project's image sources do not alter an account appearance setting.
 
 Wide [Clair SVG](adaptive-timing-clair-wide.svg) and [Obscur SVG](adaptive-timing-obscur-wide.svg) preserve the original units, qualifications and Inter outlines. Narrow editions remain available above.

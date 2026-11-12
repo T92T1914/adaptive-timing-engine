@@ -8,7 +8,7 @@ for that page without changing the selected trace or time window.
 
 Earlier versions removed the preference when Auto was selected. An old Auto
 choice and a first visit therefore look identical and receive the new default.
-Saved Clair and Obscur remain effective; selecting Auto again now preserves it
+Saved Clair and Obscur remain effective. Selecting Auto again now preserves it
 through reload. The README's entry diagram stays Obscur in either GitHub
 appearance, with Clair editions retained as direct alternatives.
 
@@ -18,9 +18,9 @@ The adapter pins [the source tokens](https://github.com/T92T1914/clair-obscur-th
 
 `python tools/render_saved_viewer.py --output reports/retained` reads the retained compressed traces and verifies that their payload matches the historical HTML. It renders a new explorer without running a workload or rewriting the historical files. The site builder uses this same renderer. The original diagram, experiment results and traces retain their bytes.
 
-The generated provenance includes the archive SHA-256, a canonical report hash, the rendering revision, uncommitted-state flag, renderer text hashes and pinned theme source. Renderer text hashes normalize checkout line endings to LF. The archive's introduction commit identifies the stored bytes. It is not evidence of the revision evaluated by that experiment, which was not recorded and remains `null`.
+The generated provenance includes the archive SHA-256, a canonical report hash, the rendering revision, uncommitted state flag, renderer text hashes and pinned theme source. Renderer text hashes normalize checkout line endings to LF. The archive's introduction commit identifies the stored bytes. It is not evidence of the revision evaluated by that experiment, which was not recorded and remains `null`.
 
-The plot and table show planning decisions. A constrained task is still planned, with its requested time adjusted to a feasible interval. A rejected task has no admitted start. These are not dispatch, expiration or observed-response outcomes. The full embedded report retains its separate execution experiment, conditions and all unfavorable results. Exporting a selected case preserves its original numeric values and task identities.
+The plot and table show planning decisions. A constrained task is still planned, with its requested time adjusted to a feasible interval. A rejected task has no admitted start. These are not dispatch, expiration or observed response outcomes. The full embedded report retains its separate execution experiment, conditions and all unfavorable results. Exporting a selected case preserves its original numeric values and task identities.
 
 Circles mark planned tasks, squares mark constrained planned tasks and crosses mark rejected tasks. Color reinforces those meanings. Appearance changes redraw the canvas while retaining the selected case and time window. The scrollable table gives the equivalent values with units and status text. With JavaScript disabled, Auto and all saved case summaries remain available. Print uses Clair without changing the stored screen preference.
 
@@ -30,17 +30,17 @@ source revision and event order without running work. The original figure
 remains available. Its recorded source is separate from the unknown evaluated
 revision of the trace archive above.
 
-The landing page also links the installed [caller-manifest runner](revision-file.md),
-[revised-analysis session](revised-work.md) and [passive receipt checker](receipt-check.md).
-Its literal two-revision recipe is distinct from the retained controlled
-three-revision lifecycle figure. That figure explains physical ownership,
+The landing page also links the installed [caller manifest runner](revision-file.md),
+[revised analysis session](revised-work.md) and [passive receipt checker](receipt-check.md).
+Its literal two revision recipe is distinct from the retained controlled
+three revision lifecycle figure. That figure explains physical ownership,
 waiting replacement, stale completion, reconciliation and current adoption.
 Spacing means event order, not elapsed time. Its [figure provenance](revised-lifecycle-figure.json)
 records the retained source and presentation separately. The adjacent ordered
 text provides the same lifecycle meaning without relying on the image or its colors.
 
 Clair and Obscur lifecycle PNG/SVG editions follow the same effective appearance
-as the worker figure, including no-script Auto and Clair print. They add no new
+as the worker figure, including no script Auto and Clair print. They add no new
 appearance preference or default. Original worker figures and experiment evidence
 remain unchanged. A readable recipe, guide links and the lifecycle text stay
 available with JavaScript disabled, blocked storage or fallback fonts.
@@ -63,7 +63,7 @@ cover its actual headings, labels and body text when strict Inter checking is
 enabled. Original batch evidence and its unknown evaluated revision remain
 unchanged.
 
-The HTML viewer uses six local Inter lookups that cover Regular 400, SemiBold 600, Bold 700 and their genuine italics. No font files are embedded or downloaded. Visitors without those faces use a system fallback. Code stays monospace, and unsupported characters use normal language or symbol fallbacks. Local rendered-glyph checks establish the tested environment only, not every visitor's font installation or native application acceptance.
+The HTML viewer uses six local Inter lookups that cover Regular 400, SemiBold 600, Bold 700 and their genuine italics. No font files are embedded or downloaded. Visitors without those faces use a system fallback. Code stays monospace, and unsupported characters use normal language or symbol fallbacks. Local rendered glyph checks establish the tested environment only, not every visitor's font installation or native application acceptance.
 
 The fixed worker figures use verified Inter files during authoring. Their PNG
 pixels and SVG outlines preserve those glyphs even when the viewer has no Inter
@@ -79,9 +79,9 @@ npm run test:state
 npm run test:browser
 ```
 
-Browser checks require Playwright's matching Chromium or an already installed supported Chrome channel. Set `TIMING_BROWSER_CHANNEL=chrome` to use installed Chrome. CI uses that channel with sandboxing enabled. There is no visible-browser or disabled-sandbox fallback. `TIMING_REQUIRE_INTER=1` adds strict six-face rendered-glyph checks when Inter is installed. The intentionally missing-font control is a separate test. Optional `TIMING_SCREENSHOT_DIR` saves isolated-page captures.
+Browser checks require Playwright's matching Chromium or an already installed supported Chrome channel. Set `TIMING_BROWSER_CHANNEL=chrome` to use installed Chrome. CI uses that channel with sandboxing enabled. There is no visible browser or disabled sandbox fallback. `TIMING_REQUIRE_INTER=1` adds strict six face rendered glyph checks when Inter is installed. The intentionally missing font control is a separate test. Optional `TIMING_SCREENSHOT_DIR` saves isolated page captures.
 
-The browser suite checks every saved case, case downloads, a downloaded offline HTML file, appearance changes, blocked storage, no JavaScript, keyboard controls, narrow and enlarged-text layouts, print and forced colors. It also checks that no external font or page requests escape the owned test origin. Headless verification does not establish physical-display comfort, a screen-reader audit or native Chrome/Equibop acceptance.
+The browser suite checks every saved case, case downloads, a downloaded offline HTML file, appearance changes, blocked storage, no JavaScript, keyboard controls, narrow and enlarged text layouts, print and forced colors. It also checks that no external font or page requests escape the owned test origin. Headless verification does not establish physical display comfort, a screen reader audit or native Chrome/Equibop acceptance.
 
 Check distributable resources separately:
 

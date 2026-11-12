@@ -53,19 +53,19 @@ Installation is optional when running from a checkout. The wheel includes the vi
   </picture>
 </a>
 
-One calculation can run while one request waits. New requests replace the waiting request; an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
+One calculation can run while one request waits. New requests replace the waiting request, and an obsolete result is rejected when the active calculation finishes. The diagram shows event order, not elapsed time.
 [Reproduce and inspect the values](docs/visual-example.md), or open the retained
 Clair [stacked](docs/adaptive-timing-clair.png) or
 [wide](docs/adaptive-timing-clair-wide.png) alternate. The entry graphic remains Obscur.
 
-The committed experiment compares **4 workloads × 4 policy variants × 3 seeds**, with 240 tasks per case. Policies receive identical events and identical per event random draws. Seeds are 7, 42, and 73; all parameters and interpreter details are recorded alongside the results.
+The committed experiment compares 4 workloads × 4 policy variants × 3 seeds, with 240 tasks per case. Policies receive identical events and identical per event random draws. Seeds are 7, 42, and 73. All parameters and interpreter details are recorded alongside the results.
 
 | Question | Observation at seed 42 | What it establishes |
 | --- | --- | --- |
-| Does load response change the trace? | In the burst workload, full policy absolute offset p95 is **34.942 ms**, versus **28.060 ms** with load response disabled. | The workload mechanism affects observable timing. This is not a realism score. |
-| Does more variation improve admission? | Under saturation, the full policy admits **96/240** tasks; disabling variation admits **108/240**. | The variability/admission tradeoff is visible. No universal improvement is claimed. |
-| Can queued planning grow without bound? | **101 requests → 2 calculations**, with **99 queued requests replaced** and **1 obsolete result rejected** in a gated worker experiment. | One active calculation and one waiting request; obsolete output cannot replace current work. |
-| Can a valid plan still miss deadlines? | The execution experiment compares **2, 40, and 150 ms** virtual polling intervals, recording admitted, dispatched, and expired tasks separately. | Planning feasibility does not guarantee execution timeliness. |
+| Does load response change the trace? | In the burst workload, full policy absolute offset p95 is 34.942 ms, versus 28.060 ms with load response disabled. | The workload mechanism affects observable timing. This is not a realism score. |
+| Does more variation improve admission? | Under saturation, the full policy admits 96/240 tasks, and disabling variation admits 108/240. | The variability/admission tradeoff is visible. No universal improvement is claimed. |
+| Can queued planning grow without bound? | 101 requests → 2 calculations, with 99 queued requests replaced and 1 obsolete result rejected in a gated worker experiment. | One active calculation and one waiting request; obsolete output cannot replace current work. |
+| Can a valid plan still miss deadlines? | The execution experiment compares 2, 40, and 150 ms virtual polling intervals, recording admitted, dispatched, and expired tasks separately. | Planning feasibility does not guarantee execution timeliness. |
 
 See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency.
 
@@ -186,7 +186,7 @@ flowchart LR
 | [`model.py`](adaptive_timing/model.py) | Timing policy, workload, recovery, resource windows | Noise is keyed by event identity, so an ablation cannot accidentally change its random inputs. |
 | [`causal.py`](adaptive_timing/causal.py) | Delivered information, incremental planning and result adoption | A result must match the current immutable request and generation before it can change the session. |
 | [`worker.py`](adaptive_timing/worker.py) | Latest request computation and versioned outcomes | A new request invalidates already completed pending output immediately, not only when its replacement finishes. |
-| [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning; the poll budget also counts duplicates and deferred tasks. |
+| [`runtime.py`](adaptive_timing/runtime.py) | Plan adoption and incremental virtual dispatch | Issued IDs and resource reservations survive replanning, and the poll budget also counts duplicates and deferred tasks. |
 | [`execution.py`](adaptive_timing/execution.py) | Optional callable execution and observed completion | A cancellation request or stale result does not release a running operation's resource. |
 | [`revised_analysis.py`](adaptive_timing/revised_analysis.py) | Finite revised numeric work and current adoption | Data revisions, planning generations and physical outcomes stay separate. |
 | [`revision_file.py`](adaptive_timing/revision_file.py) | Manifests supplied by the caller and runner outcomes | Admit the bounded input before workers start; record requested offsets separately from actual deliveries. |
@@ -194,7 +194,7 @@ flowchart LR
 | [`experiment.py`](adaptive_timing/experiment.py) | Generated data and paired comparisons | Full traces accompany measurements, and execution expiration is separate from planning rejection. |
 | [`tests/test_engine.py`](tests/test_engine.py) | Failure cases and independent invariants | Deterministic thread gates expose stale output races without relying on convenient sleep timing. |
 
-An event has an immutable ID, target time, earliest start, completion deadline, service duration, and resource. A resource is a serial server; different resources can operate concurrently. The planner processes events by target time and ID, applies the configured timing policy, and either admits an event within its feasible interval or explicitly rejects it.
+An event has an immutable ID, target time, earliest start, completion deadline, service duration, and resource. A resource is a serial server, and different resources can operate concurrently. The planner processes events by target time and ID, applies the configured timing policy, and either admits an event within its feasible interval or explicitly rejects it.
 
 ## Scope and limits
 
@@ -218,9 +218,9 @@ Found a problem or have a useful comparison? [Open an issue](https://github.com/
 
 I use this project to study what happens when new work arrives before the old calculation finishes. It connects concurrency, scheduling and diagnostics in a small system where I can inspect the event trace.
 
-- **Concurrency.** Inspect the worker that replaces waiting requests and rejects obsolete results. [Inspect the work](adaptive_timing/worker.py).
-- **Runtime state.** Follow plan adoption, resource reservations and bounded dispatch. [Inspect the work](adaptive_timing/runtime.py).
-- **Controlled experiments.** Compare the same workload and seed with one mechanism disabled. [Inspect the work](docs/evidence/results.md).
+- Concurrency: inspect the worker that replaces waiting requests and rejects obsolete results. [Inspect the work](adaptive_timing/worker.py).
+- Runtime state: follow plan adoption, resource reservations and bounded dispatch. [Inspect the work](adaptive_timing/runtime.py).
+- Controlled experiments: compare the same workload and seed with one mechanism disabled. [Inspect the work](docs/evidence/results.md).
 
 These patterns are useful in backend services and interactive applications. The simulation is synthetic and does not establish hard real time guarantees or a calibrated model of human performance.
 

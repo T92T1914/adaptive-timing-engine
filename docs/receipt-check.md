@@ -1,6 +1,6 @@
 # Inspect a saved analysis receipt
 
-The installed checker reads a saved revised-analysis report without running its
+The installed checker reads a saved revised analysis report without running its
 work again:
 
 ```sh
@@ -19,9 +19,9 @@ replay a schedule or load executable objects. Source hashes remain saved claims.
 
 ## Inputs and results
 
-The initial supported profile is the current schema-1 report from
+The initial supported profile is the current schema 1 report from
 `adaptive_timing.revised_analysis`. A bare report is the default input.
-Retained client and operating-run records sometimes wrap the report in a named
+Retained client and operating run records sometimes wrap the report in a named
 field. Select that field explicitly:
 
 ```sh
@@ -29,10 +29,10 @@ python -m adaptive_timing.receipt_check client.json --record session --json
 python -m adaptive_timing.receipt_check operating.json --record consumer --json
 ```
 
-The [caller-manifest runner](revision-file.md) also wraps its receipt under
+The [caller manifest runner](revision-file.md) also wraps its receipt under
 `session`. Select it with `--record session`. The verdict checks that session's
 supported claims, not every runner wrapper field or whether its execution happened.
-The [revised-analysis guide](revised-work.md) explains the producer's controlled
+The [revised analysis guide](revised-work.md) explains the producer's controlled
 demonstration and programmatic session.
 
 The whole file must pass bounded JSON admission before wrapper selection. The
@@ -53,15 +53,15 @@ from the captured digest of the original analysis input, which is absent.
 | 1 | An admitted record contains a demonstrated contradiction |
 | 2 | Input cannot be read/admitted, or requested report delivery failed |
 
-Read `completion` separately from exit status. A cleaned-up timeout or
-missing current result can be consistently incomplete. A clean zero-revision
+Read `completion` separately from exit status. A cleaned up timeout or
+missing current result can be consistently incomplete. A clean zero revision
 session can be complete with no current answer. Empty input on a real revision
-instead has an actual zero-count Summary.
+instead has an actual zero count Summary.
 
 Add `--output NEW_FILE` to save the verdict as JSON as well as printing it.
 The file is created exclusively. Existing files, input aliases, hard links and
 symlinks are refused without truncation. A delivery failure has a separate
-`delivery_issue` and exit 2. No crash-durability promise is made. A disk
+`delivery_issue` and exit 2. No crash durability promise is made. A disk
 write failure after creation can leave a partial new output file.
 Choose distinct paths before invoking a shell: shell redirection can truncate
 a file before the checker starts.
@@ -87,7 +87,7 @@ evade that comparison. Histogram counts cannot recover original byte order.
 
 These are the declared numeric operation's rules. The producer does not validate
 every injected callback's Summary. A reported adoption error can also accompany a
-physically completed non-Summary value, including False or a Summary-looking
+physically completed non Summary value, including False or a Summary looking
 plain dictionary. The checker preserves that lifecycle and does not infer
 original Python types or numeric adoption from JSON shape alone.
 An object outcome without a recorded adoption error is checked as a declared
@@ -102,13 +102,13 @@ Metrics use the producer's recorded populations:
 | offered | Revision rows |
 | admitted | Presence of admitted_at, including zero |
 | refused | Sum of revision refusal attempts |
-| replaced | Superseded-before-admission dispositions |
+| replaced | Superseded before admission dispositions |
 | physical_started | Retained results with a nonnull start |
 | physical_completed | Retained completed results |
 | physical_values | Recorded progress across revisions |
 | usable / stale | Retained result flags and usability expression |
 
-A live start need not yet appear in result-based metrics. Progress, retained
+A live start need not yet appear in result based metrics. Progress, retained
 results and drained observations are sampled separately. The file is not an
 atomic replay trace. One snapshot cannot establish unrecorded transitions,
 progress history or the analyzer implementation.
@@ -121,7 +121,7 @@ already accepted into the physical queue. A later row cancellation also need
 not equal the earlier immutable result's cancellation flag.
 A true result cancellation flag does require the owning revision's cancellation
 flag. The reverse implication is not valid after later owner cancellation.
-The closed flag stops new admission. An owner-thread report captured reentrantly
+The closed flag stops new admission. An owner thread report captured reentrantly
 during close can still precede cleanup, so a closed incomplete snapshot alone
 does not certify that its work has retired.
 
@@ -143,17 +143,17 @@ nonfinite numbers. It applies these supported limits to the entire document:
 | Diagnostic issues | 32 |
 
 The selected report additionally admits at most 64 revisions, 64 results and
-512 observations, using the producer's input ceiling of 65,536 byte-valued
-integers, one physical worker and capacity one or two. Over-limit records are
+512 observations, using the producer's input ceiling of 65,536 byte valued
+integers, one physical worker and capacity one or two. Over limit records are
 refused. These are consumer compatibility limits, not universal maximum valid
 producer output or a general security certification.
 
 Bounded annotation fields may remain unvalidated metadata. Unknown core states
 and incompatible semantic structures receive explicit unsupported or malformed
-dispositions. An earlier schema-1 profile missing current clock/source/timeout
+dispositions. An earlier schema 1 profile missing current clock/source/timeout
 metadata is unsupported with field locations. Missing fields do not authenticate
 a historical origin. Ordinary reports need neither demonstration annotations
-nor successful completion. Explicit unavailable source-hash entries are supported.
+nor successful completion. Explicit unavailable source hash entries are supported.
 
 Original private receipts remain unchanged. Public test fixtures are separately
 identified sanitized derivatives with synthetic paths and a documented omission
@@ -162,11 +162,11 @@ policy. Their identities are distinct from the original evidence.
 ## Validation boundary
 
 Tests pair valid complete, incomplete, empty and live receipts with targeted
-contradictions and parser-limit controls. Installed verification invokes the
+contradictions and parser limit controls. Installed verification invokes the
 shipped command outside the checkout with thread/executor, subprocess, network,
-receipt-directed import and unapproved-file guards. These checks establish the
-exercised passive paths, not an untrusted-code sandbox.
+receipt directed import and unapproved file guards. These checks establish the
+exercised passive paths, not an untrusted code sandbox.
 
-The existing revised-analysis command, wheel resources and CI environment matrix
+The existing revised analysis command, wheel resources and CI environment matrix
 remain in use. No new performance study, native backend, GPU operation or
-long-session framework is part of this consumer.
+long session framework is part of this consumer.

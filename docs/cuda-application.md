@@ -25,10 +25,10 @@ claim that cancellation happened during a GPU kernel, device failure or reset.
 `CudaHistogramExecutor` is a narrow adapter over `OwnerExecutor`, which uses one
 worker. Factory, repeated operations, close and reference release run on that
 worker. The runtime wrapper owns one dedicated native CUDA thread with the
-selected device current. Thread-affine methods are never dispatched to an
+selected device current. Thread affine methods are never dispatched to an
 arbitrary pool worker. `OwnerExecutor` requires waiting shutdown and closes its
 resource after admitted running work returns. It preserves RealExecutor's IDs,
-physical states and creating-thread reconciliation.
+physical states and creating thread reconciliation.
 
 `submit_image` requires an exact uint8 NumPy array with the configured shape
 and C contiguous layout. Array subclasses are accepted, but copying first
@@ -70,7 +70,7 @@ unpassed diagnostic gates.
 
 The [full actual trace](cuda-application-trace.json) records the runtime source
 `fa7afb4b798a1481ffa34a85248ba63d2ea029a2` and this application's source
-`3ce1b6571899faed99fc7a2eabdf5862cf5639ad`. Its published LF-byte SHA-256 is
+`3ce1b6571899faed99fc7a2eabdf5862cf5639ad`. Its published LF byte SHA-256 is
 `da83bf0e4fdd0190fbcdb936b785d175e8a6a18befc2530424dc3b42d43065f9`.
 The trace retains both synthetic input arrays and all four completed GPU output
 arrays. The independent scalar checker inspects those arrays and seven physical
@@ -83,4 +83,4 @@ records actual RTX 4090 contracts, fresh packages, successful hosted Clang host
 TSan and a separate WSL TSan initialization restriction. It preserves both
 results and makes no GPU sanitizer claim. The existing Inter/Clair/Obscur
 explorers and all historical study artifacts are unchanged. This application
-adds inspectable JSON and a command-line checker without a presentation redesign.
+adds inspectable JSON and a command line checker without a presentation redesign.
