@@ -64,7 +64,7 @@ The committed experiment compares 4 workloads × 4 policy variants × 3 seeds, w
 | --- | --- | --- |
 | Does load response change the trace? | In the burst workload, full policy absolute offset p95 is 34.942 ms, versus 28.060 ms with load response disabled. | The workload mechanism affects observable timing. This is not a realism score. |
 | Does more variation improve admission? | Under saturation, the full policy admits 96/240 tasks, and disabling variation admits 108/240. | The variability/admission tradeoff is visible. No universal improvement is claimed. |
-| Can queued planning grow without bound? | 101 requests → 2 calculations, with 99 queued requests replaced and 1 obsolete result rejected in a gated worker experiment. | One active calculation and one waiting request; obsolete output cannot replace current work. |
+| Can queued planning grow without bound? | 101 requests → 2 calculations, with 99 queued requests replaced and 1 obsolete result rejected in a gated worker experiment. | One active calculation and one waiting request, and obsolete output cannot replace current work. |
 | Can a valid plan still miss deadlines? | The execution experiment compares 2, 40, and 150 ms virtual polling intervals, recording admitted, dispatched, and expired tasks separately. | Planning feasibility does not guarantee execution timeliness. |
 
 See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency.
