@@ -2,8 +2,9 @@
 
 The public page declares an opaque Obscur sharing image in its initial HTML.
 It is an authored summary of retained evidence, not an application screenshot.
-The image is 1280 by 640 pixels and remains below 1 MB. Inter Regular, Semibold,
-Bold and genuine Italic glyphs are rasterized from explicitly verified files.
+The image is 1280 by 640 pixels and remains below 1 MB. It uses the same Obscur
+rules as the figures, with a black canvas and white and gray lettering. Inter
+Regular, SemiBold and Bold glyphs are rasterized from explicitly verified files.
 No font file or remote font request is part of the image.
 
 Rebuild with the existing optional figure dependencies, including Pillow and

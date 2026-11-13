@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "name": "Obscur figure rules",
+  "basis": {
+    "repository": "T92T1914/clair-obscur-themes",
+    "revision": "4693831b51f2b3fa268d830fd9b977fb70c83e3d",
+    "file": "tokens-monochrome.json",
+    "version": "1.0.0"
+  },
+  "colors": {
+    "canvas": "#000000",
+    "text": "#ffffff",
+    "muted": "#cccccc",
+    "divider": "#505050",
+    "control": "#151515",
+    "hover": "#252525",
+    "selected": "#202020",
+    "border": "#999999",
+    "accent": "#ffffff",
+    "on_accent": "#000000",
+    "focus": "#ffffff",
+    "code": "#080808",
+    "disabled": "#aaaaaa"
+  },
+  "type": {
+    "release": "Inter 4.1",
+    "faces": {"Regular": 400, "SemiBold": 600, "Bold": 700},
+    "dpi": 100,
+    "line_spacing": 1.3,
+    "points": {
+      "wide": {"title": 40, "subtitle": 30, "card_title": 32, "body": 30, "footer": 30},
+      "narrow": {"title": 40, "subtitle": 33, "card_title": 34, "body": 33, "footer": 33}
+    }
+  },
+  "space": {
+    "wide": {"width": 1800, "margin": 72, "card_width": 500, "gap": 78, "columns": 3},
+    "narrow": {"width": 960, "margin": 48, "card_width": 864, "gap": 24, "columns": 1},
+    "card_pad_side": 28,
+    "card_pad_top": 32,
+    "card_pad_bottom": 32,
+    "body_line_gap": 14,
+    "title_body_gap": 20,
+    "card_radius": 18,
+    "outline": 2,
+    "connector": 2.5,
+    "label_clearance": 12,
+    "footer_bottom": 49
+  }
+}

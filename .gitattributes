@@ -9,6 +9,7 @@ docs/adaptive-timing-obscur-wide.svg text eol=lf
 # Lifecycle rendering receipts also identify exact SVG bytes across hosts.
 docs/revised-lifecycle-clair.svg text eol=lf
 docs/revised-lifecycle-obscur.svg text eol=lf
+docs/revised-lifecycle-obscur-wide.svg text eol=lf
 
 # Sanitized receipt fixtures retain their documented byte identities on every host.
 tests/fixtures/receipt-*.json text eol=lf

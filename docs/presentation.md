@@ -40,7 +40,8 @@ records the retained source and presentation separately. The adjacent ordered
 text provides the same lifecycle meaning without relying on the image or its colors.
 
 Clair and Obscur lifecycle PNG/SVG editions follow the same effective appearance
-as the worker figure, including no script Auto and Clair print. They add no new
+as the worker figure, including no script Auto and Clair print. The Obscur
+lifecycle figure also has a wide edition, linked for download. They add no new
 appearance preference or default. Original worker figures and experiment evidence
 remain unchanged. A readable recipe, guide links and the lifecycle text stay
 available with JavaScript disabled, blocked storage or fallback fonts.

@@ -503,7 +503,7 @@ test('wide figure follows its container and preserves every delivered file', asy
     assert.equal(await visible.count(),1);
     assert.equal(await visible.getAttribute('src'),`worker-${mode}-wide.png`);
     await visible.scrollIntoViewIfNeeded(); await visible.evaluate(e=>e.decode());
-    assert.deepEqual(await visible.evaluate(e=>[e.naturalWidth,e.naturalHeight]),[1800,1280]);
+    assert.deepEqual(await visible.evaluate(e=>[e.naturalWidth,e.naturalHeight]),[1800,mode==='obscur'?1677:1280]);
     const destination=process.env.TIMING_SCREENSHOT_DIR;
     if(destination){await mkdir(destination,{recursive:true});await visible.screenshot({path:path.join(destination,`worker-${mode}-wide.png`)});}
     await page.locator('#worker-figure').evaluate(e=>e.style.width='400px');
@@ -558,7 +558,7 @@ test('landing real-work recipe stays distinct, readable and linked across appear
     assert.equal(await image.getAttribute('src'),`lifecycle-${mode}.png`);
     assert.match(await image.getAttribute('alt'),/physical return and reconciliation.*Event order, not elapsed time/);
     await image.scrollIntoViewIfNeeded();await image.evaluate(element=>element.decode());
-    assert.deepEqual(await image.evaluate(element=>[element.naturalWidth,element.naturalHeight]),[1520,4400]);
+    assert.deepEqual(await image.evaluate(element=>[element.naturalWidth,element.naturalHeight]),mode==='obscur'?[960,2541]:[1520,4400]);
     assert.equal(await target.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   };
   await edition(page,'obscur');

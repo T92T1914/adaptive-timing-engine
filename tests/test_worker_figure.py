@@ -3,6 +3,7 @@
 import copy
 import json
 import re
+import struct
 import subprocess
 import sys
 import tempfile
@@ -28,16 +29,21 @@ class WorkerFigureTests(unittest.TestCase):
         self.assertEqual(data["stats"]["replaced"] + data["stats"]["computed"], 101)
         self.assertEqual(data["computed_payloads"], [0, 100])
         self.assertEqual(data["stats"]["stale"], 1)
-        self.assertEqual(record["layout"]["clair"], record["layout"]["obscur"])
-        self.assertEqual(record["layout"]["clair"]["width"], 960)
-        self.assertEqual(record["layout"]["clair"]["height"], 2240)
-        self.assertGreaterEqual(record["layout"]["clair"]["minimum_font_points"], 12)
+        narrow, wide = record["layout"]["narrow"], record["layout"]["wide"]
+        self.assertEqual((narrow["width"], wide["width"]), (960, 1800))
+        self.assertGreaterEqual(narrow["minimum_font_points"], 33)
+        self.assertGreaterEqual(wide["minimum_font_points"], 30)
+        self.assertEqual(record["rules"]["version"], "1.0.0")
+        self.assertEqual(
+            sorted(record["typography"]["files"]), ["Bold", "Regular", "SemiBold"]
+        )
         for face, (weight, italic) in figure.FACES.items():
             item = record["typography"]["files"][face]
             self.assertEqual(
                 (item["postscript"], item["weight"], item["italic"]),
                 ("Inter-" + face, weight, italic),
             )
+        self.assertFalse(record["retained_alternates"]["rebuilt"])
 
     def test_originals_remain_identical_with_text_checkout_normalization(self):
         for name, checksum, text in (
@@ -59,68 +65,63 @@ class WorkerFigureTests(unittest.TestCase):
         ):
             self.assertEqual(figure.digest(figure.ROOT / name, text=text), checksum)
 
-    def test_svg_editions_have_same_sequence_geometry_and_full_evidence(self):
-        roots = [
-            ET.parse(figure.ROOT / f"docs/adaptive-timing-{mode}.svg").getroot()
-            for mode in ("clair", "obscur")
-        ]
-        for key, _, _, _ in figure.EVENTS:
-            paths = [
-                root.find(f".//s:g[@id='event-{key}']/s:path", NS).get("d")
-                for root in roots
-            ]
-            self.assertEqual(paths[0], paths[1])
-        for root in roots:
-            metadata = json.loads(root.find(".//dc:description", NS).text)
-            self.assertEqual(metadata, figure.semantic_record(figure.load_data()))
-            self.assertEqual(len(root.findall(".//s:g[@id='next-start']", NS)), 1)
-            self.assertEqual(len(root.findall(".//s:g[@id='next-replace']", NS)), 1)
-            self.assertEqual(len(root.findall(".//s:g[@id='next-reject']", NS)), 1)
-
-    def test_wide_sequence_keeps_order_counters_and_glyphs(self):
-        for mode in ("clair", "obscur"):
-            raw = (figure.ROOT / f"docs/adaptive-timing-{mode}-wide.svg").read_text()
-            root = ET.fromstring(raw)
-            positions = []
-            for index, (key, title, _, _) in enumerate(figure.EVENTS):
+    def test_obscur_editions_keep_order_geometry_and_full_evidence(self):
+        narrow = ET.parse(figure.ROOT / "docs/adaptive-timing-obscur.svg").getroot()
+        wide = ET.parse(figure.ROOT / "docs/adaptive-timing-obscur-wide.svg").getroot()
+        places = {}
+        for name, root in (("narrow", narrow), ("wide", wide)):
+            places[name] = []
+            for key, _, _, _ in figure.EVENTS:
                 path = root.find(f".//s:g[@id='event-{key}']/s:path", NS).get("d")
                 xy = re.match(r"M ([\d.]+) ([\d.]+)", path)
-                positions.append(tuple(map(float, xy.groups())))
-                self.assertIn(f"<!-- {index + 1}. {title} -->", raw)
-            self.assertLess(positions[0][0], positions[1][0])
-            self.assertEqual(positions[0][1], positions[1][1])
-            self.assertLess(positions[0][1], positions[2][1])
-            self.assertEqual(positions[0][0], positions[2][0])
-            self.assertEqual(positions[1][0], positions[3][0])
-            self.assertEqual(positions[2][1], positions[3][1])
+                places[name].append(tuple(map(float, xy.groups())))
             for key in ("start", "replace", "reject"):
-                self.assertIsNotNone(root.find(f".//s:g[@id='next-{key}']", NS))
-            for text in (
-                "99 requests replaced.",
-                "payload 100, revision 101.",
-                "Its obsolete result is rejected.",
-            ):
-                self.assertIn(text, raw)
+                self.assertEqual(len(root.findall(f".//s:g[@id='next-{key}']", NS)), 1)
             self.assertEqual(
                 json.loads(root.find(".//dc:description", NS).text),
                 figure.semantic_record(figure.load_data()),
             )
-            for face in ("Regular", "SemiBold", "Bold", "Italic"):
-                self.assertIn(f'xlink:href="#Inter-{face}-', raw)
-            self.assertNotIn("<text", raw)
+        column = places["narrow"]
+        self.assertEqual({x for x, _ in column}, {column[0][0]})
+        self.assertEqual(column, sorted(column, key=lambda item: item[1]))
+        row = places["wide"]
+        self.assertLess(row[0][0], row[1][0])
+        self.assertLess(row[1][0], row[2][0])
+        self.assertEqual({y for _, y in row[:3]}, {row[0][1]})
+        self.assertLess(row[0][1], row[3][1])
+        self.assertEqual(row[3][0], row[0][0])
+        self.assertIsNotNone(wide.find(".//s:g[@id='focus-publish']", NS))
 
-    def test_real_inter_outlines_and_no_external_glyph_requests(self):
-        for mode in ("clair", "obscur"):
-            svg = (figure.ROOT / f"docs/adaptive-timing-{mode}.svg").read_text()
-            for face in ("Regular", "SemiBold", "Bold", "Italic"):
+    def test_obscur_uses_only_the_monochrome_tokens_and_inter_outlines(self):
+        allowed = set(json.loads(
+            (figure.ROOT / figure.TOKENS_PATH).read_text())["colors"].values())
+        for name in figure.OBSCUR:
+            if not name.endswith(".svg"):
+                continue
+            svg = (figure.ROOT / name).read_text()
+            self.assertLessEqual(set(re.findall(r"#[0-9a-fA-F]{6}", svg)), allowed)
+            for face in ("Regular", "SemiBold", "Bold"):
                 self.assertIn(f'id="Inter-{face}-', svg)
+            self.assertNotIn("Italic", svg)
             self.assertNotIn("DejaVu", svg)
             self.assertNotIn("<text", svg)
             self.assertNotIn("@font-face", svg)
             for node in ET.fromstring(svg).iter():
-                for name, value in node.attrib.items():
-                    if name.endswith("href"):
+                for key, value in node.attrib.items():
+                    if key.endswith("href"):
                         self.assertTrue(value.startswith("#"))
+
+    def test_png_editions_have_the_rule_dimensions(self):
+        record = figure.check_outputs()
+        for name, edition in (
+            ("docs/adaptive-timing-obscur.png", "narrow"),
+            ("docs/adaptive-timing-obscur-wide.png", "wide"),
+        ):
+            data = (figure.ROOT / name).read_bytes()
+            self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+            size = struct.unpack(">II", data[16:24])
+            layout = record["layout"][edition]
+            self.assertEqual(size, (layout["width"], layout["height"]))
 
     def test_changed_counters_boolean_aliases_or_timing_claims_are_rejected(self):
         for key in ("count", "stale", "bool", "payload", "revision", "time"):

@@ -41,15 +41,15 @@ validated model of human performance.
 ## Inspect the source
 
 The [underlying values](visual-example-data.json) include the source and
-conditions. The new [Clair SVG](adaptive-timing-clair.svg) and [Obscur SVG](adaptive-timing-obscur.svg) carry outlined Inter labels. The [original PNG](adaptive-timing-example.png) and [original SVG](adaptive-timing-example.svg) retain their recorded bytes.
+conditions. The [Obscur SVG](adaptive-timing-obscur.svg) and the [Clair SVG](adaptive-timing-clair.svg) carry outlined Inter labels. The [original PNG](adaptive-timing-example.png) and [original SVG](adaptive-timing-example.svg) retain their recorded bytes.
 The figure is a visual explanation of the public implementation, not a
 screenshot of an external application.
 
 ## Rebuild the figure without another experiment
 
 The maintained renderer reads the saved counters. It does not run the worker,
-planner or timing experiment. Supply the six official static Inter TTF files
-from one release in a local directory:
+planner or timing experiment. Supply the three official static Inter TTF files
+from one release in a local directory. Regular, SemiBold and Bold are enough:
 
 ```sh
 python -m pip install -r requirements-figures.txt
@@ -58,9 +58,9 @@ python tools/render_worker_figure.py --check
 ```
 
 Each font's name, weight, italic flag and Latin glyph coverage are checked.
-Regular, Semibold, Bold and genuine Italic supply this diagram's labels. The
-[rendering receipt](adaptive-timing-figure.json) records all six input hashes,
-retained values, tokens and output identities. No font files are distributed or
+Regular, SemiBold and Bold supply this diagram's labels. The
+[rendering receipt](adaptive-timing-figure.json) records the three font hashes,
+the Obscur rules and their basis revision, retained values and output identities. No font files are distributed or
 downloaded. PNGs rasterize the intended Inter glyphs. SVGs outline those same
 labels, with selectable explanations and JSON available here.
 
@@ -89,4 +89,18 @@ system appearance was covered by the original width investigation. That older
 check is not acceptance of a later source change. GitHub controls its surrounding
 chrome, and this project's image sources do not alter an account appearance setting.
 
-Wide [Clair SVG](adaptive-timing-clair-wide.svg) and [Obscur SVG](adaptive-timing-obscur-wide.svg) preserve the original units, qualifications and Inter outlines. Narrow editions remain available above.
+Wide [Obscur SVG](adaptive-timing-obscur-wide.svg) and [Clair SVG](adaptive-timing-clair-wide.svg) preserve the original units, qualifications and Inter outlines. Narrow editions remain available above.
+
+## The Obscur figure rules
+
+The Obscur editions follow one set of rules in
+[`tools/obscur-figure.json`](../tools/obscur-figure.json). The canvas is black,
+text is white and everything secondary is gray. No hue carries meaning. A dashed
+outline marks the rejected result, and a raised card with a ring marks the current
+one. Labels are 30 points or larger at 100 dpi, and the layout is measured from the
+Inter files rather than scaled to fit. The renderer rejects a label that sits within
+12 pixels of its card edge or outside the canvas.
+
+The Clair editions and the original figure keep the bytes they were recorded with.
+The renderer does not rebuild them, and the receipt lists their hashes so the
+check still notices a change.
