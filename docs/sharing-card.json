@@ -4,7 +4,7 @@
   "subtitle": "Keep the newest result",
   "description": "Inspect a controlled worker example and saved scheduling traces. Follow requests, obsolete results and virtual dispatch without claiming external completion or real time guarantees.",
   "helper": "render_worker_figure",
-  "tokens": "adaptive_timing/presentation.json",
+  "tokens": "tools/obscur-figure.json",
   "source": "docs/visual-example-data.json",
   "pages": [
     "site/index.html"

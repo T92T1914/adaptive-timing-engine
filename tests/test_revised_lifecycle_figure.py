@@ -1,6 +1,7 @@
 """Keep the new lifecycle figure tied to its public saved evidence."""
 
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -24,28 +25,33 @@ class RevisedLifecycleFigureTests(unittest.TestCase):
         self.assertEqual(evidence["current"]["total"], 142336)
         self.assertEqual(evidence["terminal_cleanup"]["outstanding"], 0)
         self.assertIn("Its unsubmitted work never runs.", evidence["text_equivalent"])
-        self.assertEqual(record["layout"]["clair"], record["layout"]["obscur"])
-        layout = record["layout"]["obscur"]
-        self.assertEqual((layout["width"], layout["height"]), (1520, 4400))
-        self.assertGreaterEqual(layout["minimum_font_points"], 24)
-        self.assertGreaterEqual(layout["minimum_css_pixels_at_narrow_width"], 15)
+        narrow, wide = record["layout"]["narrow"], record["layout"]["wide"]
+        self.assertEqual((narrow["width"], wide["width"]), (960, 1800))
+        self.assertGreaterEqual(narrow["minimum_font_points"], 33)
+        self.assertGreaterEqual(wide["minimum_font_points"], 30)
+        self.assertEqual(narrow["cards"], 5)
+        self.assertEqual(
+            sorted(record["typography"]["files"]), ["Bold", "Regular", "SemiBold"]
+        )
+        self.assertFalse(record["retained_alternates"]["rebuilt"])
 
     def test_svg_editions_preserve_order_geometry_and_text_evidence(self):
         record = figure.check_outputs()
-        roots = [ET.parse(figure.ROOT / f"docs/revised-lifecycle-{mode}.svg").getroot()
-                 for mode in ("clair", "obscur")]
-        for root in roots:
+        allowed = set(json.loads(
+            (figure.ROOT / figure.TOKENS_PATH).read_text())["colors"].values())
+        for name in ("docs/revised-lifecycle-obscur.svg",
+                     "docs/revised-lifecycle-obscur-wide.svg"):
+            text = (figure.ROOT / name).read_text()
+            root = ET.fromstring(text)
             self.assertEqual(json.loads(root.find(".//dc:description", NS).text),
                              record["evidence"])
-            self.assertGreater(len(root.findall(".//s:g[@id]", NS)), 5)
-        for key, _, _, _, _ in figure.STAGES:
-            paths = [root.find(f".//s:g[@id='stage-{key}']/s:path", NS).get("d")
-                     for root in roots]
-            self.assertEqual(paths[0], paths[1])
-        for mode in ("clair", "obscur"):
-            text = (figure.ROOT / f"docs/revised-lifecycle-{mode}.svg").read_text()
-            for face in ("Regular", "SemiBold", "Bold", "Italic"):
+            for key, _, _, _ in figure.STAGES:
+                self.assertIsNotNone(
+                    root.find(f".//s:g[@id='event-{key}']/s:path", NS))
+            for face in ("Regular", "SemiBold", "Bold"):
                 self.assertIn(f'id="Inter-{face}-', text)
+            self.assertLessEqual(set(re.findall(r"#[0-9a-fA-F]{6}", text)), allowed)
+            self.assertNotIn("Italic", text)
             self.assertNotIn("<text", text)
 
     def test_check_needs_no_authoring_or_product_imports(self):

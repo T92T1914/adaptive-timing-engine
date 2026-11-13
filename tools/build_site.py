@@ -16,6 +16,8 @@ OUT = ROOT / "_site"
 FILES = {
     "docs/revised-lifecycle-obscur.png": "lifecycle-obscur.png",
     "docs/revised-lifecycle-obscur.svg": "lifecycle-obscur.svg",
+    "docs/revised-lifecycle-obscur-wide.png": "lifecycle-obscur-wide.png",
+    "docs/revised-lifecycle-obscur-wide.svg": "lifecycle-obscur-wide.svg",
     "docs/revised-lifecycle-clair.png": "lifecycle-clair.png",
     "docs/revised-lifecycle-clair.svg": "lifecycle-clair.svg",
     "docs/revised-lifecycle-figure.json": "lifecycle-figure.json",

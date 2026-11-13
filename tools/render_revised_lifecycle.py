@@ -1,15 +1,14 @@
-"""Render the saved three-revision lifecycle without running analysis work."""
+"""Render the saved three-revision lifecycle on Obscur without running analysis work."""
 
 import argparse
-import hashlib
 import json
 import tempfile
 from pathlib import Path
 
 if __package__:
-    from .render_worker_figure import font_files
+    from .obscur_figure import FACES, TOKENS_PATH, digest, font_files, render
 else:
-    from render_worker_figure import font_files
+    from obscur_figure import FACES, TOKENS_PATH, digest, font_files, render
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,49 +18,51 @@ MANIFEST = "docs/revised-lifecycle-figure.json"
 INPUTS = (
     DATA,
     PROVENANCE,
-    "adaptive_timing/presentation.json",
+    TOKENS_PATH,
     "docs/revised-work.md",
-    "tools/render_worker_figure.py",
+    "tools/obscur_figure.py",
     "tools/render_revised_lifecycle.py",
 )
-WIDTH_POINTS = 547.2
-HEIGHT_POINTS = 1584
-MINIMUM_POINTS = 24
+OBSCUR = (
+    "docs/revised-lifecycle-obscur.png",
+    "docs/revised-lifecycle-obscur.svg",
+    "docs/revised-lifecycle-obscur-wide.png",
+    "docs/revised-lifecycle-obscur-wide.svg",
+)
+CLAIR = (
+    "docs/revised-lifecycle-clair.png",
+    "docs/revised-lifecycle-clair.svg",
+)
 STAGES = (
     (
         "physical-running",
-        "1  Revision 1 starts",
+        "Revision 1 starts",
         "The first input is running.\nIt keeps its physical resource.",
-        "accent",
-        178,
+        "plain",
     ),
     (
         "capacity-refused",
-        "2  Revision 2 is refused",
+        "Revision 2 is refused",
         "The physical executor refuses it.\nIts exact dispatch stays unsubmitted.",
-        "warning",
-        178,
+        "dashed",
     ),
     (
         "waiting-superseded",
-        "3  Revision 3 replaces revision 2",
+        "Revision 3 replaces revision 2",
         "Revision 2 is superseded.\nIts unsubmitted work never runs.",
-        "warning",
-        178,
+        "dashed",
     ),
     (
         "stale-reconciled",
-        "4  Revision 1 returns stale",
-        "Its result stays inspectable.\nThe owner reconciles the return,\nthen retires physical ownership.",
-        "muted",
-        228,
+        "Revision 1 returns stale",
+        "Its result stays inspectable.\nThe owner reconciles the return, then retires physical ownership.",
+        "plain",
     ),
     (
         "current-adopted",
-        "5  Revision 3 becomes current",
+        "Revision 3 becomes current",
         "It is admitted and completes.\nThe owner adopts its current result.",
-        "success",
-        178,
+        "current",
     ),
 )
 QUALIFIERS = (
@@ -69,11 +70,6 @@ QUALIFIERS = (
     "Saved public receipt. No workload rerun.",
     "No speedup or deadline claim.",
 )
-
-
-def digest(path, text=False):
-    data = path.read_text(encoding="utf-8").encode("utf-8") if text else path.read_bytes()
-    return hashlib.sha256(data).hexdigest()
 
 
 def load_data():
@@ -147,7 +143,10 @@ def semantic_record(data):
     equivalent = [
         "Keep the current answer.",
         "3 revisions. 2 physical completions.",
-        *(title + ". " + body.replace("\n", " ") for _, title, body, _, _ in STAGES),
+        *(
+            f"{index + 1}. {title}. " + body.replace("\n", " ")
+            for index, (_, title, body, _) in enumerate(STAGES)
+        ),
         f'Current revision 3: {receipt["current"]["count"]:,} values; '
         f'sum {receipt["current"]["total"]:,}.',
         *QUALIFIERS,
@@ -179,100 +178,29 @@ def semantic_record(data):
             "contract, not an intermediate resource snapshot or measured delay."
         ),
         "sequence": [
-            {"id": key, "title": title, "explanation": body, "role": role}
-            for key, title, body, role, _ in STAGES
+            {"id": key, "title": title, "explanation": body, "mark": mark}
+            for key, title, body, mark in STAGES
         ],
+        "marks": "A dashed outline marks work that never ran. A raised card with a ring marks the current result.",
         "text_equivalent": "\n\n".join(equivalent),
     }
 
 
-def draw(data, tokens, mode, files, output):
-    import matplotlib
-
-    matplotlib.use("Agg")
-    from matplotlib import rc_context
-    from matplotlib.backends.backend_agg import FigureCanvasAgg
-    from matplotlib.figure import Figure
-    from matplotlib.font_manager import FontProperties
-    from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
-
-    roles = tokens["themes"][mode]
-    fonts = {name: FontProperties(fname=str(path)) for name, path in files.items()}
-    with rc_context({"svg.fonttype": "path", "svg.hashsalt": "timing-revised-lifecycle-v1"}):
-        fig = Figure(figsize=(WIDTH_POINTS / 72, HEIGHT_POINTS / 72), dpi=200,
-                     facecolor=roles["canvas"])
-        labels = []
-
-        def label(x, top, text, size=MINIMUM_POINTS, face="Regular", color=None,
-                  right=515.2, bottom=1552):
-            item = fig.text(x / WIDTH_POINTS, 1 - top / HEIGHT_POINTS, text,
-                            fontsize=size, fontproperties=fonts[face],
-                            color=color or roles["text"], va="top", linespacing=1.3)
-            labels.append((item, right, bottom))
-
-        label(32, 32, "ADAPTIVE TIMING ENGINE", face="SemiBold", color=roles["accent"])
-        label(32, 84, "Keep the current answer.", 38, "Bold")
-        label(32, 160, "3 revisions. 2 physical completions.")
-        top = 224
-        for index, (key, title, body, role, height) in enumerate(STAGES):
-            fig.add_artist(FancyBboxPatch(
-                (28 / WIDTH_POINTS, 1 - (top + height) / HEIGHT_POINTS),
-                (WIDTH_POINTS - 56) / WIDTH_POINTS, height / HEIGHT_POINTS,
-                transform=fig.transFigure, boxstyle="round,pad=0,rounding_size=0.008",
-                facecolor=roles["panel"], edgecolor=roles["border"], linewidth=0.9,
-                gid=f"stage-{key}",
-            ))
-            label(46, top + 17, title, 26, "SemiBold", roles[role],
-                  right=WIDTH_POINTS - 46, bottom=top + 62)
-            label(46, top + 70, body, right=WIDTH_POINTS - 46,
-                  bottom=top + height - 14)
-            if index < len(STAGES) - 1:
-                fig.add_artist(FancyArrowPatch(
-                    (0.5, 1 - (top + height + 4) / HEIGHT_POINTS),
-                    (0.5, 1 - (top + height + 18) / HEIGHT_POINTS),
-                    transform=fig.transFigure, arrowstyle="-|>", mutation_scale=14,
-                    color=roles["muted"], gid=f"next-{key}",
-                ))
-            top += height + 22
-        current = data["receipt"]["current"]
-        label(32, 1290, f'Current R3: {current["count"]:,} values.\nSum: {current["total"]:,}.',
-              face="SemiBold")
-        label(32, 1408, "\n".join(QUALIFIERS), face="Italic", color=roles["muted"])
-        canvas = FigureCanvasAgg(fig)
-        canvas.draw()
-        for item, right, bottom in labels:
-            bounds = item.get_window_extent(canvas.get_renderer())
-            if (bounds.x0 < 0 or bounds.y0 < 0 or bounds.x1 > right * 200 / 72
-                    or bounds.y0 < (HEIGHT_POINTS - bottom) * 200 / 72
-                    or bounds.y1 > fig.bbox.height):
-                raise ValueError(
-                    "A lifecycle label exceeds its text area: " + item.get_text()
-                    + f" (right {bounds.x1 * 72 / 200:.1f}/{right:.1f}, "
-                    + f"bottom {HEIGHT_POINTS - bounds.y0 * 72 / 200:.1f}/{bottom:.1f})"
-                )
-        layout = {
-            "width": round(fig.bbox.width), "height": round(fig.bbox.height),
-            "width_points": WIDTH_POINTS, "height_points": HEIGHT_POINTS,
-            "labels_within_text_areas": len(labels),
-            "minimum_font_points": min(item.get_fontsize() for item, _, _ in labels),
-            "intended_maximum_css_width": 760,
-            "narrow_content_css_width": 350,
-            "minimum_css_pixels_at_narrow_width": round(MINIMUM_POINTS * 350 / WIDTH_POINTS, 3),
-            "scale_scope": "350px content inside a 390px viewport with 20px side padding",
-        }
-        for extension in ("png", "svg"):
-            metadata = {"Description": json.dumps(semantic_record(data), sort_keys=True)}
-            if extension == "svg":
-                metadata["Date"] = None
-            path = output / f"revised-lifecycle-{mode}.{extension}"
-            fig.savefig(path, metadata=metadata)
-            if extension == "svg":
-                path.write_text(
-                    "\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n",
-                    encoding="utf-8", newline="\n",
-                )
-        fig.clear()
-        return layout
+def spec(data):
+    current = data["receipt"]["current"]
+    return dict(
+        title="Keep the current answer.",
+        subtitle="3 revisions, 2 physical completions.",
+        stats=[
+            (f'{current["count"]:,}', "values in revision 3"),
+            (f'{current["total"]:,}', "sum of those values"),
+        ],
+        cards=[
+            dict(id=key, title=title, lines=body.split("\n"), mark=mark)
+            for key, title, body, mark in STAGES
+        ],
+        footer=list(QUALIFIERS),
+    )
 
 
 def check_outputs():
@@ -283,21 +211,23 @@ def check_outputs():
     for name in INPUTS:
         if record["inputs_sha256_lf"][name] != digest(ROOT / name, text=True):
             raise ValueError(f"Lifecycle figure input changed: {name}")
-    expected = {
-        f"docs/revised-lifecycle-{mode}.{extension}"
-        for mode in ("clair", "obscur") for extension in ("png", "svg")
-    }
-    if set(record["outputs_sha256"]) != expected:
+    if set(record["outputs_sha256"]) != set(OBSCUR):
         raise ValueError("Both lifecycle PNG and SVG editions are required")
-    for name, checksum in record["outputs_sha256"].items():
-        if digest(ROOT / name) != checksum:
-            raise ValueError(f"Lifecycle figure output changed: {name}")
+    alternates = record.get("retained_alternates")
+    if not alternates or alternates.get("rebuilt") is not False:
+        raise ValueError("The retained Clair alternates are not recorded")
+    if set(alternates["outputs_sha256"]) != set(CLAIR):
+        raise ValueError("The retained Clair alternates are incomplete")
+    for group in (record["outputs_sha256"], alternates["outputs_sha256"]):
+        for name, checksum in group.items():
+            if digest(ROOT / name) != checksum:
+                raise ValueError(f"Lifecycle figure output changed: {name}")
     return record
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--font-dir", type=Path, help="Directory of six official static Inter TTFs")
+    parser.add_argument("--font-dir", type=Path, help="Directory of the three official static Inter TTFs")
     parser.add_argument("--check", action="store_true", help="Verify committed files without fonts or rendering")
     args = parser.parse_args()
     if args.check:
@@ -307,27 +237,45 @@ def main():
     if args.font_dir is None:
         parser.error("--font-dir is required for authoring; no font download is performed")
     data = load_data()
-    tokens = json.loads((ROOT / "adaptive_timing/presentation.json").read_text(encoding="utf-8"))
     files, font_evidence = font_files(args.font_dir)
+    previous = json.loads((ROOT / MANIFEST).read_text(encoding="utf-8"))
+    alternates = previous.get("retained_alternates") or {
+        "outputs_sha256": {name: digest(ROOT / name) for name in CLAIR},
+        "rebuilt": False,
+        "note": "Recorded bytes of the Clair editions, kept as explicit alternatives. This renderer does not rebuild them.",
+    }
+    description = json.dumps(semantic_record(data), sort_keys=True)
     with tempfile.TemporaryDirectory() as temporary:
         output = Path(temporary)
-        layouts = {mode: draw(data, tokens, mode, files, output) for mode in ("clair", "obscur")}
+        layout = {}
+        for edition, wide in (("narrow", False), ("wide", True)):
+            stem = "revised-lifecycle-obscur" + ("-wide" if wide else "")
+            layout[edition] = render(
+                spec(data), wide, files, output, stem, "timing-revised-lifecycle-obscur-v1", description
+            )
+        import PIL
         import matplotlib
 
         record = {
-            "schema_version": 1,
+            "schema_version": 2,
             "evidence": semantic_record(data),
-            "theme_source": tokens["source"],
-            "renderer": {"matplotlib": matplotlib.__version__, "backend": "Agg"},
-            "layout": layouts,
+            "rules": json.loads((ROOT / TOKENS_PATH).read_text(encoding="utf-8"))["basis"],
+            "renderer": {
+                "matplotlib": matplotlib.__version__,
+                "Pillow": PIL.__version__,
+                "backend": "Agg",
+            },
+            "layout": layout,
             "typography": {
+                "release": "Inter 4.1",
                 "files": font_evidence,
-                "painted_faces": ["Regular", "SemiBold", "Bold", "Italic"],
+                "painted_faces": list(FACES),
                 "png": "Glyphs rasterized from verified Inter files",
-                "svg": "Labels outlined from the same files; full text is in evidence.text_equivalent",
+                "svg": "Labels outlined from the same files. Full text is in evidence.text_equivalent",
             },
             "inputs_sha256_lf": {name: digest(ROOT / name, text=True) for name in INPUTS},
             "outputs_sha256": {"docs/" + path.name: digest(path) for path in sorted(output.iterdir())},
+            "retained_alternates": alternates,
         }
         for path in output.iterdir():
             (ROOT / "docs" / path.name).write_bytes(path.read_bytes())

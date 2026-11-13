@@ -1,41 +1,49 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "content": {
     "title": "Adaptive Timing",
     "subtitle": "Keep the newest result",
     "panels": [
       [
         "Requests",
-        "101",
-        "submitted"
+        "101"
       ],
       [
         "Calculations",
-        "2",
-        "executed"
+        "2"
       ]
     ],
-    "context": "Controlled worker example",
-    "footer": "99 waiting requests replaced. 1 obsolete result rejected.",
+    "footer": [
+      "99 requests replaced. 1 result rejected.",
+      "Controlled worker example, not a benchmark."
+    ],
     "source_sha256": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429"
   },
   "inputs_sha256_lf": {
-    "tools/render_share_preview.py": "659aed220e79634e83c6b465b77bb4aea894f4a20d3a53deb888bfca917254e2",
-    "docs/sharing-card.json": "fd4bb794714d9b56d7e7fca995e8f62546b06e13c9d2b13d9053c8dad487709c",
+    "tools/render_share_preview.py": "8e0a9c6d83d12f68936244199e87aa70078e109f989764e651b8d899783cc3cf",
+    "tools/obscur_figure.py": "d39abb987501edd40cd1842247bb3d0bdfc1a0cec1a4bd230ec90fbb00caa7bd",
+    "docs/sharing-card.json": "a9dd43a41a5e67ed834c1b1f94023d887a27eb9a57a4e4e7fce0df5d70c0eb7f",
     "docs/visual-example-data.json": "a40b87d2ed6e034ce6bc7aad59467f5c90e990a4bfb6a3f523dfab978d120429",
-    "adaptive_timing/presentation.json": "2f1373a5d89213471e42212732de56368c5f8225760d633073599f8e4032e5f0",
-    "tools/render_worker_figure.py": "7210426b667954edacc4d9bf34be5577ac5586c2936319f8b991abf1ddcf940c"
+    "tools/obscur-figure.json": "14c0a35e48c0a7b1188c4e5b455f8a811d34fcf091a49ca071589173ca2f5a3f",
+    "tools/render_worker_figure.py": "b7bd67eafd5aefa49af6e9992a13eb22df4a6b6842040cbe2528ed279f672ed7"
   },
-  "png_sha256": "3880c57edd36b86d20e48723857a741381fbd6d1bc36dc794ba893444ac67a60",
+  "png_sha256": "0b24c5e7cccd269ef197946cda8225b29bc309d037805918c45e7ac3029968b7",
   "dimensions": [
     1280,
     640
   ],
   "appearance": "obscur",
   "opaque": true,
+  "rules": {
+    "repository": "T92T1914/clair-obscur-themes",
+    "revision": "4693831b51f2b3fa268d830fd9b977fb70c83e3d",
+    "file": "tokens-monochrome.json",
+    "version": "1.0.0"
+  },
   "renderer": {
     "Pillow": "12.3.0"
   },
+  "font_release": "Inter 4.1",
   "font_files": {
     "Regular": {
       "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
@@ -54,24 +62,6 @@
       "postscript": "Inter-Bold",
       "weight": 700,
       "italic": false
-    },
-    "Italic": {
-      "sha256": "bbc051dd204b5019a1aa0bc0ae2aa8a05ab13e7a3f979fa357631dc7feb6833a",
-      "postscript": "Inter-Italic",
-      "weight": 400,
-      "italic": true
-    },
-    "SemiBoldItalic": {
-      "sha256": "eff2930c3d3b35d3fcf5f76252b6baef4c3e907d9d2fde1d16cf5d417f8deef4",
-      "postscript": "Inter-SemiBoldItalic",
-      "weight": 600,
-      "italic": true
-    },
-    "BoldItalic": {
-      "sha256": "948405a16cdc62701da5f4005ed068ca5f4d27061d98f7974ccfc37831d9581d",
-      "postscript": "Inter-BoldItalic",
-      "weight": 700,
-      "italic": true
     }
   },
   "painted_labels": [
@@ -79,111 +69,89 @@
       "text": "Adaptive Timing",
       "face": "Inter-Bold",
       "bounds": [
-        68,
-        52,
-        580,
-        115
+        72,
+        59,
+        516,
+        113
       ],
-      "size": 64
+      "points": 40
     },
     {
       "text": "Keep the newest result",
-      "face": "Inter-SemiBold",
-      "bounds": [
-        68,
-        136,
-        532,
-        174
-      ],
-      "size": 42
-    },
-    {
-      "text": "Controlled worker example",
       "face": "Inter-Regular",
       "bounds": [
-        68,
-        208,
-        449,
-        236
+        72,
+        145.22222222222223,
+        522,
+        183.22222222222223
       ],
-      "size": 30
+      "points": 30
     },
     {
       "text": "Requests",
       "face": "Inter-SemiBold",
       "bounds": [
-        94,
-        298,
-        238,
-        329
+        100,
+        267,
+        300,
+        309
       ],
-      "size": 32
+      "points": 32
     },
     {
       "text": "101",
       "face": "Inter-Bold",
       "bounds": [
-        94,
-        350,
-        198,
-        402
+        100,
+        345.77777777777777,
+        185,
+        388.77777777777777
       ],
-      "size": 68
-    },
-    {
-      "text": "submitted",
-      "face": "Inter-Regular",
-      "bounds": [
-        94,
-        451,
-        235,
-        475
-      ],
-      "size": 30
+      "points": 40
     },
     {
       "text": "Calculations",
       "face": "Inter-SemiBold",
       "bounds": [
-        682,
-        298,
-        874,
-        323
+        678,
+        266,
+        944,
+        301
       ],
-      "size": 32
+      "points": 32
     },
     {
       "text": "2",
       "face": "Inter-Bold",
       "bounds": [
-        682,
-        350,
-        725,
-        401
+        678,
+        345.77777777777777,
+        713,
+        387.77777777777777
       ],
-      "size": 68
+      "points": 40
     },
     {
-      "text": "executed",
-      "face": "Inter-Regular",
+      "text": "99 requests replaced. 1 result rejected.",
+      "face": "Inter-SemiBold",
       "bounds": [
-        682,
-        451,
-        812,
-        473
+        72,
+        487,
+        853,
+        527
       ],
-      "size": 30
+      "points": 30
     },
     {
-      "text": "99 waiting requests replaced. 1 obsolete result rejected.",
-      "face": "Inter-Italic",
+      "text": "Controlled worker example, not a benchmark.",
+      "face": "Inter-SemiBold",
       "bounds": [
-        68,
-        548,
-        860,
-        578
+        72,
+        557.1666666666666,
+        989,
+        595.1666666666666
       ],
-      "size": 30
+      "points": 30
     }
   ],
   "experimental_work_rerun": false,

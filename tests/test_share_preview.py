@@ -29,9 +29,11 @@ class SharingTests(unittest.TestCase):
         config = json.loads((ROOT / "docs/sharing-card.json").read_text())
         receipt = check()
         self.assertFalse(receipt["experimental_work_rerun"])
+        self.assertEqual(receipt["appearance"], "obscur")
+        self.assertTrue(all(x["points"] >= 30 for x in receipt["painted_labels"]))
         self.assertEqual(
             {x["face"] for x in receipt["painted_labels"]},
-            {"Inter-Regular", "Inter-SemiBold", "Inter-Bold", "Inter-Italic"},
+            {"Inter-Regular", "Inter-SemiBold", "Inter-Bold"},
         )
         for relative, canonical in config["page_urls"].items():
             head = Head()

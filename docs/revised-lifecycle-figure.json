@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "evidence": {
     "source_fixture": {
       "path": "tests/fixtures/receipt-complete-demo.json",
@@ -39,76 +39,69 @@
     "sequence": [
       {
         "id": "physical-running",
-        "title": "1  Revision 1 starts",
+        "title": "Revision 1 starts",
         "explanation": "The first input is running.\nIt keeps its physical resource.",
-        "role": "accent"
+        "mark": "plain"
       },
       {
         "id": "capacity-refused",
-        "title": "2  Revision 2 is refused",
+        "title": "Revision 2 is refused",
         "explanation": "The physical executor refuses it.\nIts exact dispatch stays unsubmitted.",
-        "role": "warning"
+        "mark": "dashed"
       },
       {
         "id": "waiting-superseded",
-        "title": "3  Revision 3 replaces revision 2",
+        "title": "Revision 3 replaces revision 2",
         "explanation": "Revision 2 is superseded.\nIts unsubmitted work never runs.",
-        "role": "warning"
+        "mark": "dashed"
       },
       {
         "id": "stale-reconciled",
-        "title": "4  Revision 1 returns stale",
-        "explanation": "Its result stays inspectable.\nThe owner reconciles the return,\nthen retires physical ownership.",
-        "role": "muted"
+        "title": "Revision 1 returns stale",
+        "explanation": "Its result stays inspectable.\nThe owner reconciles the return, then retires physical ownership.",
+        "mark": "plain"
       },
       {
         "id": "current-adopted",
-        "title": "5  Revision 3 becomes current",
+        "title": "Revision 3 becomes current",
         "explanation": "It is admitted and completes.\nThe owner adopts its current result.",
-        "role": "success"
+        "mark": "current"
       }
     ],
-    "text_equivalent": "Keep the current answer.\n\n3 revisions. 2 physical completions.\n\n1  Revision 1 starts. The first input is running. It keeps its physical resource.\n\n2  Revision 2 is refused. The physical executor refuses it. Its exact dispatch stays unsubmitted.\n\n3  Revision 3 replaces revision 2. Revision 2 is superseded. Its unsubmitted work never runs.\n\n4  Revision 1 returns stale. Its result stays inspectable. The owner reconciles the return, then retires physical ownership.\n\n5  Revision 3 becomes current. It is admitted and completes. The owner adopts its current result.\n\nCurrent revision 3: 2,048 values; sum 142,336.\n\nControlled event order, not elapsed time.\n\nSaved public receipt. No workload rerun.\n\nNo speedup or deadline claim."
+    "marks": "A dashed outline marks work that never ran. A raised card with a ring marks the current result.",
+    "text_equivalent": "Keep the current answer.\n\n3 revisions. 2 physical completions.\n\n1. Revision 1 starts. The first input is running. It keeps its physical resource.\n\n2. Revision 2 is refused. The physical executor refuses it. Its exact dispatch stays unsubmitted.\n\n3. Revision 3 replaces revision 2. Revision 2 is superseded. Its unsubmitted work never runs.\n\n4. Revision 1 returns stale. Its result stays inspectable. The owner reconciles the return, then retires physical ownership.\n\n5. Revision 3 becomes current. It is admitted and completes. The owner adopts its current result.\n\nCurrent revision 3: 2,048 values; sum 142,336.\n\nControlled event order, not elapsed time.\n\nSaved public receipt. No workload rerun.\n\nNo speedup or deadline claim."
   },
-  "theme_source": {
+  "rules": {
     "repository": "T92T1914/clair-obscur-themes",
-    "revision": "7a57fe750ff50205a17e1d342106a0d3f2777159",
-    "file": "tokens.json",
-    "sha256": "889df65e0f4f4eea99a81c535d542e7332b537c000c332402a3ffa6a6cbb15b7",
-    "license": "MIT",
-    "url": "https://github.com/T92T1914/clair-obscur-themes/blob/7a57fe750ff50205a17e1d342106a0d3f2777159/tokens.json"
+    "revision": "4693831b51f2b3fa268d830fd9b977fb70c83e3d",
+    "file": "tokens-monochrome.json",
+    "version": "1.0.0"
   },
   "renderer": {
     "matplotlib": "3.11.1",
+    "Pillow": "12.3.0",
     "backend": "Agg"
   },
   "layout": {
-    "clair": {
-      "width": 1520,
-      "height": 4400,
-      "width_points": 547.2,
-      "height_points": 1584,
-      "labels_within_text_areas": 15,
-      "minimum_font_points": 24.0,
-      "intended_maximum_css_width": 760,
-      "narrow_content_css_width": 350,
-      "minimum_css_pixels_at_narrow_width": 15.351,
-      "scale_scope": "350px content inside a 390px viewport with 20px side padding"
+    "narrow": {
+      "width": 960,
+      "height": 2541,
+      "cards": 5,
+      "labels_within_canvas": 27,
+      "labels_within_cards": 16,
+      "minimum_font_points": 33
     },
-    "obscur": {
-      "width": 1520,
-      "height": 4400,
-      "width_points": 547.2,
-      "height_points": 1584,
-      "labels_within_text_areas": 15,
-      "minimum_font_points": 24.0,
-      "intended_maximum_css_width": 760,
-      "narrow_content_css_width": 350,
-      "minimum_css_pixels_at_narrow_width": 15.351,
-      "scale_scope": "350px content inside a 390px viewport with 20px side padding"
+    "wide": {
+      "width": 1800,
+      "height": 1703,
+      "cards": 5,
+      "labels_within_canvas": 39,
+      "labels_within_cards": 30,
+      "minimum_font_points": 30
     }
   },
   "typography": {
+    "release": "Inter 4.1",
     "files": {
       "Regular": {
         "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
@@ -127,47 +120,36 @@
         "postscript": "Inter-Bold",
         "weight": 700,
         "italic": false
-      },
-      "Italic": {
-        "sha256": "bbc051dd204b5019a1aa0bc0ae2aa8a05ab13e7a3f979fa357631dc7feb6833a",
-        "postscript": "Inter-Italic",
-        "weight": 400,
-        "italic": true
-      },
-      "SemiBoldItalic": {
-        "sha256": "eff2930c3d3b35d3fcf5f76252b6baef4c3e907d9d2fde1d16cf5d417f8deef4",
-        "postscript": "Inter-SemiBoldItalic",
-        "weight": 600,
-        "italic": true
-      },
-      "BoldItalic": {
-        "sha256": "948405a16cdc62701da5f4005ed068ca5f4d27061d98f7974ccfc37831d9581d",
-        "postscript": "Inter-BoldItalic",
-        "weight": 700,
-        "italic": true
       }
     },
     "painted_faces": [
       "Regular",
       "SemiBold",
-      "Bold",
-      "Italic"
+      "Bold"
     ],
     "png": "Glyphs rasterized from verified Inter files",
-    "svg": "Labels outlined from the same files; full text is in evidence.text_equivalent"
+    "svg": "Labels outlined from the same files. Full text is in evidence.text_equivalent"
   },
   "inputs_sha256_lf": {
     "tests/fixtures/receipt-complete-demo.json": "2b0b24ac31602f40a214875a2eca57f2f7c3bb8bd43d17e181bd8803f6ed5c40",
     "tests/fixtures/receipt-provenance.json": "678763270741e904f861cfc0c42dca877f235514ffea418668f90143dcfb862d",
-    "adaptive_timing/presentation.json": "2f1373a5d89213471e42212732de56368c5f8225760d633073599f8e4032e5f0",
+    "tools/obscur-figure.json": "14c0a35e48c0a7b1188c4e5b455f8a811d34fcf091a49ca071589173ca2f5a3f",
     "docs/revised-work.md": "cee355731515465c1bb056b65600581cf7d5c260e3f0ca0ccd9be48830cd6860",
-    "tools/render_worker_figure.py": "7210426b667954edacc4d9bf34be5577ac5586c2936319f8b991abf1ddcf940c",
-    "tools/render_revised_lifecycle.py": "ea65879288cea74393efb40b2ae6792f99b0025d705d3e31a9a345b985711853"
+    "tools/obscur_figure.py": "d39abb987501edd40cd1842247bb3d0bdfc1a0cec1a4bd230ec90fbb00caa7bd",
+    "tools/render_revised_lifecycle.py": "f2e564ba8c47b44465bdaab90d111dd7b1faafd705a4a28757c95f99e776fdcd"
   },
   "outputs_sha256": {
-    "docs/revised-lifecycle-clair.png": "a4d244d429e0d3f69848370c23f4699cf2ee8f50c534bd49f0828541b7cff82f",
-    "docs/revised-lifecycle-clair.svg": "6b17ad0157e8c7b40d8ffdbbeef7864a28b157eddd51fc802ed3fbcd91884aaa",
-    "docs/revised-lifecycle-obscur.png": "403c7dd891fbff81ac420e92273905235f04272f59cd8185fb35f8c6dca7bb6b",
-    "docs/revised-lifecycle-obscur.svg": "2705c91bde7e4290eafdb588392a8ea5c97055efd1bf07fb278eeea988370d93"
+    "docs/revised-lifecycle-obscur-wide.png": "7e926831c57cd23c2252dbd61da1dc34ae357dba43bf9f49d3ffd9a78255e216",
+    "docs/revised-lifecycle-obscur-wide.svg": "b5fb8f29006d7100e00409f2a44474448e87aad7d93a382dbc2a5aa82ab6efd5",
+    "docs/revised-lifecycle-obscur.png": "dad3883ec2674c7b3d739122f3f33990b71d046085bfdcd7bb78801a758b69b4",
+    "docs/revised-lifecycle-obscur.svg": "a2e39dab558ef71fa4d1da4a3c50def3fa6aae6c24ecbf736ba834f6f81f50ba"
+  },
+  "retained_alternates": {
+    "outputs_sha256": {
+      "docs/revised-lifecycle-clair.png": "a4d244d429e0d3f69848370c23f4699cf2ee8f50c534bd49f0828541b7cff82f",
+      "docs/revised-lifecycle-clair.svg": "6b17ad0157e8c7b40d8ffdbbeef7864a28b157eddd51fc802ed3fbcd91884aaa"
+    },
+    "rebuilt": false,
+    "note": "Recorded bytes of the Clair editions, kept as explicit alternatives. This renderer does not rebuild them."
   }
 }
