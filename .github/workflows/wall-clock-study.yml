@@ -6,6 +6,7 @@ on:
   push:
     paths:
       - .github/workflows/wall-clock-study.yml
+      - tools/wall_clock_study.py
 permissions:
   contents: read
 jobs:
