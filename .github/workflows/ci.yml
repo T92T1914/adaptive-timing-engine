@@ -18,6 +18,10 @@ jobs:
           # Free threaded builds, where the GIL no longer serializes the threads.
           - {python: '3.14t', os: ubuntu-latest}
           - {python: '3.15t', os: ubuntu-latest}
+          - {python: '3.14t', os: windows-latest}
+          - {python: '3.15t', os: windows-latest}
+          - {python: '3.14t', os: macos-latest}
+          - {python: '3.15t', os: macos-latest}
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
