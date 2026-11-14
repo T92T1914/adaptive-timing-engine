@@ -3,7 +3,9 @@ import importlib.util
 import json
 from pathlib import Path
 import tempfile
+import types
 import unittest
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("wall_clock_study", ROOT / "tools/wall_clock_study.py")
@@ -37,6 +39,13 @@ class WallClockStudyTests(unittest.TestCase):
             self.assertEqual(study.main(["--quick", "--output", str(output)]), 0)
             report = json.loads(output.read_text(encoding="utf-8"))
         check_shape(self, report, study.QUICK)
+
+    def test_environment_reports_the_actual_gil_state(self):
+        for state in (True, False):
+            with mock.patch.object(study.sys, "_is_gil_enabled", lambda state=state: state, create=True):
+                self.assertIs(study.environment()["gil_enabled"], state)
+        with mock.patch.object(study, "sys", types.SimpleNamespace(version="3.11 test")):
+            self.assertIsNone(study.environment()["gil_enabled"])
 
     def test_retained_results_keep_the_documented_shape(self):
         path = ROOT / "docs/evidence/wall-clock.json"

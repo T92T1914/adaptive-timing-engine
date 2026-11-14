@@ -110,7 +110,6 @@ def gil_state():
 
 
 def environment() -> dict:
-    gil = getattr(sys, "_is_gil_enabled", None)
     info = time.get_clock_info("perf_counter")
     return {"python": sys.version.replace("\n", " "),
             "implementation": platform.python_implementation(),
@@ -118,7 +117,7 @@ def environment() -> dict:
             "machine": platform.machine(),
             "processor": platform.processor(),
             "logical_cpus": os.cpu_count(),
-            "gil_enabled": None if gil is None else bool(gil),
+            "gil_enabled": gil_state(),
             "timer": "time.perf_counter_ns",
             "timer_resolution_s": info.resolution,
             "timer_monotonic": info.monotonic}
