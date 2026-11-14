@@ -42,7 +42,7 @@ pip install .
 adaptive-timing demo --events 120
 ```
 
-Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, including the source suite, wheel resources, a fresh installed consumer for revised analysis and passive receipt inspection. The runner for caller manifests has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate browser checks used only in development exercise the generated viewer.
+Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, plus the free threaded builds of 3.14 and 3.15 on Ubuntu, including the source suite, wheel resources, a fresh installed consumer for revised analysis and passive receipt inspection. The runner for caller manifests has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate browser checks used only in development exercise the generated viewer.
 
 ## Measured examples
 
@@ -67,7 +67,7 @@ The committed experiment compares 4 workloads × 4 policy variants × 3 seeds, w
 | Can queued planning grow without bound? | 101 requests → 2 calculations, with 99 queued requests replaced and 1 obsolete result rejected in a gated worker experiment. | One active calculation and one waiting request, and obsolete output cannot replace current work. |
 | Can a valid plan still miss deadlines? | The execution experiment compares 2, 40, and 150 ms virtual polling intervals, recording admitted, dispatched, and expired tasks separately. | Planning feasibility does not guarantee execution timeliness. |
 
-See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency.
+See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency. The [wall clock study](docs/wall-clock-study.md) measures planning, the reference swap, polling and adoption on one Windows machine. It is a record of that run and gives no latency bound.
 
 ### Planning as information arrives
 
