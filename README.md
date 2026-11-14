@@ -42,7 +42,7 @@ pip install .
 adaptive-timing demo --events 120
 ```
 
-Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, plus the free threaded builds of 3.14 and 3.15 on Ubuntu, including the source suite, wheel resources, a fresh installed consumer for revised analysis and passive receipt inspection. The runner for caller manifests has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate browser checks used only in development exercise the generated viewer.
+Installation is optional when running from a checkout. The wheel includes the viewer template and its presentation resources. CI checks standard CPython 3.11 through 3.15 on Ubuntu, Windows and macOS, plus the free threaded builds of 3.14 and 3.15 on the same three systems, including the source suite, wheel resources, a fresh installed consumer for revised analysis and passive receipt inspection. The runner for caller manifests has source regressions in that matrix and separate retained fresh installed qualification on Windows CPython 3.11.8. Separate browser checks used only in development exercise the generated viewer.
 
 ## Measured examples
 
