@@ -117,12 +117,39 @@ class AdoptionStressTests(unittest.TestCase):
     def test_current_answer_is_never_replaced_by_an_older_completion(self):
         self.assertEqual(drive(LatestWorker), [])
 
-    def test_the_stress_catches_a_missing_generation_check(self):
-        # Scheduling decides how often the race is hit, so give it several runs.
-        for _ in range(30):
-            if drive(_mutant_class()):
-                return
-        self.fail("the stress did not notice the removed generation check")
+    def test_a_missing_generation_check_is_visible_to_the_same_invariant(self):
+        # A fixed interleaving, so the result does not depend on scheduling.
+        # Request 2 returns while request 1 is still computing.
+        def interleave(worker_class):
+            first, release_first = threading.Event(), threading.Event()
+            second, release_second = threading.Event(), threading.Event()
+
+            def compute(payload):
+                if payload == 1:
+                    first.set()
+                    release_first.wait(10)
+                else:
+                    second.set()
+                    release_second.wait(10)
+                return payload
+
+            with worker_class(compute) as worker:
+                worker.request(1)
+                self.assertTrue(first.wait(10))
+                newest = worker.request(2)
+                release_first.set()
+                # Request 1 has finished and request 2 is computing.
+                self.assertTrue(second.wait(10))
+                outcome = worker.take()
+                release_second.set()
+                self.assertTrue(worker.wait_idle(10))
+                return newest, outcome
+
+        newest, outcome = interleave(LatestWorker)
+        self.assertIsNone(outcome)
+        newest, outcome = interleave(_mutant_class())
+        self.assertLess(outcome.generation, newest,
+                        "the mutant should publish the stale completion")
 
 
 if __name__ == "__main__":
