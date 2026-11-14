@@ -1,6 +1,6 @@
 # Wall clock study
 
-The rest of this project runs on a virtual clock. This study measures what the pieces actually cost in elapsed time. The first run was on one Windows computer, and later runs on hosted Linux and macOS are further down. Each is a measurement of that machine and that run. It gives no latency bound and says nothing about other hardware, other interpreters or human performance.
+The rest of this project runs on a virtual clock. This study measures what the pieces actually cost in elapsed time. The first run was on one Windows computer, and runs on hosted Linux and macOS are further down. Each is a measurement of that machine and that run. It gives no latency bound and says nothing about other hardware, other interpreters or human performance.
 
 ```sh
 python tools/wall_clock_study.py --output reports/wall-clock.json
@@ -90,7 +90,7 @@ Each cell is the median and then the 95th percentile, in microseconds. The sampl
 
 What these runs show:
 
-1. The tight loop penalty is not specific to Windows. On Linux with the GIL on, adoption in a tight loop took 5.8 ms at 60 events where planning took 0.6 ms. That is close to the default switch interval of 5 ms. At 240 and 960 events the gap grew to 5.2 ms and 10.5 ms, so on Linux it is not the flat 15.5 ms of the Windows run.
+1. The tight loop penalty is not specific to Windows. On Linux with the GIL on, adoption in a tight loop took 5.8 ms at 60 events where planning took 0.6 ms. That is close to the default switch interval of 5 ms. The gap stayed near 5.2 ms at 240 events and grew to 10.5 ms at 960 events, so on Linux it is not the flat 15.5 ms of the Windows run.
 2. On macOS the tight loop took 24 ms to 37 ms at the median, with 95th percentiles up to 62 ms. The macOS runner had three CPUs and its planning figures also spread more than Linux, so I read part of that as host noise.
 3. On the free threaded build the tight loop stayed within about 0.9 ms of planning at every size, and its median was at or below the `sleep(0)` median. That agrees with the reading that the penalty comes from the owner thread holding the GIL while it spins. It does not prove it. The free threaded job also ran a different Python version than the Linux 3.13 job, and I did not run the same version with the GIL forced on or off.
 4. Planning, the first poll and the two sleeping styles keep the ordering of the Windows run on every runner. The reference swap stays a fraction of a microsecond. Its rows are in the JSON files and not in the table.
@@ -101,6 +101,6 @@ A first version of the study script reported the GIL as on for every Python from
 
 ## What I did not establish
 
-The 15.5 ms with a tight loop is consistent with the owner thread holding the interpreter while it spins, so that the planning thread waits for a thread switch. A short side probe on the same machine supports that reading. At 60 events the tight loop took a median of 15.6 ms with the default switch interval of 5 ms and 3.0 ms with `sys.setswitchinterval(0.0001)`. I did not separate this from the Windows timer tick. The probe is not in the retained results. The hosted runs below add Linux, macOS and a free threaded build, and they change the picture without settling it. I have not run the switch interval probe on them, and each hosted figure is one run on a shared machine.
+The 15.5 ms with a tight loop is consistent with the owner thread holding the interpreter while it spins, so that the planning thread waits for a thread switch. A short side probe on the same machine supports that reading. At 60 events the tight loop took a median of 15.6 ms with the default switch interval of 5 ms and 3.0 ms with `sys.setswitchinterval(0.0001)`. I did not separate this from the Windows timer tick. The probe is not in the retained results. The hosted runs above add Linux, macOS and a free threaded build, and they change the picture without settling it. I have not run the switch interval probe on them, and each hosted figure is one run on a shared machine.
 
-The study does not show an operating system wakeup bound, a hard deadline or a figure that carries over to another machine. The synthetic workloads stay synthetic. Treat the table as how this implementation behaved on one computer on one day.
+The study does not show an operating system wakeup bound, a hard deadline or a figure that carries over to another machine. The synthetic workloads stay synthetic. Treat each table as how this implementation behaved on that machine in that run.
