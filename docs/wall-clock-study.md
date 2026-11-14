@@ -1,6 +1,6 @@
 # Wall clock study
 
-The rest of this project runs on a virtual clock. This study measures what the pieces actually cost in elapsed time, on one machine. It is a measurement of that machine and that run. It gives no latency bound and says nothing about other hardware, other interpreters or human performance.
+The rest of this project runs on a virtual clock. This study measures what the pieces actually cost in elapsed time. The first run was on one Windows computer, and later runs on hosted Linux and macOS are further down. Each is a measurement of that machine and that run. It gives no latency bound and says nothing about other hardware, other interpreters or human performance.
 
 ```sh
 python tools/wall_clock_study.py --output reports/wall-clock.json
@@ -58,8 +58,49 @@ All values are microseconds, from the retained run. A sample count is in the JSO
 3. A poll with the default budget stays below about 0.5 ms at p95 for 240 and 960 events. At 240 events the plan is smaller than the budget, so the poll drains it. At 960 events the plan is larger than the budget and the poll cost stayed close to the 240 event cost.
 4. The tight loop is also bimodal. Its fastest samples took 7.8 ms to 13 ms against a median of 15.5 ms. How the owner thread waits matters more than the swap. With a tight loop, adoption took about 15.5 ms at the median for every size, even when planning took 0.6 ms. With `sleep(0)` it took about as long as planning plus a small overhead.
 
+## Hosted runs on Linux and macOS
+
+The workflow [`wall-clock-study.yml`](../.github/workflows/wall-clock-study.yml) runs the same script on GitHub hosted runners. It runs on dispatch and when the workflow or the script changes. Each job uploads the study JSON and a `runner.json` that names the runner image. The retained files are in [`docs/wall-clock-hosted`](wall-clock-hosted), one folder per job, from run 43608063433 at revision dce1636.
+
+| Job | Operating system image | Interpreter | Logical CPUs | GIL during the study |
+| --- | --- | --- | ---: | --- |
+| Linux, 3.13 | ubuntu26, image 20261111.196.1 | CPython 3.13.18 | 4 | on |
+| macOS, 3.13 | macos26, image 20261102.0473.1 | CPython 3.13.17 | 3 | on |
+| Linux, 3.14t | ubuntu26, image 20261111.196.1 | CPython 3.14.10 free threading build | 4 | off at the start and after every measure |
+
+Each cell is the median and then the 95th percentile, in microseconds. The sample counts match the retained Windows run. The runners are shared virtual machines and the jobs ran one after another, so other tenants may have shared the host.
+
+| Runner | Measure | 60 events | 240 events | 960 events |
+| --- | --- | ---: | ---: | ---: |
+| Linux, 3.13 | Planning | 577 / 598 | 2296 / 2325 | 9404 / 9571 |
+| Linux, 3.13 | First poll | 68 / 76 | 267 / 279 | 293 / 303 |
+| Linux, 3.13 | Adoption, tight loop | 5765 / 5878 | 7516 / 7650 | 19920 / 20164 |
+| Linux, 3.13 | Adoption, `sleep(0)` | 663 / 693 | 2407 / 2481 | 9738 / 9867 |
+| Linux, 3.13 | Adoption, `sleep(0.001)` | 2147 / 2155 | 3488 / 3561 | 10648 / 11064 |
+| macOS, 3.13 | Planning | 704 / 1633 | 4012 / 5920 | 14610 / 22423 |
+| macOS, 3.13 | First poll | 45 / 131 | 192 / 476 | 214 / 614 |
+| macOS, 3.13 | Adoption, tight loop | 24196 / 28068 | 25422 / 31901 | 36901 / 61829 |
+| macOS, 3.13 | Adoption, `sleep(0)` | 1514 / 2543 | 3932 / 7581 | 14859 / 21534 |
+| macOS, 3.13 | Adoption, `sleep(0.001)` | 10346 / 13334 | 10162 / 12211 | 20059 / 26691 |
+| Linux, 3.14t | Planning | 562 / 580 | 2228 / 2276 | 9190 / 9440 |
+| Linux, 3.14t | First poll | 68 / 76 | 268 / 279 | 288 / 303 |
+| Linux, 3.14t | Adoption, tight loop | 688 / 994 | 2471 / 2901 | 10107 / 10520 |
+| Linux, 3.14t | Adoption, `sleep(0)` | 740 / 1047 | 2582 / 3067 | 10203 / 10738 |
+| Linux, 3.14t | Adoption, `sleep(0.001)` | 2150 / 2161 | 4333 / 4353 | 12147 / 13407 |
+
+What these runs show:
+
+1. The tight loop penalty is not specific to Windows. On Linux with the GIL on, adoption in a tight loop took 5.8 ms at 60 events where planning took 0.6 ms. That is close to the default switch interval of 5 ms. At 240 and 960 events the gap grew to 5.2 ms and 10.5 ms, so on Linux it is not the flat 15.5 ms of the Windows run.
+2. On macOS the tight loop took 24 ms to 37 ms at the median, with 95th percentiles up to 62 ms. The macOS runner had three CPUs and its planning figures also spread more than Linux, so I read part of that as host noise.
+3. On the free threaded build the tight loop stayed within about 0.9 ms of planning at every size, and its median was at or below the `sleep(0)` median. That agrees with the reading that the penalty comes from the owner thread holding the GIL while it spins. It does not prove it. The free threaded job also ran a different Python version than the Linux 3.13 job, and I did not run the same version with the GIL forced on or off.
+4. Planning, the first poll and the two sleeping styles keep the ordering of the Windows run on every runner. The reference swap stays a fraction of a microsecond. Its rows are in the JSON files and not in the table.
+5. The same workflow gave different figures on a second run. In an earlier run at revision 80aff16 the Linux tight loop at 960 events had a median of 27.1 ms against 19.9 ms here. I did not retain that run. Treat any one hosted figure as good to a few tens of percent at best.
+6. The hosted figures differ from the retained Windows figures and from each other. They do not combine into one number.
+
+A first version of the study script reported the GIL as on for every Python from 3.13, because it read the function `sys._is_gil_enabled` and not its result. The free threaded job showed the GIL off in the per measure record, so the script was fixed before these files were retained. A test now covers it. The retained Windows file is unaffected, because it ran on 3.11 and records null.
+
 ## What I did not establish
 
-The 15.5 ms with a tight loop is consistent with the owner thread holding the interpreter while it spins, so that the planning thread waits for a thread switch. A short side probe on the same machine supports that reading. At 60 events the tight loop took a median of 15.6 ms with the default switch interval of 5 ms and 3.0 ms with `sys.setswitchinterval(0.0001)`. I did not separate this from the Windows timer tick, and I did not run the study on Linux or macOS or on a free threaded build, where the effect may differ. The probe is not in the retained results.
+The 15.5 ms with a tight loop is consistent with the owner thread holding the interpreter while it spins, so that the planning thread waits for a thread switch. A short side probe on the same machine supports that reading. At 60 events the tight loop took a median of 15.6 ms with the default switch interval of 5 ms and 3.0 ms with `sys.setswitchinterval(0.0001)`. I did not separate this from the Windows timer tick. The probe is not in the retained results. The hosted runs below add Linux, macOS and a free threaded build, and they change the picture without settling it. I have not run the switch interval probe on them, and each hosted figure is one run on a shared machine.
 
 The study does not show an operating system wakeup bound, a hard deadline or a figure that carries over to another machine. The synthetic workloads stay synthetic. Treat the table as how this implementation behaved on one computer on one day.
