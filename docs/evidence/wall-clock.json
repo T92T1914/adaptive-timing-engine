@@ -1,0 +1,181 @@
+{
+  "environment": {
+    "gil_enabled": null,
+    "implementation": "CPython",
+    "logical_cpus": 16,
+    "machine": "AMD64",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "python": "3.11.8 (tags/v3.11.8:db85d51, Feb  6 2024, 22:03:32) [MSC v.1937 64 bit (AMD64)]",
+    "timer": "time.perf_counter_ns",
+    "timer_monotonic": true,
+    "timer_resolution_s": 1e-07
+  },
+  "note": "One machine, one interpreter, one run. Not a latency bound.",
+  "samples_per_measure": {
+    "adopt": 200,
+    "plan": 200,
+    "poll": 2000,
+    "swap": 5000
+  },
+  "scenario": "steady",
+  "seed": 42,
+  "sizes": {
+    "240": {
+      "adoption_sleep_0": {
+        "max_us": 3251.0,
+        "min_us": 1823.0,
+        "p50_us": 2127.0,
+        "p95_us": 2796.615,
+        "p99_us": 3008.063,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 5316.6,
+        "min_us": 2894.4,
+        "p50_us": 3516.5,
+        "p95_us": 4121.74,
+        "p99_us": 4557.346,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 17350.3,
+        "min_us": 7752.2,
+        "p50_us": 15532.7,
+        "p95_us": 16645.24,
+        "p99_us": 17288.316,
+        "samples": 200
+      },
+      "events": 240,
+      "first_poll_budget_256": {
+        "max_us": 851.5,
+        "min_us": 203.7,
+        "p50_us": 211.9,
+        "p95_us": 407.21,
+        "p99_us": 473.705,
+        "samples": 2000
+      },
+      "planned": 240,
+      "planning": {
+        "max_us": 4960.6,
+        "min_us": 1808.4,
+        "p50_us": 2028.3,
+        "p95_us": 2985.895,
+        "p99_us": 3715.469,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 126.2,
+        "min_us": 0.1,
+        "p50_us": 0.3,
+        "p95_us": 0.3,
+        "p99_us": 0.4,
+        "samples": 5000
+      }
+    },
+    "60": {
+      "adoption_sleep_0": {
+        "max_us": 1744.5,
+        "min_us": 484.5,
+        "p50_us": 617.4,
+        "p95_us": 1077.845,
+        "p99_us": 1309.236,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 4863.3,
+        "min_us": 2090.6,
+        "p50_us": 3047.15,
+        "p95_us": 3404.605,
+        "p99_us": 4112.422,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 19054.7,
+        "min_us": 8694.7,
+        "p50_us": 15532.55,
+        "p95_us": 16453.21,
+        "p99_us": 17303.688,
+        "samples": 200
+      },
+      "events": 60,
+      "first_poll_budget_256": {
+        "max_us": 469.1,
+        "min_us": 50.6,
+        "p50_us": 52.2,
+        "p95_us": 99.805,
+        "p99_us": 136.103,
+        "samples": 2000
+      },
+      "planned": 60,
+      "planning": {
+        "max_us": 1508.6,
+        "min_us": 452.8,
+        "p50_us": 611.15,
+        "p95_us": 819.735,
+        "p99_us": 1392.111,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 51.7,
+        "min_us": 0.2,
+        "p50_us": 0.3,
+        "p95_us": 0.3,
+        "p99_us": 0.4,
+        "samples": 5000
+      }
+    },
+    "960": {
+      "adoption_sleep_0": {
+        "max_us": 11908.4,
+        "min_us": 7374.0,
+        "p50_us": 8205.2,
+        "p95_us": 10509.72,
+        "p99_us": 11122.66,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 13727.7,
+        "min_us": 8519.5,
+        "p50_us": 9808.55,
+        "p95_us": 12458.905,
+        "p99_us": 13507.671,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 28868.7,
+        "min_us": 12980.0,
+        "p50_us": 15695.1,
+        "p95_us": 17389.135,
+        "p99_us": 28115.136,
+        "samples": 200
+      },
+      "events": 960,
+      "first_poll_budget_256": {
+        "max_us": 1112.1,
+        "min_us": 217.7,
+        "p50_us": 226.75,
+        "p95_us": 437.705,
+        "p99_us": 515.908,
+        "samples": 2000
+      },
+      "planned": 960,
+      "planning": {
+        "max_us": 14164.3,
+        "min_us": 7266.9,
+        "p50_us": 8369.2,
+        "p95_us": 10674.655,
+        "p99_us": 12447.405,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 5.0,
+        "min_us": 0.1,
+        "p50_us": 0.2,
+        "p95_us": 0.3,
+        "p99_us": 0.4,
+        "samples": 5000
+      }
+    }
+  }
+}

@@ -67,7 +67,7 @@ The committed experiment compares 4 workloads × 4 policy variants × 3 seeds, w
 | Can queued planning grow without bound? | 101 requests → 2 calculations, with 99 queued requests replaced and 1 obsolete result rejected in a gated worker experiment. | One active calculation and one waiting request, and obsolete output cannot replace current work. |
 | Can a valid plan still miss deadlines? | The execution experiment compares 2, 40, and 150 ms virtual polling intervals, recording admitted, dispatched, and expired tasks separately. | Planning feasibility does not guarantee execution timeliness. |
 
-See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency.
+See the [complete results](docs/evidence/results.md) for every seed, including results that are less favorable. Wall clock measurements are specific to the recorded environment. Virtual polling delays are simulated inputs, not measured operating system wakeup latency. The [wall clock study](docs/wall-clock-study.md) measures planning, the reference swap, polling and adoption on one Windows machine. It is a record of that run and gives no latency bound.
 
 ### Planning as information arrives
 
