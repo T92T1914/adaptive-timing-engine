@@ -28,20 +28,6 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: false
-      - name: Report when the GIL is on
-        shell: python {0}
-        run: |
-          import sys
-          gil = getattr(sys, "_is_gil_enabled", lambda: True)
-          print("at start:", gil())
-          for name in ("platform", "json", "threading", "time", "os"):
-              __import__(name)
-              print("after", name, gil())
-          sys.path.insert(0, ".")
-          import adaptive_timing
-          print("after adaptive_timing:", gil())
-          import adaptive_timing.experiment
-          print("after adaptive_timing.experiment:", gil())
       - name: Run the study
         run: python tools/wall_clock_study.py --output reports/wall-clock.json
       - name: Record the runner
@@ -50,7 +36,6 @@ jobs:
           import json
           import os
           from pathlib import Path
-          import sys
 
           details = {key: os.environ.get(key) for key in (
               "RUNNER_OS", "RUNNER_ARCH", "RUNNER_NAME", "ImageOS", "ImageVersion",
@@ -58,8 +43,6 @@ jobs:
           details["matrix_python"] = "${{ matrix.python }}"
           details["matrix_os"] = "${{ matrix.os }}"
           details["logical_cpus"] = os.cpu_count()
-          gil = getattr(sys, "_is_gil_enabled", None)
-          details["gil_enabled"] = None if gil is None else bool(gil)
           Path("reports/runner.json").write_text(
               json.dumps(details, indent=2, sort_keys=True) + "\n", encoding="utf-8")
           print(json.dumps(details, indent=2, sort_keys=True))
