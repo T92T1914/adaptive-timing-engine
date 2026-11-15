@@ -1,0 +1,13 @@
+{
+  "GITHUB_RUN_ATTEMPT": "1",
+  "GITHUB_RUN_ID": "43702666430",
+  "GITHUB_SHA": "d95bf1bdfc23849af03dfcbfd77d6fc7d613e4e9",
+  "ImageOS": "ubuntu26",
+  "ImageVersion": "20261111.82.6",
+  "RUNNER_ARCH": "X64",
+  "RUNNER_NAME": "GitHub Actions 1000013156",
+  "RUNNER_OS": "Linux",
+  "logical_cpus": 4,
+  "matrix_os": "ubuntu-latest",
+  "matrix_python": "3.13"
+}
