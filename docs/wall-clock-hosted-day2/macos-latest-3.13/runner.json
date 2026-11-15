@@ -1,0 +1,13 @@
+{
+  "GITHUB_RUN_ATTEMPT": "1",
+  "GITHUB_RUN_ID": "43702666430",
+  "GITHUB_SHA": "d95bf1bdfc23849af03dfcbfd77d6fc7d613e4e9",
+  "ImageOS": "macos26",
+  "ImageVersion": "20261102.0473.1",
+  "RUNNER_ARCH": "ARM64",
+  "RUNNER_NAME": "GitHub Actions 1000013163",
+  "RUNNER_OS": "macOS",
+  "logical_cpus": 5,
+  "matrix_os": "macos-latest",
+  "matrix_python": "3.13"
+}

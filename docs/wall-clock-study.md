@@ -99,6 +99,38 @@ What these runs show:
 
 A first version of the study script reported the GIL as on for every Python from 3.13, because it read the function `sys._is_gil_enabled` and not its result. The free threaded job showed the GIL off in the per measure record, so the script was fixed before these files were retained. A test now covers it. The retained Windows file is unaffected, because it ran on 3.11 and records null.
 
+## A second hosted run on the next day
+
+I dispatched nothing new for this. The merge of pull request 40 touched the workflow, so the same jobs ran again on November 15, a day after the first retained run. The files are in [`docs/wall-clock-hosted-day2`](wall-clock-hosted-day2), from run 43702666430 at revision d95bf1b. The macOS and free threaded Linux jobs ran on the same images as before. The Linux 3.13 job ran on image 20261111.82.6, not 20261111.196.1. All three Linux and free threaded jobs had four logical CPUs, and the macOS job had five, where it had three before. The format of each cell is the same, the median and then the 95th percentile in microseconds.
+
+| Runner | Measure | 60 events | 240 events | 960 events |
+| --- | --- | ---: | ---: | ---: |
+| Linux, 3.13 | Planning | 553 / 568 | 2213 / 2253 | 8938 / 9025 |
+| Linux, 3.13 | First poll | 57 / 67 | 232 / 245 | 252 / 266 |
+| Linux, 3.13 | Adoption, tight loop | 5795 / 6101 | 7513 / 7796 | 19236 / 19935 |
+| Linux, 3.13 | Adoption, `sleep(0)` | 708 / 990 | 2409 / 2598 | 9015 / 9327 |
+| Linux, 3.13 | Adoption, `sleep(0.001)` | 2161 / 2223 | 3455 / 3871 | 10275 / 10517 |
+| macOS, 3.13 | Planning | 657 / 735 | 2718 / 3070 | 13613 / 17875 |
+| macOS, 3.13 | First poll | 50 / 84 | 198 / 217 | 221 / 427 |
+| macOS, 3.13 | Adoption, tight loop | 23279 / 29352 | 25414 / 31610 | 36608 / 62705 |
+| macOS, 3.13 | Adoption, `sleep(0)` | 878 / 1285 | 2697 / 3548 | 12247 / 15946 |
+| macOS, 3.13 | Adoption, `sleep(0.001)` | 12704 / 15140 | 10202 / 13788 | 16882 / 22680 |
+| Linux, 3.14t | Planning | 730 / 744 | 2863 / 2909 | 11461 / 11666 |
+| Linux, 3.14t | First poll | 92 / 102 | 366 / 380 | 398 / 411 |
+| Linux, 3.14t | Adoption, tight loop | 836 / 965 | 3125 / 3209 | 12386 / 12736 |
+| Linux, 3.14t | Adoption, `sleep(0)` | 940 / 1219 | 3248 / 3355 | 12864 / 13371 |
+| Linux, 3.14t | Adoption, `sleep(0.001)` | 2184 / 2194 | 4378 / 5440 | 14344 / 14446 |
+
+How it compares with the first retained run:
+
+1. The Linux tight loop gap held. It was 5.2, 5.3 and 10.3 ms at 60, 240 and 960 events, against 5.2, 5.2 and 10.5 ms before. The cost is a gap over planning that stays close to the 5 ms switch interval at small sizes, and it is not a single number.
+2. The macOS tight loop medians were 23.3, 25.4 and 36.6 ms, against 24.2, 25.4 and 36.9 ms. The 95th percentile at 960 events was 62.7 ms, against 61.8 ms.
+3. The free threaded tight loop stayed within 0.1, 0.3 and 0.9 ms of planning, and it was at or below the `sleep(0)` median at every size, as before.
+4. Planning itself moved more than the gaps did. On the free threaded Linux job the planning median at 60 events was 730 microseconds, against 562 in the first run, and it was now about 30 percent above the Linux 3.13 job. In the first run the two were level. The macOS runner also had more CPUs than before, and the Linux 3.13 job ran on a different image. I read the planning shift as host and image variation on shared machines, so I do not read a difference between 3.13 and 3.14t into it.
+5. The earlier run I did not retain gave a Linux tight loop median of 27.1 ms at 960 events. The three runs I saw gave 27.1, 19.9 and 19.2 ms. The two retained runs agree within about 4 percent here, and the one I dropped did not.
+
+Two runs on two days still give no bound. They do show that the gap pattern repeated on Linux, macOS and the free threaded build, which one run could not.
+
 ## What I did not establish
 
 The 15.5 ms with a tight loop is consistent with the owner thread holding the interpreter while it spins, so that the planning thread waits for a thread switch. A short side probe on the same machine supports that reading. At 60 events the tight loop took a median of 15.6 ms with the default switch interval of 5 ms and 3.0 ms with `sys.setswitchinterval(0.0001)`. I did not separate this from the Windows timer tick. The probe is not in the retained results. The hosted runs above add Linux, macOS and a free threaded build, and they change the picture without settling it. I have not run the switch interval probe on them, and each hosted figure is one run on a shared machine.

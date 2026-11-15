@@ -1,0 +1,206 @@
+{
+  "environment": {
+    "gil_enabled": true,
+    "gil_enabled_at_start": true,
+    "implementation": "CPython",
+    "logical_cpus": 4,
+    "machine": "x86_64",
+    "platform": "Linux-7.0.0-1016-aws-x86_64-with-glibc2.43",
+    "processor": "",
+    "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+    "timer": "time.perf_counter_ns",
+    "timer_monotonic": true,
+    "timer_resolution_s": 1e-09
+  },
+  "note": "One machine, one interpreter, one run. Not a latency bound.",
+  "samples_per_measure": {
+    "adopt": 200,
+    "plan": 200,
+    "poll": 2000,
+    "swap": 5000
+  },
+  "scenario": "steady",
+  "seed": 42,
+  "sizes": {
+    "240": {
+      "adoption_sleep_0": {
+        "max_us": 2711.718,
+        "min_us": 2300.402,
+        "p50_us": 2409.061,
+        "p95_us": 2598.014,
+        "p99_us": 2675.314,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 4230.754,
+        "min_us": 3348.56,
+        "p50_us": 3454.612,
+        "p95_us": 3870.544,
+        "p99_us": 4165.171,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 7980.68,
+        "min_us": 7283.507,
+        "p50_us": 7513.471,
+        "p95_us": 7795.554,
+        "p99_us": 7912.523,
+        "samples": 200
+      },
+      "events": 240,
+      "first_poll_budget_256": {
+        "max_us": 295.955,
+        "min_us": 222.378,
+        "p50_us": 231.829,
+        "p95_us": 244.585,
+        "p99_us": 249.723,
+        "samples": 2000
+      },
+      "gil_enabled_after": {
+        "adoption_sleep_0": true,
+        "adoption_sleep_1ms": true,
+        "adoption_tight_loop": true,
+        "first_poll_budget_256": true,
+        "planning": true,
+        "reference_swap": true
+      },
+      "planned": 240,
+      "planning": {
+        "max_us": 2281.941,
+        "min_us": 2188.703,
+        "p50_us": 2212.644,
+        "p95_us": 2252.541,
+        "p99_us": 2276.5,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 9.269,
+        "min_us": 0.154,
+        "p50_us": 0.167,
+        "p95_us": 0.205,
+        "p99_us": 0.235,
+        "samples": 5000
+      }
+    },
+    "60": {
+      "adoption_sleep_0": {
+        "max_us": 1084.005,
+        "min_us": 621.644,
+        "p50_us": 707.8,
+        "p95_us": 990.204,
+        "p99_us": 1037.022,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 2330.11,
+        "min_us": 2106.959,
+        "p50_us": 2160.776,
+        "p95_us": 2223.322,
+        "p99_us": 2284.576,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 7991.431,
+        "min_us": 5617.489,
+        "p50_us": 5794.65,
+        "p95_us": 6100.616,
+        "p99_us": 6212.027,
+        "samples": 200
+      },
+      "events": 60,
+      "first_poll_budget_256": {
+        "max_us": 93.129,
+        "min_us": 55.446,
+        "p50_us": 56.971,
+        "p95_us": 67.176,
+        "p99_us": 72.505,
+        "samples": 2000
+      },
+      "gil_enabled_after": {
+        "adoption_sleep_0": true,
+        "adoption_sleep_1ms": true,
+        "adoption_tight_loop": true,
+        "first_poll_budget_256": true,
+        "planning": true,
+        "reference_swap": true
+      },
+      "planned": 60,
+      "planning": {
+        "max_us": 702.875,
+        "min_us": 536.25,
+        "p50_us": 552.902,
+        "p95_us": 567.567,
+        "p99_us": 647.155,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 9.975,
+        "min_us": 0.154,
+        "p50_us": 0.168,
+        "p95_us": 0.206,
+        "p99_us": 0.233,
+        "samples": 5000
+      }
+    },
+    "960": {
+      "adoption_sleep_0": {
+        "max_us": 9478.302,
+        "min_us": 8933.003,
+        "p50_us": 9014.595,
+        "p95_us": 9327.39,
+        "p99_us": 9376.912,
+        "samples": 200
+      },
+      "adoption_sleep_1ms": {
+        "max_us": 10660.616,
+        "min_us": 10080.275,
+        "p50_us": 10274.997,
+        "p95_us": 10516.951,
+        "p99_us": 10645.353,
+        "samples": 200
+      },
+      "adoption_tight_loop": {
+        "max_us": 25570.692,
+        "min_us": 19041.227,
+        "p50_us": 19236.424,
+        "p95_us": 19935.455,
+        "p99_us": 20178.283,
+        "samples": 200
+      },
+      "events": 960,
+      "first_poll_budget_256": {
+        "max_us": 437.055,
+        "min_us": 239.747,
+        "p50_us": 251.603,
+        "p95_us": 265.703,
+        "p99_us": 383.241,
+        "samples": 2000
+      },
+      "gil_enabled_after": {
+        "adoption_sleep_0": true,
+        "adoption_sleep_1ms": true,
+        "adoption_tight_loop": true,
+        "first_poll_budget_256": true,
+        "planning": true,
+        "reference_swap": true
+      },
+      "planned": 960,
+      "planning": {
+        "max_us": 9583.1,
+        "min_us": 8811.596,
+        "p50_us": 8938.259,
+        "p95_us": 9025.29,
+        "p99_us": 9208.119,
+        "samples": 200
+      },
+      "reference_swap": {
+        "max_us": 8.812,
+        "min_us": 0.156,
+        "p50_us": 0.169,
+        "p95_us": 0.207,
+        "p99_us": 0.23,
+        "samples": 5000
+      }
+    }
+  }
+}
