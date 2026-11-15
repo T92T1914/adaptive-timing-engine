@@ -101,7 +101,7 @@ A first version of the study script reported the GIL as on for every Python from
 
 ## A second hosted run on the next day
 
-I dispatched nothing new for this. The merge of pull request 40 touched the workflow, so the same jobs ran again on November 15, a day after the first retained run. The files are in [`docs/wall-clock-hosted-day2`](wall-clock-hosted-day2), from run 43702666430 at revision d95bf1b. The runner images were the same as in the first run, and the Linux jobs again had four logical CPUs and the macOS job three. The format of each cell is the same, the median and then the 95th percentile in microseconds.
+I dispatched nothing new for this. The merge of pull request 40 touched the workflow, so the same jobs ran again on November 15, a day after the first retained run. The files are in [`docs/wall-clock-hosted-day2`](wall-clock-hosted-day2), from run 43702666430 at revision d95bf1b. The macOS and free threaded Linux jobs ran on the same images as before. The Linux 3.13 job ran on image 20261111.82.6, not 20261111.196.1. All three Linux and free threaded jobs had four logical CPUs, and the macOS job had five, where it had three before. The format of each cell is the same, the median and then the 95th percentile in microseconds.
 
 | Runner | Measure | 60 events | 240 events | 960 events |
 | --- | --- | ---: | ---: | ---: |
@@ -126,7 +126,7 @@ How it compares with the first retained run:
 1. The Linux tight loop gap held. It was 5.2, 5.3 and 10.3 ms at 60, 240 and 960 events, against 5.2, 5.2 and 10.5 ms before. The cost is a gap over planning that stays close to the 5 ms switch interval at small sizes, and it is not a single number.
 2. The macOS tight loop medians were 23.3, 25.4 and 36.6 ms, against 24.2, 25.4 and 36.9 ms. The 95th percentile at 960 events was 62.7 ms, against 61.8 ms.
 3. The free threaded tight loop stayed within 0.1, 0.3 and 0.9 ms of planning, and it was at or below the `sleep(0)` median at every size, as before.
-4. Planning itself moved more than the gaps did. On the free threaded Linux job the planning median at 60 events was 730 microseconds, against 562 in the first run, and it was now about 30 percent above the Linux 3.13 job. In the first run the two were level. That is the size of host and image variation I would expect between days on shared machines, so I do not read a difference between 3.13 and 3.14t into planning.
+4. Planning itself moved more than the gaps did. On the free threaded Linux job the planning median at 60 events was 730 microseconds, against 562 in the first run, and it was now about 30 percent above the Linux 3.13 job. In the first run the two were level. The macOS runner also had more CPUs than before, and the Linux 3.13 job ran on a different image. I read the planning shift as host and image variation on shared machines, so I do not read a difference between 3.13 and 3.14t into it.
 5. The earlier run I did not retain gave a Linux tight loop median of 27.1 ms at 960 events. The three runs I saw gave 27.1, 19.9 and 19.2 ms. The two retained runs agree within about 4 percent here, and the one I dropped did not.
 
 Two runs on two days still give no bound. They do show that the gap pattern repeated on Linux, macOS and the free threaded build, which one run could not.
