@@ -1,0 +1,56 @@
+name: Wall clock study
+# Runs the wall clock study on hosted runners and keeps each result as an artifact.
+# It is a measurement of those shared machines on that day and gives no latency bound.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/wall-clock-study.yml
+      - tools/wall_clock_study.py
+permissions:
+  contents: read
+jobs:
+  study:
+    name: study (${{ matrix.python }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        include:
+          - {python: '3.13', os: ubuntu-latest}
+          - {python: '3.13', os: macos-latest}
+          - {python: '3.14t', os: ubuntu-latest}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+          allow-prereleases: false
+      - name: Run the study
+        run: python tools/wall_clock_study.py --output reports/wall-clock.json
+      - name: Record the runner
+        shell: python {0}
+        run: |
+          import json
+          import os
+          from pathlib import Path
+
+          details = {key: os.environ.get(key) for key in (
+              "RUNNER_OS", "RUNNER_ARCH", "RUNNER_NAME", "ImageOS", "ImageVersion",
+              "GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT")}
+          details["matrix_python"] = "${{ matrix.python }}"
+          details["matrix_os"] = "${{ matrix.os }}"
+          details["logical_cpus"] = os.cpu_count()
+          Path("reports/runner.json").write_text(
+              json.dumps(details, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(details, indent=2, sort_keys=True))
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wall-clock-${{ matrix.os }}-${{ matrix.python }}
+          path: |
+            reports/wall-clock.json
+            reports/runner.json
+          if-no-files-found: error
+          retention-days: 30

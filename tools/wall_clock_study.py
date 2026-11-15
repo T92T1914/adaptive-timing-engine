@@ -103,8 +103,13 @@ def measure_adoption(events, repeats, pause):
     return samples
 
 
-def environment() -> dict:
+def gil_state():
+    """True or False on builds that report it, None where 3.11 and 3.12 cannot say."""
     gil = getattr(sys, "_is_gil_enabled", None)
+    return None if gil is None else bool(gil())
+
+
+def environment() -> dict:
     info = time.get_clock_info("perf_counter")
     return {"python": sys.version.replace("\n", " "),
             "implementation": platform.python_implementation(),
@@ -112,7 +117,7 @@ def environment() -> dict:
             "machine": platform.machine(),
             "processor": platform.processor(),
             "logical_cpus": os.cpu_count(),
-            "gil_enabled": None if gil is None else bool(gil),
+            "gil_enabled": gil_state(),
             "timer": "time.perf_counter_ns",
             "timer_resolution_s": info.resolution,
             "timer_monotonic": info.monotonic}
@@ -120,22 +125,26 @@ def environment() -> dict:
 
 def study(counts: dict) -> dict:
     results = {}
+    gil_at_start = gil_state()
     for size in SIZES:
         events = workload(SCENARIO, size)
         plan = build_plan(events, Policy(), seed=SEED, now=0.0)
         measure_planning(events, 2)
-        results[str(size)] = {
-            "events": size,
-            "planned": len(plan.scheduled),
-            "planning": summary(measure_planning(events, counts["plan"])),
-            "reference_swap": summary(measure_swap(plan, counts["swap"])),
-            "first_poll_budget_256": summary(measure_poll(plan, counts["poll"])),
-            "adoption_tight_loop": summary(measure_adoption(events, counts["adopt"], None)),
-            "adoption_sleep_0": summary(measure_adoption(events, counts["adopt"], 0)),
-            "adoption_sleep_1ms": summary(measure_adoption(events, counts["adopt"], 0.001)),
-        }
+        block = {"events": size, "planned": len(plan.scheduled)}
+        gil_after = {}
+        for name, run in (
+                ("planning", lambda: measure_planning(events, counts["plan"])),
+                ("reference_swap", lambda: measure_swap(plan, counts["swap"])),
+                ("first_poll_budget_256", lambda: measure_poll(plan, counts["poll"])),
+                ("adoption_tight_loop", lambda: measure_adoption(events, counts["adopt"], None)),
+                ("adoption_sleep_0", lambda: measure_adoption(events, counts["adopt"], 0)),
+                ("adoption_sleep_1ms", lambda: measure_adoption(events, counts["adopt"], 0.001))):
+            block[name] = summary(run())
+            gil_after[name] = gil_state()
+        block["gil_enabled_after"] = gil_after
+        results[str(size)] = block
     return {"scenario": SCENARIO, "seed": SEED, "sizes": results,
-            "environment": environment(),
+            "environment": {**environment(), "gil_enabled_at_start": gil_at_start},
             "samples_per_measure": counts,
             "note": "One machine, one interpreter, one run. Not a latency bound."}
 
