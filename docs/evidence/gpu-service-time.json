@@ -1,0 +1,55 @@
+{
+  "note": "One card, one machine, one model. Every timed region is closed by a synchronize. Nothing here is a latency bound.",
+  "card": "NVIDIA GeForce RTX 4090",
+  "driver": "621.24",
+  "toolkit": "13.0",
+  "torch": "2.14.1+cu130",
+  "model": {
+    "width": 2048,
+    "blocks": 32,
+    "batch": 256,
+    "seed": 91,
+    "dtype": "float32"
+  },
+  "passes_per_chunk_size": 300,
+  "gpu_utilization_and_memory_before": "40, 5095",
+  "gpu_utilization_and_memory_after": "98, 6051",
+  "rows": [
+    {
+      "chunk_blocks": 1,
+      "chunks_per_pass": 32,
+      "count": 9600,
+      "median_ms": 0.09059999865712598,
+      "p5_ms": 0.08800000068731606,
+      "p95_ms": 1.2386100017465649,
+      "mean_ms": 0.1887391771553363
+    },
+    {
+      "chunk_blocks": 2,
+      "chunks_per_pass": 16,
+      "count": 4800,
+      "median_ms": 0.16229999891947955,
+      "p5_ms": 0.15609999536536634,
+      "p95_ms": 1.3624999992316589,
+      "mean_ms": 0.32941562492851517
+    },
+    {
+      "chunk_blocks": 4,
+      "chunks_per_pass": 8,
+      "count": 2400,
+      "median_ms": 0.3129999968223274,
+      "p5_ms": 0.29720000020461157,
+      "p95_ms": 1.6164050040970324,
+      "mean_ms": 0.61409512493204
+    },
+    {
+      "chunk_blocks": 8,
+      "chunks_per_pass": 4,
+      "count": 1200,
+      "median_ms": 0.9982500014302786,
+      "p5_ms": 0.5758999977842905,
+      "p95_ms": 2.0197150039166445,
+      "mean_ms": 1.1354149166557665
+    }
+  ]
+}

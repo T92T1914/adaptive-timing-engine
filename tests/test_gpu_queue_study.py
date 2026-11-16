@@ -71,5 +71,19 @@ class GpuExampleRunTests(unittest.TestCase):
             model.chunks(blocks, 5)
 
 
+class GpuServiceTimeResultsTests(unittest.TestCase):
+    def test_the_retained_results_name_their_environment_and_keep_their_order(self):
+        import json
+        report = json.loads((ROOT / "docs/evidence/gpu-service-time.json").read_text(encoding="utf-8"))
+        for key in ("card", "driver", "toolkit", "torch"):
+            self.assertTrue(report[key], key)
+        self.assertEqual([r["chunk_blocks"] for r in report["rows"]], [1, 2, 4, 8])
+        for row in report["rows"]:
+            self.assertEqual(row["count"], row["chunks_per_pass"] * report["passes_per_chunk_size"])
+            self.assertLessEqual(row["p5_ms"], row["median_ms"])
+            self.assertLessEqual(row["median_ms"], row["p95_ms"])
+        self.assertIn("nothing here is a latency bound", report["note"].lower())
+
+
 if __name__ == "__main__":
     unittest.main()

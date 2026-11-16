@@ -7,6 +7,9 @@ This folder holds the calculation I put under the worker's queue model. It is a 
 1. `model.py` builds 32 blocks of a 2048 wide linear layer and GELU from a seeded generator, and groups them into chunks of 1, 2, 4 or 8 blocks.
 2. `harness.py` times one chunk at a time. Every timed region is closed by `torch.cuda.synchronize()`, so a timing includes the work on the GPU and not only the launch.
 3. `requirements.txt` pins the `torch` build I use.
+4. `measure_service.py` times every chunk of every chunk size and writes [`docs/evidence/gpu-service-time.json`](../../docs/evidence/gpu-service-time.json). It holds the card, the driver, the toolkit, the `torch` build, and the count, median, 5th and 95th percentile for each chunk size.
+
+The retained run was one pass of 300 repeats per chunk size on the RTX 4090 while the desktop was idle but its usual background programs held about 40 percent of the card. That load widens the upper percentile, and the median is the steadier number. It is one run on one machine.
 
 ## Environment
 
