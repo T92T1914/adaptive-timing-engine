@@ -47,6 +47,9 @@ def measure(runs):
             "p5_ms": percentile(values, 0.05),
             "p95_ms": percentile(values, 0.95),
             "mean_ms": statistics.fmean(values),
+            # One whole pass is the sum of its chunk timings. The queue model reads these.
+            "pass_ms": [round(sum(chunk[i] for chunk in per_chunk) * 1000.0, 5)
+                        for i in range(runs)],
         })
     return rows
 

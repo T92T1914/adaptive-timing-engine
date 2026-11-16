@@ -82,6 +82,8 @@ class GpuServiceTimeResultsTests(unittest.TestCase):
             self.assertEqual(row["count"], row["chunks_per_pass"] * report["passes_per_chunk_size"])
             self.assertLessEqual(row["p5_ms"], row["median_ms"])
             self.assertLessEqual(row["median_ms"], row["p95_ms"])
+            self.assertEqual(len(row["pass_ms"]), report["passes_per_chunk_size"])
+            self.assertTrue(all(value > 0 for value in row["pass_ms"]))
         self.assertIn("nothing here is a latency bound", report["note"].lower())
 
 
