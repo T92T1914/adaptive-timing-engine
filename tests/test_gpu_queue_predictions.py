@@ -51,12 +51,28 @@ class GpuQueuePredictionTests(unittest.TestCase):
             self.assertTrue(0 <= p["stale_gpu_time_share"] < 1)
             self.assertGreater(p["mean_adopted_age"], 0)
 
-    def test_the_script_rewrites_the_retained_file_exactly(self):
+    def test_the_script_reproduces_the_retained_file(self):
+        # The last digit of a float can differ between platforms, so values are compared closely.
+        def close(left, right):
+            if isinstance(left, dict):
+                self.assertEqual(left.keys(), right.keys())
+                for key in left:
+                    close(left[key], right[key])
+            elif isinstance(left, list):
+                self.assertEqual(len(left), len(right))
+                for a, b in zip(left, right):
+                    close(a, b)
+            elif isinstance(left, float):
+                self.assertAlmostEqual(left, right, places=9)
+            else:
+                self.assertEqual(left, right)
+
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "again.json"
             self.assertEqual(predictions.main(["--output", str(output)]), 0)
-            self.assertEqual(output.read_text(encoding="utf-8"),
-                             (ROOT / "docs/evidence/gpu-queue-predictions.json").read_text(encoding="utf-8"))
+            again = json.loads(output.read_text(encoding="utf-8"))
+        retained = json.loads((ROOT / "docs/evidence/gpu-queue-predictions.json").read_text(encoding="utf-8"))
+        close(again, retained)
 
 
 if __name__ == "__main__":
