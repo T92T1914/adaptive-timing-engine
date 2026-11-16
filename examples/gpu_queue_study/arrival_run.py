@@ -1,0 +1,147 @@
+"""Run the real LatestWorker over the GPU calculation and set the counts beside the predictions.
+
+Arrivals are generated in real time from the same schedules as tools/queue_model_study.py,
+scaled by the mean pass duration of the chunk size. Run it from this folder in the GPU
+environment after docs/evidence/gpu-queue-predictions.json is committed:
+
+    python arrival_run.py --output ../../docs/evidence/gpu-arrival-runs.json
+"""
+import argparse
+import importlib.util
+import json
+from pathlib import Path
+import random
+import statistics
+import sys
+import time
+
+import torch
+
+import model
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from adaptive_timing import LatestWorker  # noqa: E402
+
+spec = importlib.util.spec_from_file_location("queue_model_study", ROOT / "tools" / "queue_model_study.py")
+queue_model = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(queue_model)
+
+PREDICTIONS = ROOT / "docs" / "evidence" / "gpu-queue-predictions.json"
+FULL = {"requests": 1000, "seeds": (7, 42, 73), "sizes": model.CHUNK_SIZES, "loads": queue_model.LOADS}
+QUICK = {"requests": 40, "seeds": (7,), "sizes": (1,), "loads": (0.6,)}
+METRICS = ("computed_share", "adopted_share", "mean_adopted_age", "stale_gpu_time_share")
+
+
+def wait_until(target):
+    """Sleep most of the gap, then spin, so a millisecond schedule holds on Windows."""
+    while True:
+        remaining = target - time.perf_counter()
+        if remaining <= 0:
+            return
+        if remaining > 0.002:
+            time.sleep(remaining - 0.0015)
+
+
+def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
+    rng = random.Random(f"gpu/{arrival}/{load}/{seed}")
+    schedule = [t * mean_pass for t in queue_model.arrival_times(arrival, load, requests, rng)]
+    arrived = [0.0] * requests
+    runs = []
+    holder = {}
+
+    def compute(index):
+        start = time.perf_counter()
+        value = inputs
+        for chunk in chunk_list:
+            value = model.run_chunk(chunk, value)
+        torch.cuda.synchronize()
+        end = time.perf_counter()
+        # Adopted when no newer request exists at the moment the computation ends.
+        adopted = holder["worker"].stats().generation == index + 2
+        if index >= 0:
+            runs.append((index, start, end, adopted))
+
+    with LatestWorker(compute) as worker:
+        holder["worker"] = worker
+        # The first call on a new thread sets up its cuBLAS handle, so one warm request
+        # runs before the schedule and is left out of every count.
+        worker.request(-1)
+        worker.wait_idle(timeout=60)
+        origin = time.perf_counter()
+        for index, offset in enumerate(schedule):
+            wait_until(origin + offset)
+            arrived[index] = time.perf_counter()
+            worker.request(index)
+        worker.wait_idle(timeout=60)
+        stats = worker.stats()
+    busy = sum(end - start for _, start, end, _ in runs)
+    stale_time = sum(end - start for _, start, end, adopted in runs if not adopted)
+    ages = [end - arrived[index] for index, _, end, adopted in runs if adopted]
+    adopted_count = len(ages)
+    return {
+        "submitted": stats.submitted - 1, "computed": stats.computed - 1, "replaced": stats.replaced,
+        "stale": stats.stale, "adopted": adopted_count,
+        # The check at the end of a computation and the worker's own check are two lock
+        # acquisitions. A mismatch is a request that slipped between them.
+        "adopted_check_mismatch": (stats.computed - 1 - stats.stale) - adopted_count,
+        "computed_share": (stats.computed - 1) / requests,
+        "adopted_share": adopted_count / requests,
+        "mean_adopted_age": (statistics.fmean(ages) / mean_pass) if ages else None,
+        "stale_gpu_time_share": stale_time / busy if busy else None,
+    }
+
+
+def study(settings, predictions, source):
+    blocks, inputs = model.build()
+    for _ in range(3):
+        value = inputs
+        for chunk in model.chunks(blocks, 1):
+            value = model.run_chunk(chunk, value)
+    torch.cuda.synchronize()
+    predicted = {(r["chunk_blocks"], r["arrival"], r["load"]): r["predicted"] for r in predictions["rows"]}
+    rows = []
+    for size in settings["sizes"]:
+        chunk_list = model.chunks(blocks, size)
+        mean_pass = predictions["mean_pass_ms"][str(size)] / 1000.0
+        for arrival in queue_model.ARRIVALS:
+            for load in settings["loads"]:
+                runs = [run_case(chunk_list, inputs, arrival, load, mean_pass, settings["requests"], seed)
+                        for seed in settings["seeds"]]
+                expected = predicted[(size, arrival, load)]
+                row = {"chunk_blocks": size, "arrival": arrival, "load": load,
+                       "runs": runs, "predicted": expected}
+                for name in METRICS:
+                    row[name] = queue_model.compare(expected[name], [run[name] for run in runs])
+                rows.append(row)
+    return {
+        "schema_version": 1,
+        "card": source["card"], "driver": source["driver"], "toolkit": source["toolkit"],
+        "torch": source["torch"],
+        "settings": {"requests_per_run": settings["requests"], "seeds": list(settings["seeds"]),
+                     "loads": list(settings["loads"]), "noise_factor": queue_model.NOISE_FACTOR,
+                     "time_unit": "mean pass duration of the chunk size",
+                     "arrivals": "generated in real time, not from any person"},
+        "note": "One card, one machine, one model, generated arrivals. Nothing here is a latency bound "
+                "or a measure of human performance.",
+        "rows": rows,
+    }
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--quick", action="store_true", help="a short run for tests")
+    args = parser.parse_args(argv)
+    if not torch.cuda.is_available():
+        raise SystemExit("no CUDA device")
+    predictions = json.loads(PREDICTIONS.read_text(encoding="utf-8"))
+    source = json.loads((ROOT / "docs" / "evidence" / "gpu-service-time.json").read_text(encoding="utf-8"))
+    report = study(QUICK if args.quick else FULL, predictions, source)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
