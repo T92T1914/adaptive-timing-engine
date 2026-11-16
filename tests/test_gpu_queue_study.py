@@ -19,8 +19,16 @@ class GpuExampleTests(unittest.TestCase):
     def test_nothing_in_the_package_or_the_tools_imports_the_example(self):
         for folder in ("adaptive_timing", "tools"):
             for path in (ROOT / folder).glob("*.py"):
-                text = path.read_text(encoding="utf-8")
-                self.assertNotIn("gpu_queue_study", text, path.name)
+                tree = ast.parse(path.read_text(encoding="utf-8"))
+                for node in ast.walk(tree):
+                    names = []
+                    if isinstance(node, ast.Import):
+                        names = [alias.name for alias in node.names]
+                    elif isinstance(node, ast.ImportFrom):
+                        names = [node.module or ""]
+                    for name in names:
+                        self.assertNotIn(name.split(".")[0], {"gpu_queue_study", "harness", "measure_service", "torch"},
+                                         path.name)
 
     def test_the_requirements_pin_one_exact_torch_build(self):
         lines = [l for l in (EXAMPLE / "requirements.txt").read_text(encoding="utf-8").splitlines()
