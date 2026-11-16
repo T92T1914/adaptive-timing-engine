@@ -1,0 +1,2638 @@
+{
+  "schema_version": 1,
+  "settings": {
+    "requests_per_run": 3000,
+    "seeds": [
+      7,
+      42,
+      73,
+      101,
+      211
+    ],
+    "loads": [
+      0.3,
+      0.6,
+      0.9,
+      1.5,
+      3.0
+    ],
+    "burst_size": 5,
+    "burst_spacing": 0.05,
+    "phase": 0.1234567,
+    "noise_factor": 3.0,
+    "time_unit": "mean service time of one computation"
+  },
+  "note": "Virtual time. The worker is real, the service durations are assumed inputs, and nothing here is a latency bound or a measure of human performance.",
+  "rows": [
+    {
+      "arrival": "poisson",
+      "service": "fixed",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 2889,
+          "replaced": 111,
+          "stale": 772,
+          "adopted": 2117,
+          "computed_share": 0.963,
+          "adopted_share": 0.7056666666666667,
+          "mean_adopted_age": 1.1281209238832832
+        },
+        {
+          "computed": 2885,
+          "replaced": 115,
+          "stale": 762,
+          "adopted": 2123,
+          "computed_share": 0.9616666666666667,
+          "adopted_share": 0.7076666666666667,
+          "mean_adopted_age": 1.1285948340845566
+        },
+        {
+          "computed": 2869,
+          "replaced": 131,
+          "stale": 715,
+          "adopted": 2154,
+          "computed_share": 0.9563333333333334,
+          "adopted_share": 0.718,
+          "mean_adopted_age": 1.116083488571496
+        },
+        {
+          "computed": 2889,
+          "replaced": 111,
+          "stale": 749,
+          "adopted": 2140,
+          "computed_share": 0.963,
+          "adopted_share": 0.7133333333333334,
+          "mean_adopted_age": 1.1243518419927998
+        },
+        {
+          "computed": 2899,
+          "replaced": 101,
+          "stale": 747,
+          "adopted": 2152,
+          "computed_share": 0.9663333333333334,
+          "adopted_share": 0.7173333333333334,
+          "mean_adopted_age": 1.1230829974560288
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9607825652254794,
+        "adopted_share": 0.7117652304323562,
+        "mean_adopted_age": 1.123121043712556
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.9620666666666666,
+          "min": 0.9563333333333334,
+          "max": 0.9663333333333334,
+          "standard_error": 0.0016275407487644912
+        },
+        "difference": 0.0012841014411871798,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.7124,
+          "min": 0.7056666666666667,
+          "max": 0.718,
+          "standard_error": 0.0024931015935086894
+        },
+        "difference": 0.0006347695676438558,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.1240468171976328,
+          "min": 1.116083488571496,
+          "max": 1.1285948340845566,
+          "standard_error": 0.002255209461642383
+        },
+        "difference": 0.0009257734850767196,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "fixed",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 2596,
+          "replaced": 404,
+          "stale": 1184,
+          "adopted": 1412,
+          "computed_share": 0.8653333333333333,
+          "adopted_share": 0.4706666666666667,
+          "mean_adopted_age": 1.1977333534882126
+        },
+        {
+          "computed": 2622,
+          "replaced": 378,
+          "stale": 1210,
+          "adopted": 1412,
+          "computed_share": 0.874,
+          "adopted_share": 0.4706666666666667,
+          "mean_adopted_age": 1.2075323770442485
+        },
+        {
+          "computed": 2616,
+          "replaced": 384,
+          "stale": 1142,
+          "adopted": 1474,
+          "computed_share": 0.872,
+          "adopted_share": 0.49133333333333334,
+          "mean_adopted_age": 1.1893941022976977
+        },
+        {
+          "computed": 2585,
+          "replaced": 415,
+          "stale": 1199,
+          "adopted": 1386,
+          "computed_share": 0.8616666666666667,
+          "adopted_share": 0.462,
+          "mean_adopted_age": 1.21034347879867
+        },
+        {
+          "computed": 2609,
+          "replaced": 391,
+          "stale": 1162,
+          "adopted": 1447,
+          "computed_share": 0.8696666666666667,
+          "adopted_share": 0.48233333333333334,
+          "mean_adopted_age": 1.206573951631353
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8704647207439612,
+        "adopted_share": 0.4777211675536232,
+        "mean_adopted_age": 1.2031689704159294
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.8685333333333333,
+          "min": 0.8616666666666667,
+          "max": 0.874,
+          "standard_error": 0.002242518425540555
+        },
+        "difference": -0.0019313874106279272,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.47540000000000004,
+          "min": 0.462,
+          "max": 0.49133333333333334,
+          "standard_error": 0.005129868960856167
+        },
+        "difference": -0.00232116755362316,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.2023154526520363,
+          "min": 1.1893941022976977,
+          "max": 1.21034347879867,
+          "standard_error": 0.0038584792678503124
+        },
+        "difference": -0.0008535177638930858,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "fixed",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 2300,
+          "replaced": 700,
+          "stale": 1368,
+          "adopted": 932,
+          "computed_share": 0.7666666666666667,
+          "adopted_share": 0.31066666666666665,
+          "mean_adopted_age": 1.2504995962152319
+        },
+        {
+          "computed": 2323,
+          "replaced": 677,
+          "stale": 1350,
+          "adopted": 973,
+          "computed_share": 0.7743333333333333,
+          "adopted_share": 0.3243333333333333,
+          "mean_adopted_age": 1.2419911365050993
+        },
+        {
+          "computed": 2328,
+          "replaced": 672,
+          "stale": 1367,
+          "adopted": 961,
+          "computed_share": 0.776,
+          "adopted_share": 0.32033333333333336,
+          "mean_adopted_age": 1.2458123057054098
+        },
+        {
+          "computed": 2274,
+          "replaced": 726,
+          "stale": 1326,
+          "adopted": 948,
+          "computed_share": 0.758,
+          "adopted_share": 0.316,
+          "mean_adopted_age": 1.2436697385465
+        },
+        {
+          "computed": 2289,
+          "replaced": 711,
+          "stale": 1347,
+          "adopted": 942,
+          "computed_share": 0.763,
+          "adopted_share": 0.314,
+          "mean_adopted_age": 1.2574166006044318
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7653629429896113,
+        "adopted_share": 0.3111733513093498,
+        "mean_adopted_age": 1.2527973849920686
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.7676000000000001,
+          "min": 0.758,
+          "max": 0.776,
+          "standard_error": 0.003391820225843999
+        },
+        "difference": 0.0022370570103887877,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.31706666666666666,
+          "min": 0.31066666666666665,
+          "max": 0.3243333333333333,
+          "standard_error": 0.0023976840677805925
+        },
+        "difference": 0.005893315357316853,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.2478778755153346,
+          "min": 1.2419911365050993,
+          "max": 1.2574166006044318,
+          "standard_error": 0.0027792929614959046
+        },
+        "difference": -0.00491950947673403,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "fixed",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 1707,
+          "replaced": 1293,
+          "stale": 1353,
+          "adopted": 354,
+          "computed_share": 0.569,
+          "adopted_share": 0.118,
+          "mean_adopted_age": 1.2875648107348794
+        },
+        {
+          "computed": 1771,
+          "replaced": 1229,
+          "stale": 1364,
+          "adopted": 407,
+          "computed_share": 0.5903333333333334,
+          "adopted_share": 0.13566666666666666,
+          "mean_adopted_age": 1.327611431023714
+        },
+        {
+          "computed": 1733,
+          "replaced": 1267,
+          "stale": 1329,
+          "adopted": 404,
+          "computed_share": 0.5776666666666667,
+          "adopted_share": 0.13466666666666666,
+          "mean_adopted_age": 1.3029559904584977
+        },
+        {
+          "computed": 1773,
+          "replaced": 1227,
+          "stale": 1376,
+          "adopted": 397,
+          "computed_share": 0.591,
+          "adopted_share": 0.13233333333333333,
+          "mean_adopted_age": 1.3288279725801122
+        },
+        {
+          "computed": 1753,
+          "replaced": 1247,
+          "stale": 1361,
+          "adopted": 392,
+          "computed_share": 0.5843333333333334,
+          "adopted_share": 0.13066666666666665,
+          "mean_adopted_age": 1.2910239145283373
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.580339212398128,
+        "adopted_share": 0.12949118140280794,
+        "mean_adopted_age": 1.2947830664192836
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.5824666666666667,
+          "min": 0.569,
+          "max": 0.591,
+          "standard_error": 0.004138706185378345
+        },
+        "difference": 0.0021274542685386644,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.13026666666666667,
+          "min": 0.118,
+          "max": 0.13566666666666666,
+          "standard_error": 0.003189217946630664
+        },
+        "difference": 0.0007754852638587328,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.3075968238651081,
+          "min": 1.2875648107348794,
+          "max": 1.3288279725801122,
+          "standard_error": 0.008800074954551032
+        },
+        "difference": 0.01281375744582447,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "fixed",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 1018,
+          "replaced": 1982,
+          "stale": 965,
+          "adopted": 53,
+          "computed_share": 0.3393333333333333,
+          "adopted_share": 0.017666666666666667,
+          "mean_adopted_age": 1.314373458301848
+        },
+        {
+          "computed": 977,
+          "replaced": 2023,
+          "stale": 936,
+          "adopted": 41,
+          "computed_share": 0.32566666666666666,
+          "adopted_share": 0.013666666666666667,
+          "mean_adopted_age": 1.2426444474128773
+        },
+        {
+          "computed": 978,
+          "replaced": 2022,
+          "stale": 935,
+          "adopted": 43,
+          "computed_share": 0.326,
+          "adopted_share": 0.014333333333333333,
+          "mean_adopted_age": 1.2843037153874004
+        },
+        {
+          "computed": 978,
+          "replaced": 2022,
+          "stale": 926,
+          "adopted": 52,
+          "computed_share": 0.326,
+          "adopted_share": 0.017333333333333333,
+          "mean_adopted_age": 1.2310008110014108
+        },
+        {
+          "computed": 994,
+          "replaced": 2006,
+          "stale": 944,
+          "adopted": 50,
+          "computed_share": 0.3313333333333333,
+          "adopted_share": 0.016666666666666666,
+          "mean_adopted_age": 1.270454653948038
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3278917437784153,
+        "adopted_share": 0.01632476866475409,
+        "mean_adopted_age": 1.266950575509515
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.32966666666666666,
+          "min": 0.32566666666666666,
+          "max": 0.3393333333333333,
+          "standard_error": 0.0026373387259803266
+        },
+        "difference": 0.0017749228882513735,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.015933333333333334,
+          "min": 0.013666666666666667,
+          "max": 0.017666666666666667,
+          "standard_error": 0.0008124038404635959
+        },
+        "difference": -0.00039143533142075443,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.2685554172103148,
+          "min": 1.2310008110014108,
+          "max": 1.314373458301848,
+          "standard_error": 0.014887302792103266
+        },
+        "difference": 0.001604841700799886,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "fixed",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9607825652254794,
+        "adopted_share": 0.7117652304323562,
+        "mean_adopted_age": 1.123121043712556
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.039217434774520554,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.2882347695676438,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": -0.12312104371255606,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "fixed",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 1.0
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8704647207439612,
+        "adopted_share": 0.4777211675536232,
+        "mean_adopted_age": 1.2031689704159294
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.1295352792560388,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.5222788324463767,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": -0.2031689704159294,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "fixed",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 0.9999999999999999
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 0.9999999999999999
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 0.9999999999999999
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 0.9999999999999999
+        },
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 0,
+          "adopted": 3000,
+          "computed_share": 1.0,
+          "adopted_share": 1.0,
+          "mean_adopted_age": 0.9999999999999999
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7653629429896113,
+        "adopted_share": 0.3111733513093498,
+        "mean_adopted_age": 1.2527973849920686
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.23463705701038873,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "standard_error": 0.0
+        },
+        "difference": 0.6888266486906502,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.9999999999999998,
+          "min": 0.9999999999999999,
+          "max": 0.9999999999999999,
+          "standard_error": 0.0
+        },
+        "difference": -0.25279738499206883,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "fixed",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 2001,
+          "replaced": 999,
+          "stale": 2000,
+          "adopted": 1,
+          "computed_share": 0.667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.6666666666669698
+        },
+        {
+          "computed": 2001,
+          "replaced": 999,
+          "stale": 2000,
+          "adopted": 1,
+          "computed_share": 0.667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.6666666666669698
+        },
+        {
+          "computed": 2001,
+          "replaced": 999,
+          "stale": 2000,
+          "adopted": 1,
+          "computed_share": 0.667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.6666666666669698
+        },
+        {
+          "computed": 2001,
+          "replaced": 999,
+          "stale": 2000,
+          "adopted": 1,
+          "computed_share": 0.667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.6666666666669698
+        },
+        {
+          "computed": 2001,
+          "replaced": 999,
+          "stale": 2000,
+          "adopted": 1,
+          "computed_share": 0.667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.6666666666669698
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.580339212398128,
+        "adopted_share": 0.12949118140280794,
+        "mean_adopted_age": 1.2947830664192836
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.667,
+          "min": 0.667,
+          "max": 0.667,
+          "standard_error": 0.0
+        },
+        "difference": 0.08666078760187201,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.0003333333333333333,
+          "min": 0.0003333333333333333,
+          "max": 0.0003333333333333333,
+          "standard_error": 0.0
+        },
+        "difference": -0.1291578480694746,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.6666666666669698,
+          "min": 1.6666666666669698,
+          "max": 1.6666666666669698,
+          "standard_error": 0.0
+        },
+        "difference": 0.3718836002476862,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "fixed",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 1001,
+          "replaced": 1999,
+          "stale": 1000,
+          "adopted": 1,
+          "computed_share": 0.33366666666666667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.3333333333333712
+        },
+        {
+          "computed": 1001,
+          "replaced": 1999,
+          "stale": 1000,
+          "adopted": 1,
+          "computed_share": 0.33366666666666667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.3333333333333712
+        },
+        {
+          "computed": 1001,
+          "replaced": 1999,
+          "stale": 1000,
+          "adopted": 1,
+          "computed_share": 0.33366666666666667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.3333333333333712
+        },
+        {
+          "computed": 1001,
+          "replaced": 1999,
+          "stale": 1000,
+          "adopted": 1,
+          "computed_share": 0.33366666666666667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.3333333333333712
+        },
+        {
+          "computed": 1001,
+          "replaced": 1999,
+          "stale": 1000,
+          "adopted": 1,
+          "computed_share": 0.33366666666666667,
+          "adopted_share": 0.0003333333333333333,
+          "mean_adopted_age": 1.3333333333333712
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3278917437784153,
+        "adopted_share": 0.01632476866475409,
+        "mean_adopted_age": 1.266950575509515
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.33366666666666667,
+          "min": 0.33366666666666667,
+          "max": 0.33366666666666667,
+          "standard_error": 0.0
+        },
+        "difference": 0.005774922888251377,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.0003333333333333333,
+          "min": 0.0003333333333333333,
+          "max": 0.0003333333333333333,
+          "standard_error": 0.0
+        },
+        "difference": -0.015991435331420754,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.3333333333333712,
+          "min": 1.3333333333333712,
+          "max": 1.3333333333333712,
+          "standard_error": 0.0
+        },
+        "difference": 0.06638275782385628,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "fixed",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 1116,
+          "replaced": 1884,
+          "stale": 575,
+          "adopted": 541,
+          "computed_share": 0.372,
+          "adopted_share": 0.18033333333333335,
+          "mean_adopted_age": 1.7717387770656106
+        },
+        {
+          "computed": 1110,
+          "replaced": 1890,
+          "stale": 575,
+          "adopted": 535,
+          "computed_share": 0.37,
+          "adopted_share": 0.17833333333333334,
+          "mean_adopted_age": 1.7663800938288343
+        },
+        {
+          "computed": 1109,
+          "replaced": 1891,
+          "stale": 575,
+          "adopted": 534,
+          "computed_share": 0.36966666666666664,
+          "adopted_share": 0.178,
+          "mean_adopted_age": 1.7695871614365914
+        },
+        {
+          "computed": 1095,
+          "replaced": 1905,
+          "stale": 569,
+          "adopted": 526,
+          "computed_share": 0.365,
+          "adopted_share": 0.17533333333333334,
+          "mean_adopted_age": 1.7523765108623695
+        },
+        {
+          "computed": 1115,
+          "replaced": 1885,
+          "stale": 581,
+          "adopted": 534,
+          "computed_share": 0.37166666666666665,
+          "adopted_share": 0.178,
+          "mean_adopted_age": 1.7741580777727695
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9607825652254794,
+        "adopted_share": 0.7117652304323562,
+        "mean_adopted_age": 1.123121043712556
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.36966666666666664,
+          "min": 0.365,
+          "max": 0.372,
+          "standard_error": 0.001251665557034572
+        },
+        "difference": -0.5911158985588127,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.178,
+          "min": 0.17533333333333334,
+          "max": 0.18033333333333335,
+          "standard_error": 0.0007958224257542222
+        },
+        "difference": -0.5337652304323561,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.7668481241932352,
+          "min": 1.7523765108623695,
+          "max": 1.7741580777727695,
+          "standard_error": 0.0038373355123940103
+        },
+        "difference": 0.6437270804806792,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "fixed",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 1016,
+          "replaced": 1984,
+          "stale": 551,
+          "adopted": 465,
+          "computed_share": 0.33866666666666667,
+          "adopted_share": 0.155,
+          "mean_adopted_age": 1.7173322351927378
+        },
+        {
+          "computed": 1039,
+          "replaced": 1961,
+          "stale": 566,
+          "adopted": 473,
+          "computed_share": 0.3463333333333333,
+          "adopted_share": 0.15766666666666668,
+          "mean_adopted_age": 1.7380195974078667
+        },
+        {
+          "computed": 1029,
+          "replaced": 1971,
+          "stale": 555,
+          "adopted": 474,
+          "computed_share": 0.343,
+          "adopted_share": 0.158,
+          "mean_adopted_age": 1.7228928871959222
+        },
+        {
+          "computed": 1057,
+          "replaced": 1943,
+          "stale": 573,
+          "adopted": 484,
+          "computed_share": 0.35233333333333333,
+          "adopted_share": 0.16133333333333333,
+          "mean_adopted_age": 1.7491637477501165
+        },
+        {
+          "computed": 1038,
+          "replaced": 1962,
+          "stale": 559,
+          "adopted": 479,
+          "computed_share": 0.346,
+          "adopted_share": 0.15966666666666668,
+          "mean_adopted_age": 1.73077506764687
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8704647207439612,
+        "adopted_share": 0.4777211675536232,
+        "mean_adopted_age": 1.2031689704159294
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.34526666666666667,
+          "min": 0.33866666666666667,
+          "max": 0.35233333333333333,
+          "standard_error": 0.0022395436042987734
+        },
+        "difference": -0.5251980540772945,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.15833333333333335,
+          "min": 0.155,
+          "max": 0.16133333333333333,
+          "standard_error": 0.0010593499054713802
+        },
+        "difference": -0.3193878342202898,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.7316367070387026,
+          "min": 1.7173322351927378,
+          "max": 1.7491637477501165,
+          "standard_error": 0.0056113864964057085
+        },
+        "difference": 0.5284677366227732,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "fixed",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 995,
+          "replaced": 2005,
+          "stale": 567,
+          "adopted": 428,
+          "computed_share": 0.33166666666666667,
+          "adopted_share": 0.14266666666666666,
+          "mean_adopted_age": 1.7188891977738616
+        },
+        {
+          "computed": 964,
+          "replaced": 2036,
+          "stale": 542,
+          "adopted": 422,
+          "computed_share": 0.32133333333333336,
+          "adopted_share": 0.14066666666666666,
+          "mean_adopted_age": 1.6884743871896666
+        },
+        {
+          "computed": 955,
+          "replaced": 2045,
+          "stale": 535,
+          "adopted": 420,
+          "computed_share": 0.31833333333333336,
+          "adopted_share": 0.14,
+          "mean_adopted_age": 1.693664730781934
+        },
+        {
+          "computed": 967,
+          "replaced": 2033,
+          "stale": 551,
+          "adopted": 416,
+          "computed_share": 0.32233333333333336,
+          "adopted_share": 0.13866666666666666,
+          "mean_adopted_age": 1.6950230588803967
+        },
+        {
+          "computed": 998,
+          "replaced": 2002,
+          "stale": 562,
+          "adopted": 436,
+          "computed_share": 0.33266666666666667,
+          "adopted_share": 0.14533333333333334,
+          "mean_adopted_age": 1.7221022520920792
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7653629429896113,
+        "adopted_share": 0.3111733513093498,
+        "mean_adopted_age": 1.2527973849920686
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.3252666666666667,
+          "min": 0.31833333333333336,
+          "max": 0.33266666666666667,
+          "standard_error": 0.002897125011685429
+        },
+        "difference": -0.44009627632294457,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.14146666666666668,
+          "min": 0.13866666666666666,
+          "max": 0.14533333333333334,
+          "standard_error": 0.0011623730516108475
+        },
+        "difference": -0.16970668464268313,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.7036307253435876,
+          "min": 1.6884743871896666,
+          "max": 1.7221022520920792,
+          "standard_error": 0.006989799128394635
+        },
+        "difference": 0.450833340351519,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "fixed",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 850,
+          "replaced": 2150,
+          "stale": 500,
+          "adopted": 350,
+          "computed_share": 0.2833333333333333,
+          "adopted_share": 0.11666666666666667,
+          "mean_adopted_age": 1.6630697134316204
+        },
+        {
+          "computed": 870,
+          "replaced": 2130,
+          "stale": 519,
+          "adopted": 351,
+          "computed_share": 0.29,
+          "adopted_share": 0.117,
+          "mean_adopted_age": 1.6683154014911
+        },
+        {
+          "computed": 855,
+          "replaced": 2145,
+          "stale": 512,
+          "adopted": 343,
+          "computed_share": 0.285,
+          "adopted_share": 0.11433333333333333,
+          "mean_adopted_age": 1.667139366179104
+        },
+        {
+          "computed": 832,
+          "replaced": 2168,
+          "stale": 498,
+          "adopted": 334,
+          "computed_share": 0.2773333333333333,
+          "adopted_share": 0.11133333333333334,
+          "mean_adopted_age": 1.6350138020820015
+        },
+        {
+          "computed": 887,
+          "replaced": 2113,
+          "stale": 537,
+          "adopted": 350,
+          "computed_share": 0.2956666666666667,
+          "adopted_share": 0.11666666666666667,
+          "mean_adopted_age": 1.6708034436951213
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.580339212398128,
+        "adopted_share": 0.12949118140280794,
+        "mean_adopted_age": 1.2947830664192836
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.28626666666666667,
+          "min": 0.2773333333333333,
+          "max": 0.2956666666666667,
+          "standard_error": 0.003100895927882067
+        },
+        "difference": -0.29407254573146135,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.11520000000000001,
+          "min": 0.11133333333333334,
+          "max": 0.117,
+          "standard_error": 0.0010780641085864151
+        },
+        "difference": -0.014291181402807926,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.6608683453757895,
+          "min": 1.6350138020820015,
+          "max": 1.6708034436951213,
+          "standard_error": 0.006583289282579665
+        },
+        "difference": 0.3660852789565059,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "fixed",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 654,
+          "replaced": 2346,
+          "stale": 449,
+          "adopted": 205,
+          "computed_share": 0.218,
+          "adopted_share": 0.06833333333333333,
+          "mean_adopted_age": 1.5506327837718719
+        },
+        {
+          "computed": 692,
+          "replaced": 2308,
+          "stale": 470,
+          "adopted": 222,
+          "computed_share": 0.23066666666666666,
+          "adopted_share": 0.074,
+          "mean_adopted_age": 1.5929566364409533
+        },
+        {
+          "computed": 675,
+          "replaced": 2325,
+          "stale": 464,
+          "adopted": 211,
+          "computed_share": 0.225,
+          "adopted_share": 0.07033333333333333,
+          "mean_adopted_age": 1.5427598169414876
+        },
+        {
+          "computed": 638,
+          "replaced": 2362,
+          "stale": 436,
+          "adopted": 202,
+          "computed_share": 0.21266666666666667,
+          "adopted_share": 0.06733333333333333,
+          "mean_adopted_age": 1.5505638942503817
+        },
+        {
+          "computed": 638,
+          "replaced": 2362,
+          "stale": 437,
+          "adopted": 201,
+          "computed_share": 0.21266666666666667,
+          "adopted_share": 0.067,
+          "mean_adopted_age": 1.5627626327387198
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3278917437784153,
+        "adopted_share": 0.01632476866475409,
+        "mean_adopted_age": 1.266950575509515
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.2198,
+          "min": 0.21266666666666667,
+          "max": 0.23066666666666666,
+          "standard_error": 0.0035364765892999567
+        },
+        "difference": -0.1080917437784153,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.06939999999999999,
+          "min": 0.067,
+          "max": 0.074,
+          "standard_error": 0.0012884098726725119
+        },
+        "difference": 0.0530752313352459,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.559935152828683,
+          "min": 1.5427598169414876,
+          "max": 1.5929566364409533,
+          "standard_error": 0.008853699065491175
+        },
+        "difference": 0.29298457731916794,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "exponential",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 2773,
+          "replaced": 227,
+          "stale": 671,
+          "adopted": 2102,
+          "computed_share": 0.9243333333333333,
+          "adopted_share": 0.7006666666666667,
+          "mean_adopted_age": 0.927638817463786
+        },
+        {
+          "computed": 2828,
+          "replaced": 172,
+          "stale": 670,
+          "adopted": 2158,
+          "computed_share": 0.9426666666666667,
+          "adopted_share": 0.7193333333333334,
+          "mean_adopted_age": 0.9730720088633927
+        },
+        {
+          "computed": 2822,
+          "replaced": 178,
+          "stale": 675,
+          "adopted": 2147,
+          "computed_share": 0.9406666666666667,
+          "adopted_share": 0.7156666666666667,
+          "mean_adopted_age": 0.9493606685354635
+        },
+        {
+          "computed": 2811,
+          "replaced": 189,
+          "stale": 647,
+          "adopted": 2164,
+          "computed_share": 0.937,
+          "adopted_share": 0.7213333333333334,
+          "mean_adopted_age": 0.9583161456705408
+        },
+        {
+          "computed": 2812,
+          "replaced": 188,
+          "stale": 627,
+          "adopted": 2185,
+          "computed_share": 0.9373333333333334,
+          "adopted_share": 0.7283333333333334,
+          "mean_adopted_age": 0.9716225084949431
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9352517985611511,
+        "adopted_share": 0.7194244604316546,
+        "mean_adopted_age": 0.9467455621301779
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.9364000000000001,
+          "min": 0.9243333333333333,
+          "max": 0.9426666666666667,
+          "standard_error": 0.0031961782734314954
+        },
+        "difference": 0.0011482014388489725,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.7170666666666667,
+          "min": 0.7006666666666667,
+          "max": 0.7283333333333334,
+          "standard_error": 0.004589117562233517
+        },
+        "difference": -0.0023577937649879033,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.9560020298056251,
+          "min": 0.927638817463786,
+          "max": 0.9730720088633927,
+          "standard_error": 0.008334621064035777
+        },
+        "difference": 0.009256467675447189,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "exponential",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 2443,
+          "replaced": 557,
+          "stale": 945,
+          "adopted": 1498,
+          "computed_share": 0.8143333333333334,
+          "adopted_share": 0.49933333333333335,
+          "mean_adopted_age": 0.879924435576607
+        },
+        {
+          "computed": 2447,
+          "replaced": 553,
+          "stale": 921,
+          "adopted": 1526,
+          "computed_share": 0.8156666666666667,
+          "adopted_share": 0.5086666666666667,
+          "mean_adopted_age": 0.8482904210449251
+        },
+        {
+          "computed": 2447,
+          "replaced": 553,
+          "stale": 885,
+          "adopted": 1562,
+          "computed_share": 0.8156666666666667,
+          "adopted_share": 0.5206666666666667,
+          "mean_adopted_age": 0.8356180632982452
+        },
+        {
+          "computed": 2472,
+          "replaced": 528,
+          "stale": 892,
+          "adopted": 1580,
+          "computed_share": 0.824,
+          "adopted_share": 0.5266666666666666,
+          "mean_adopted_age": 0.8109713010222805
+        },
+        {
+          "computed": 2454,
+          "replaced": 546,
+          "stale": 922,
+          "adopted": 1532,
+          "computed_share": 0.818,
+          "adopted_share": 0.5106666666666667,
+          "mean_adopted_age": 0.8569422998875179
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8163265306122448,
+        "adopted_share": 0.5102040816326531,
+        "mean_adopted_age": 0.859375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.8175333333333332,
+          "min": 0.8143333333333334,
+          "max": 0.824,
+          "standard_error": 0.0017211107524567352
+        },
+        "difference": 0.001206802721088418,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.5132000000000001,
+          "min": 0.49933333333333335,
+          "max": 0.5266666666666666,
+          "standard_error": 0.0047767957647127535
+        },
+        "difference": 0.002995918367347028,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.8463493041659153,
+          "min": 0.8109713010222805,
+          "max": 0.879924435576607,
+          "standard_error": 0.01142372876807759
+        },
+        "difference": -0.01302569583408475,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "exponential",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 2128,
+          "replaced": 872,
+          "stale": 1003,
+          "adopted": 1125,
+          "computed_share": 0.7093333333333334,
+          "adopted_share": 0.375,
+          "mean_adopted_age": 0.7822695241500129
+        },
+        {
+          "computed": 2121,
+          "replaced": 879,
+          "stale": 995,
+          "adopted": 1126,
+          "computed_share": 0.707,
+          "adopted_share": 0.37533333333333335,
+          "mean_adopted_age": 0.7776901722764564
+        },
+        {
+          "computed": 2134,
+          "replaced": 866,
+          "stale": 1039,
+          "adopted": 1095,
+          "computed_share": 0.7113333333333334,
+          "adopted_share": 0.365,
+          "mean_adopted_age": 0.8004488204246971
+        },
+        {
+          "computed": 2104,
+          "replaced": 896,
+          "stale": 1007,
+          "adopted": 1097,
+          "computed_share": 0.7013333333333334,
+          "adopted_share": 0.36566666666666664,
+          "mean_adopted_age": 0.7728939579393057
+        },
+        {
+          "computed": 2108,
+          "replaced": 892,
+          "stale": 1000,
+          "adopted": 1108,
+          "computed_share": 0.7026666666666667,
+          "adopted_share": 0.36933333333333335,
+          "mean_adopted_age": 0.754897170033463
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7011070110701108,
+        "adopted_share": 0.36900369003690037,
+        "mean_adopted_age": 0.7756232686980611
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.7063333333333334,
+          "min": 0.7013333333333334,
+          "max": 0.7113333333333334,
+          "standard_error": 0.0019090428084368508
+        },
+        "difference": 0.005226322263222616,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.37006666666666665,
+          "min": 0.365,
+          "max": 0.37533333333333335,
+          "standard_error": 0.0022095751225568792
+        },
+        "difference": 0.001062976629766288,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.7776399289647871,
+          "min": 0.754897170033463,
+          "max": 0.8004488204246971,
+          "standard_error": 0.007353361579517288
+        },
+        "difference": 0.002016660266725978,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "exponential",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 1574,
+          "replaced": 1426,
+          "stale": 965,
+          "adopted": 609,
+          "computed_share": 0.5246666666666666,
+          "adopted_share": 0.203,
+          "mean_adopted_age": 0.6327713720999867
+        },
+        {
+          "computed": 1626,
+          "replaced": 1374,
+          "stale": 990,
+          "adopted": 636,
+          "computed_share": 0.542,
+          "adopted_share": 0.212,
+          "mean_adopted_age": 0.6606731730587344
+        },
+        {
+          "computed": 1576,
+          "replaced": 1424,
+          "stale": 975,
+          "adopted": 601,
+          "computed_share": 0.5253333333333333,
+          "adopted_share": 0.20033333333333334,
+          "mean_adopted_age": 0.6278802263997267
+        },
+        {
+          "computed": 1558,
+          "replaced": 1442,
+          "stale": 928,
+          "adopted": 630,
+          "computed_share": 0.5193333333333333,
+          "adopted_share": 0.21,
+          "mean_adopted_age": 0.5902567573395087
+        },
+        {
+          "computed": 1533,
+          "replaced": 1467,
+          "stale": 929,
+          "adopted": 604,
+          "computed_share": 0.511,
+          "adopted_share": 0.20133333333333334,
+          "mean_adopted_age": 0.64085364687109
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.5263157894736842,
+        "adopted_share": 0.2105263157894737,
+        "mean_adopted_age": 0.6399999999999999
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.5244666666666666,
+          "min": 0.511,
+          "max": 0.542,
+          "standard_error": 0.005078932521264248
+        },
+        "difference": -0.0018491228070175447,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.2053333333333333,
+          "min": 0.20033333333333334,
+          "max": 0.212,
+          "standard_error": 0.0023734644158557167
+        },
+        "difference": -0.005192982456140388,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.6304870351538093,
+          "min": 0.5902567573395087,
+          "max": 0.6606731730587344,
+          "standard_error": 0.011509036580643622
+        },
+        "difference": -0.009512964846190575,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "poisson",
+      "service": "exponential",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 914,
+          "replaced": 2086,
+          "stale": 717,
+          "adopted": 197,
+          "computed_share": 0.30466666666666664,
+          "adopted_share": 0.06566666666666666,
+          "mean_adopted_age": 0.39201605713597104
+        },
+        {
+          "computed": 917,
+          "replaced": 2083,
+          "stale": 682,
+          "adopted": 235,
+          "computed_share": 0.30566666666666664,
+          "adopted_share": 0.07833333333333334,
+          "mean_adopted_age": 0.4066384340635948
+        },
+        {
+          "computed": 913,
+          "replaced": 2087,
+          "stale": 672,
+          "adopted": 241,
+          "computed_share": 0.30433333333333334,
+          "adopted_share": 0.08033333333333334,
+          "mean_adopted_age": 0.4029831228021052
+        },
+        {
+          "computed": 950,
+          "replaced": 2050,
+          "stale": 676,
+          "adopted": 274,
+          "computed_share": 0.31666666666666665,
+          "adopted_share": 0.09133333333333334,
+          "mean_adopted_age": 0.43090907328636774
+        },
+        {
+          "computed": 847,
+          "replaced": 2153,
+          "stale": 662,
+          "adopted": 185,
+          "computed_share": 0.2823333333333333,
+          "adopted_share": 0.06166666666666667,
+          "mean_adopted_age": 0.45149037778867296
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3076923076923077,
+        "adopted_share": 0.07692307692307693,
+        "mean_adopted_age": 0.4375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.3027333333333333,
+          "min": 0.2823333333333333,
+          "max": 0.31666666666666665,
+          "standard_error": 0.005591064299397744
+        },
+        "difference": -0.004958974358974411,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.07546666666666667,
+          "min": 0.06166666666666667,
+          "max": 0.09133333333333334,
+          "standard_error": 0.005339163480046914
+        },
+        "difference": -0.0014564102564102593,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.4168074130153423,
+          "min": 0.39201605713597104,
+          "max": 0.45149037778867296,
+          "standard_error": 0.010749175147484656
+        },
+        "difference": -0.0206925869846577,
+        "verdict": "within noise"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "exponential",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 3000,
+          "replaced": 0,
+          "stale": 118,
+          "adopted": 2882,
+          "computed_share": 1.0,
+          "adopted_share": 0.9606666666666667,
+          "mean_adopted_age": 0.892904209585908
+        },
+        {
+          "computed": 2996,
+          "replaced": 4,
+          "stale": 126,
+          "adopted": 2870,
+          "computed_share": 0.9986666666666667,
+          "adopted_share": 0.9566666666666667,
+          "mean_adopted_age": 0.9045180070416668
+        },
+        {
+          "computed": 2991,
+          "replaced": 9,
+          "stale": 122,
+          "adopted": 2869,
+          "computed_share": 0.997,
+          "adopted_share": 0.9563333333333334,
+          "mean_adopted_age": 0.8919451914127476
+        },
+        {
+          "computed": 2994,
+          "replaced": 6,
+          "stale": 118,
+          "adopted": 2876,
+          "computed_share": 0.998,
+          "adopted_share": 0.9586666666666667,
+          "mean_adopted_age": 0.9170233954692703
+        },
+        {
+          "computed": 2998,
+          "replaced": 2,
+          "stale": 111,
+          "adopted": 2887,
+          "computed_share": 0.9993333333333333,
+          "adopted_share": 0.9623333333333334,
+          "mean_adopted_age": 0.9189220041784179
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9352517985611511,
+        "adopted_share": 0.7194244604316546,
+        "mean_adopted_age": 0.9467455621301779
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.9986,
+          "min": 0.997,
+          "max": 1.0,
+          "standard_error": 0.0005206833117271083
+        },
+        "difference": 0.0633482014388489,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.9589333333333334,
+          "min": 0.9563333333333334,
+          "max": 0.9623333333333334,
+          "standard_error": 0.0011518101695447353
+        },
+        "difference": 0.23950887290167877,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.905062561537602,
+          "min": 0.8919451914127476,
+          "max": 0.9189220041784179,
+          "standard_error": 0.005724216799823962
+        },
+        "difference": -0.0416830005925759,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "exponential",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 2842,
+          "replaced": 158,
+          "stale": 715,
+          "adopted": 2127,
+          "computed_share": 0.9473333333333334,
+          "adopted_share": 0.709,
+          "mean_adopted_age": 0.6780438054050912
+        },
+        {
+          "computed": 2851,
+          "replaced": 149,
+          "stale": 696,
+          "adopted": 2155,
+          "computed_share": 0.9503333333333334,
+          "adopted_share": 0.7183333333333334,
+          "mean_adopted_age": 0.6766753085042825
+        },
+        {
+          "computed": 2830,
+          "replaced": 170,
+          "stale": 609,
+          "adopted": 2221,
+          "computed_share": 0.9433333333333334,
+          "adopted_share": 0.7403333333333333,
+          "mean_adopted_age": 0.6569005841314745
+        },
+        {
+          "computed": 2837,
+          "replaced": 163,
+          "stale": 625,
+          "adopted": 2212,
+          "computed_share": 0.9456666666666667,
+          "adopted_share": 0.7373333333333333,
+          "mean_adopted_age": 0.6526119342109076
+        },
+        {
+          "computed": 2851,
+          "replaced": 149,
+          "stale": 668,
+          "adopted": 2183,
+          "computed_share": 0.9503333333333334,
+          "adopted_share": 0.7276666666666667,
+          "mean_adopted_age": 0.6715621286095279
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8163265306122448,
+        "adopted_share": 0.5102040816326531,
+        "mean_adopted_age": 0.859375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.9474,
+          "min": 0.9433333333333334,
+          "max": 0.9503333333333334,
+          "standard_error": 0.0013556466271775205
+        },
+        "difference": 0.13107346938775521,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.7265333333333334,
+          "min": 0.709,
+          "max": 0.7403333333333333,
+          "standard_error": 0.005843895200216292
+        },
+        "difference": 0.2163292517006803,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.6671587521722567,
+          "min": 0.6526119342109076,
+          "max": 0.6780438054050912,
+          "standard_error": 0.005221488660832908
+        },
+        "difference": -0.19221624782774327,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "exponential",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 2492,
+          "replaced": 508,
+          "stale": 1031,
+          "adopted": 1461,
+          "computed_share": 0.8306666666666667,
+          "adopted_share": 0.487,
+          "mean_adopted_age": 0.5193935016669635
+        },
+        {
+          "computed": 2478,
+          "replaced": 522,
+          "stale": 1027,
+          "adopted": 1451,
+          "computed_share": 0.826,
+          "adopted_share": 0.4836666666666667,
+          "mean_adopted_age": 0.5229997393913255
+        },
+        {
+          "computed": 2491,
+          "replaced": 509,
+          "stale": 1049,
+          "adopted": 1442,
+          "computed_share": 0.8303333333333334,
+          "adopted_share": 0.4806666666666667,
+          "mean_adopted_age": 0.5250796814765749
+        },
+        {
+          "computed": 2521,
+          "replaced": 479,
+          "stale": 1063,
+          "adopted": 1458,
+          "computed_share": 0.8403333333333334,
+          "adopted_share": 0.486,
+          "mean_adopted_age": 0.5163599223401498
+        },
+        {
+          "computed": 2511,
+          "replaced": 489,
+          "stale": 1048,
+          "adopted": 1463,
+          "computed_share": 0.837,
+          "adopted_share": 0.4876666666666667,
+          "mean_adopted_age": 0.5427437834226144
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7011070110701108,
+        "adopted_share": 0.36900369003690037,
+        "mean_adopted_age": 0.7756232686980611
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.8328666666666666,
+          "min": 0.826,
+          "max": 0.8403333333333334,
+          "standard_error": 0.0025616834742454545
+        },
+        "difference": 0.1317596555965559,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.485,
+          "min": 0.4806666666666667,
+          "max": 0.4876666666666667,
+          "standard_error": 0.0012780193008453842
+        },
+        "difference": 0.11599630996309962,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.5253153256595257,
+          "min": 0.5163599223401498,
+          "max": 0.5427437834226144,
+          "standard_error": 0.0046067117120445955
+        },
+        "difference": -0.25030794303853543,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "exponential",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 1816,
+          "replaced": 1184,
+          "stale": 1135,
+          "adopted": 681,
+          "computed_share": 0.6053333333333333,
+          "adopted_share": 0.227,
+          "mean_adopted_age": 0.3698288314396519
+        },
+        {
+          "computed": 1809,
+          "replaced": 1191,
+          "stale": 1168,
+          "adopted": 641,
+          "computed_share": 0.603,
+          "adopted_share": 0.21366666666666667,
+          "mean_adopted_age": 0.36996125973144806
+        },
+        {
+          "computed": 1849,
+          "replaced": 1151,
+          "stale": 1199,
+          "adopted": 650,
+          "computed_share": 0.6163333333333333,
+          "adopted_share": 0.21666666666666667,
+          "mean_adopted_age": 0.3656887752251397
+        },
+        {
+          "computed": 1794,
+          "replaced": 1206,
+          "stale": 1112,
+          "adopted": 682,
+          "computed_share": 0.598,
+          "adopted_share": 0.22733333333333333,
+          "mean_adopted_age": 0.3633265871762282
+        },
+        {
+          "computed": 1752,
+          "replaced": 1248,
+          "stale": 1128,
+          "adopted": 624,
+          "computed_share": 0.584,
+          "adopted_share": 0.208,
+          "mean_adopted_age": 0.35661597455236677
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.5263157894736842,
+        "adopted_share": 0.2105263157894737,
+        "mean_adopted_age": 0.6399999999999999
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.6013333333333333,
+          "min": 0.584,
+          "max": 0.6163333333333333,
+          "standard_error": 0.005269408568963565
+        },
+        "difference": 0.0750175438596491,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.21853333333333333,
+          "min": 0.208,
+          "max": 0.22733333333333333,
+          "standard_error": 0.0037897522639642597
+        },
+        "difference": 0.00800701754385963,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.3650842856249669,
+          "min": 0.35661597455236677,
+          "max": 0.36996125973144806,
+          "standard_error": 0.002464374112819218
+        },
+        "difference": -0.274915714375033,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "periodic",
+      "service": "exponential",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 977,
+          "replaced": 2023,
+          "stale": 818,
+          "adopted": 159,
+          "computed_share": 0.32566666666666666,
+          "adopted_share": 0.053,
+          "mean_adopted_age": 0.21419074563831655
+        },
+        {
+          "computed": 970,
+          "replaced": 2030,
+          "stale": 789,
+          "adopted": 181,
+          "computed_share": 0.3233333333333333,
+          "adopted_share": 0.060333333333333336,
+          "mean_adopted_age": 0.2137942800549955
+        },
+        {
+          "computed": 1009,
+          "replaced": 1991,
+          "stale": 813,
+          "adopted": 196,
+          "computed_share": 0.3363333333333333,
+          "adopted_share": 0.06533333333333333,
+          "mean_adopted_age": 0.2046165059254641
+        },
+        {
+          "computed": 1017,
+          "replaced": 1983,
+          "stale": 805,
+          "adopted": 212,
+          "computed_share": 0.339,
+          "adopted_share": 0.07066666666666667,
+          "mean_adopted_age": 0.21214475403563313
+        },
+        {
+          "computed": 906,
+          "replaced": 2094,
+          "stale": 761,
+          "adopted": 145,
+          "computed_share": 0.302,
+          "adopted_share": 0.04833333333333333,
+          "mean_adopted_age": 0.21082629432269595
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3076923076923077,
+        "adopted_share": 0.07692307692307693,
+        "mean_adopted_age": 0.4375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.32526666666666665,
+          "min": 0.302,
+          "max": 0.339,
+          "standard_error": 0.006543359653538509
+        },
+        "difference": 0.01757435897435894,
+        "verdict": "within noise"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.05953333333333333,
+          "min": 0.04833333333333333,
+          "max": 0.07066666666666667,
+          "standard_error": 0.004039526924997255
+        },
+        "difference": -0.0173897435897436,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 0.21111451599542103,
+          "min": 0.2046165059254641,
+          "max": 0.21419074563831655,
+          "standard_error": 0.0017322372997399405
+        },
+        "difference": -0.22638548400457897,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "exponential",
+      "load": 0.3,
+      "runs": [
+        {
+          "computed": 1204,
+          "replaced": 1796,
+          "stale": 646,
+          "adopted": 558,
+          "computed_share": 0.4013333333333333,
+          "adopted_share": 0.186,
+          "mean_adopted_age": 1.8247909430453808
+        },
+        {
+          "computed": 1201,
+          "replaced": 1799,
+          "stale": 656,
+          "adopted": 545,
+          "computed_share": 0.4003333333333333,
+          "adopted_share": 0.18166666666666667,
+          "mean_adopted_age": 1.8096020670076793
+        },
+        {
+          "computed": 1187,
+          "replaced": 1813,
+          "stale": 634,
+          "adopted": 553,
+          "computed_share": 0.39566666666666667,
+          "adopted_share": 0.18433333333333332,
+          "mean_adopted_age": 1.8322118618213215
+        },
+        {
+          "computed": 1192,
+          "replaced": 1808,
+          "stale": 636,
+          "adopted": 556,
+          "computed_share": 0.3973333333333333,
+          "adopted_share": 0.18533333333333332,
+          "mean_adopted_age": 1.9041829452087065
+        },
+        {
+          "computed": 1183,
+          "replaced": 1817,
+          "stale": 633,
+          "adopted": 550,
+          "computed_share": 0.3943333333333333,
+          "adopted_share": 0.18333333333333332,
+          "mean_adopted_age": 1.7193938630830041
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.9352517985611511,
+        "adopted_share": 0.7194244604316546,
+        "mean_adopted_age": 0.9467455621301779
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.3978,
+          "min": 0.3943333333333333,
+          "max": 0.4013333333333333,
+          "standard_error": 0.0013358309939675915
+        },
+        "difference": -0.5374517985611511,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.18413333333333332,
+          "min": 0.18166666666666667,
+          "max": 0.186,
+          "standard_error": 0.0007644896627453132
+        },
+        "difference": -0.5352911270983214,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.8180363360332183,
+          "min": 1.7193938630830041,
+          "max": 1.9041829452087065,
+          "standard_error": 0.029554426811749482
+        },
+        "difference": 0.8712907739030404,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "exponential",
+      "load": 0.6,
+      "runs": [
+        {
+          "computed": 1075,
+          "replaced": 1925,
+          "stale": 596,
+          "adopted": 479,
+          "computed_share": 0.35833333333333334,
+          "adopted_share": 0.15966666666666668,
+          "mean_adopted_age": 1.7011959557970273
+        },
+        {
+          "computed": 1061,
+          "replaced": 1939,
+          "stale": 589,
+          "adopted": 472,
+          "computed_share": 0.3536666666666667,
+          "adopted_share": 0.15733333333333333,
+          "mean_adopted_age": 1.731870966093626
+        },
+        {
+          "computed": 1120,
+          "replaced": 1880,
+          "stale": 631,
+          "adopted": 489,
+          "computed_share": 0.37333333333333335,
+          "adopted_share": 0.163,
+          "mean_adopted_age": 1.6273948383947798
+        },
+        {
+          "computed": 1063,
+          "replaced": 1937,
+          "stale": 590,
+          "adopted": 473,
+          "computed_share": 0.35433333333333333,
+          "adopted_share": 0.15766666666666668,
+          "mean_adopted_age": 1.650482183737266
+        },
+        {
+          "computed": 1121,
+          "replaced": 1879,
+          "stale": 635,
+          "adopted": 486,
+          "computed_share": 0.37366666666666665,
+          "adopted_share": 0.162,
+          "mean_adopted_age": 1.6996180536470344
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.8163265306122448,
+        "adopted_share": 0.5102040816326531,
+        "mean_adopted_age": 0.859375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.3626666666666667,
+          "min": 0.3536666666666667,
+          "max": 0.37366666666666665,
+          "standard_error": 0.004494441010848844
+        },
+        "difference": -0.4536598639455781,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.15993333333333334,
+          "min": 0.15733333333333333,
+          "max": 0.163,
+          "standard_error": 0.001132352516764203
+        },
+        "difference": -0.3502707482993197,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.6821123995339466,
+          "min": 1.6273948383947798,
+          "max": 1.731870966093626,
+          "standard_error": 0.018895802496864633
+        },
+        "difference": 0.8227373995339466,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "exponential",
+      "load": 0.9,
+      "runs": [
+        {
+          "computed": 1059,
+          "replaced": 1941,
+          "stale": 603,
+          "adopted": 456,
+          "computed_share": 0.353,
+          "adopted_share": 0.152,
+          "mean_adopted_age": 1.5909608091684686
+        },
+        {
+          "computed": 1021,
+          "replaced": 1979,
+          "stale": 584,
+          "adopted": 437,
+          "computed_share": 0.3403333333333333,
+          "adopted_share": 0.14566666666666667,
+          "mean_adopted_age": 1.670076200078487
+        },
+        {
+          "computed": 1028,
+          "replaced": 1972,
+          "stale": 586,
+          "adopted": 442,
+          "computed_share": 0.3426666666666667,
+          "adopted_share": 0.14733333333333334,
+          "mean_adopted_age": 1.5947812221052242
+        },
+        {
+          "computed": 1047,
+          "replaced": 1953,
+          "stale": 601,
+          "adopted": 446,
+          "computed_share": 0.349,
+          "adopted_share": 0.14866666666666667,
+          "mean_adopted_age": 1.653066461779348
+        },
+        {
+          "computed": 1028,
+          "replaced": 1972,
+          "stale": 593,
+          "adopted": 435,
+          "computed_share": 0.3426666666666667,
+          "adopted_share": 0.145,
+          "mean_adopted_age": 1.5811617744471416
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.7011070110701108,
+        "adopted_share": 0.36900369003690037,
+        "mean_adopted_age": 0.7756232686980611
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.34553333333333336,
+          "min": 0.3403333333333333,
+          "max": 0.353,
+          "standard_error": 0.002358436393507826
+        },
+        "difference": -0.3555736777367774,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.14773333333333333,
+          "min": 0.145,
+          "max": 0.152,
+          "standard_error": 0.0012445436468396316
+        },
+        "difference": -0.22127035670356704,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.618009293515734,
+          "min": 1.5811617744471416,
+          "max": 1.670076200078487,
+          "standard_error": 0.01812301199321471
+        },
+        "difference": 0.8423860248176729,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "exponential",
+      "load": 1.5,
+      "runs": [
+        {
+          "computed": 849,
+          "replaced": 2151,
+          "stale": 500,
+          "adopted": 349,
+          "computed_share": 0.283,
+          "adopted_share": 0.11633333333333333,
+          "mean_adopted_age": 1.4450683638680029
+        },
+        {
+          "computed": 896,
+          "replaced": 2104,
+          "stale": 537,
+          "adopted": 359,
+          "computed_share": 0.2986666666666667,
+          "adopted_share": 0.11966666666666667,
+          "mean_adopted_age": 1.4356973610326735
+        },
+        {
+          "computed": 917,
+          "replaced": 2083,
+          "stale": 560,
+          "adopted": 357,
+          "computed_share": 0.30566666666666664,
+          "adopted_share": 0.119,
+          "mean_adopted_age": 1.459072513549584
+        },
+        {
+          "computed": 904,
+          "replaced": 2096,
+          "stale": 540,
+          "adopted": 364,
+          "computed_share": 0.30133333333333334,
+          "adopted_share": 0.12133333333333333,
+          "mean_adopted_age": 1.4805861612640367
+        },
+        {
+          "computed": 906,
+          "replaced": 2094,
+          "stale": 557,
+          "adopted": 349,
+          "computed_share": 0.302,
+          "adopted_share": 0.11633333333333333,
+          "mean_adopted_age": 1.569851891849671
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.5263157894736842,
+        "adopted_share": 0.2105263157894737,
+        "mean_adopted_age": 0.6399999999999999
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.2981333333333333,
+          "min": 0.283,
+          "max": 0.30566666666666664,
+          "standard_error": 0.003944898252454965
+        },
+        "difference": -0.22818245614035088,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.11853333333333334,
+          "min": 0.11633333333333333,
+          "max": 0.12133333333333333,
+          "standard_error": 0.0009752492558885205
+        },
+        "difference": -0.09199298245614036,
+        "verdict": "miss"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.4780552583127935,
+          "min": 1.4356973610326735,
+          "max": 1.569851891849671,
+          "standard_error": 0.02416164177400051
+        },
+        "difference": 0.8380552583127936,
+        "verdict": "miss"
+      }
+    },
+    {
+      "arrival": "bursty",
+      "service": "exponential",
+      "load": 3.0,
+      "runs": [
+        {
+          "computed": 638,
+          "replaced": 2362,
+          "stale": 418,
+          "adopted": 220,
+          "computed_share": 0.21266666666666667,
+          "adopted_share": 0.07333333333333333,
+          "mean_adopted_age": 1.1784032568945848
+        },
+        {
+          "computed": 594,
+          "replaced": 2406,
+          "stale": 412,
+          "adopted": 182,
+          "computed_share": 0.198,
+          "adopted_share": 0.06066666666666667,
+          "mean_adopted_age": 1.1805683992834424
+        },
+        {
+          "computed": 693,
+          "replaced": 2307,
+          "stale": 460,
+          "adopted": 233,
+          "computed_share": 0.231,
+          "adopted_share": 0.07766666666666666,
+          "mean_adopted_age": 1.1115384113525155
+        },
+        {
+          "computed": 669,
+          "replaced": 2331,
+          "stale": 427,
+          "adopted": 242,
+          "computed_share": 0.223,
+          "adopted_share": 0.08066666666666666,
+          "mean_adopted_age": 1.0912623798110654
+        },
+        {
+          "computed": 616,
+          "replaced": 2384,
+          "stale": 406,
+          "adopted": 210,
+          "computed_share": 0.20533333333333334,
+          "adopted_share": 0.07,
+          "mean_adopted_age": 1.1721811300460672
+        }
+      ],
+      "predicted": {
+        "computed_share": 0.3076923076923077,
+        "adopted_share": 0.07692307692307693,
+        "mean_adopted_age": 0.4375
+      },
+      "computed_share": {
+        "measured": {
+          "mean": 0.21400000000000002,
+          "min": 0.198,
+          "max": 0.231,
+          "standard_error": 0.005928274997370183
+        },
+        "difference": -0.09369230769230769,
+        "verdict": "miss"
+      },
+      "adopted_share": {
+        "measured": {
+          "mean": 0.07246666666666667,
+          "min": 0.06066666666666667,
+          "max": 0.08066666666666666,
+          "standard_error": 0.003466666666666665
+        },
+        "difference": -0.004456410256410262,
+        "verdict": "within noise"
+      },
+      "mean_adopted_age": {
+        "measured": {
+          "mean": 1.146790715477535,
+          "min": 1.0912623798110654,
+          "max": 1.1805683992834424,
+          "standard_error": 0.018856138069749936
+        },
+        "difference": 0.709290715477535,
+        "verdict": "miss"
+      }
+    }
+  ]
+}
