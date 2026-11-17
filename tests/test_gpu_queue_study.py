@@ -87,6 +87,8 @@ class GpuExampleRunTests(unittest.TestCase):
                 self.assertEqual(run["submitted"], arrival_run.QUICK["requests"])
                 self.assertEqual(run["computed"] - run["stale"], run["adopted"] + run["adopted_check_mismatch"])
                 self.assertTrue(0 <= run["adopted_share"] <= run["computed_share"] <= 1)
+                self.assertGreaterEqual(run["arrival_lateness_ms"]["max"], run["arrival_lateness_ms"]["mean"])
+        self.assertEqual(report["settings"]["arrival_wait"], "sleep only, no spin")
 
     def test_a_chunk_size_that_does_not_divide_is_refused(self):
         import model

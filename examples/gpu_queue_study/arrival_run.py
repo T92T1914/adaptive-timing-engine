@@ -34,19 +34,22 @@ METRICS = ("computed_share", "adopted_share", "mean_adopted_age", "stale_gpu_tim
 
 
 def wait_until(target):
-    """Sleep most of the gap, then spin, so a millisecond schedule holds on Windows."""
-    while True:
-        remaining = target - time.perf_counter()
-        if remaining <= 0:
-            return
-        if remaining > 0.002:
-            time.sleep(remaining - 0.0015)
+    """Sleep until the target and never spin, so the worker can take the interpreter lock.
+
+    The first version slept until 1.5 ms before the arrival and spun for the rest, which
+    probably starved the worker thread (docs/gpu-queue-study.md). An arrival may now be
+    issued late. Each run records how late, so the schedule's distortion is part of the result.
+    """
+    remaining = target - time.perf_counter()
+    if remaining > 0:
+        time.sleep(remaining)
 
 
 def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
     rng = random.Random(f"gpu/{arrival}/{load}/{seed}")
     schedule = [t * mean_pass for t in queue_model.arrival_times(arrival, load, requests, rng)]
     arrived = [0.0] * requests
+    late = []
     runs = []
     holder = {}
 
@@ -72,6 +75,7 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
         for index, offset in enumerate(schedule):
             wait_until(origin + offset)
             arrived[index] = time.perf_counter()
+            late.append((arrived[index] - (origin + offset)) * 1000.0)
             worker.request(index)
         worker.wait_idle(timeout=60)
         stats = worker.stats()
@@ -89,6 +93,8 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
         "adopted_share": adopted_count / requests,
         "mean_adopted_age": (statistics.fmean(ages) / mean_pass) if ages else None,
         "stale_gpu_time_share": stale_time / busy if busy else None,
+        "arrival_lateness_ms": {"mean": statistics.fmean(late), "p95": sorted(late)[int(0.95 * len(late))],
+                                "max": max(late), "share_over_1ms": sum(x > 1.0 for x in late) / len(late)},
     }
 
 
@@ -121,7 +127,8 @@ def study(settings, predictions, source):
         "settings": {"requests_per_run": settings["requests"], "seeds": list(settings["seeds"]),
                      "loads": list(settings["loads"]), "noise_factor": queue_model.NOISE_FACTOR,
                      "time_unit": "mean pass duration of the chunk size",
-                     "arrivals": "generated in real time, not from any person"},
+                     "arrivals": "generated in real time, not from any person",
+                     "arrival_wait": "sleep only, no spin"},
         "note": "One card, one machine, one model, generated arrivals. Nothing here is a latency bound "
                 "or a measure of human performance.",
         "rows": rows,
