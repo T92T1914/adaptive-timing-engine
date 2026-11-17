@@ -1,0 +1,109 @@
+{
+  "switch_interval_check": {
+    "chunk_blocks": 2,
+    "requests": 1000,
+    "seed": 7,
+    "computed_share": {
+      "default_5ms": {
+        "periodic_3.0": 0.002,
+        "bursty_0.6": 0.194,
+        "poisson_0.6": 0.771,
+        "periodic_0.9": 1.0
+      },
+      "shorter_0.2ms": {
+        "periodic_3.0": 0.355,
+        "bursty_0.6": 0.368,
+        "poisson_0.6": 0.899,
+        "periodic_0.9": 1.0
+      }
+    }
+  },
+  "note": "Made after the arrival run. One card, one machine. Nothing here changes a prediction.",
+  "card": "NVIDIA GeForce RTX 4090",
+  "torch": "2.14.1+cu130",
+  "load": 0.6,
+  "requests": 1000,
+  "seed": 7,
+  "rows": [
+    {
+      "chunk_blocks": 1,
+      "assumed_mean_pass_ms": 6.229207,
+      "whole_pass_alone": {
+        "count": 300,
+        "mean_ms": 4.543382666646115,
+        "median_ms": 4.707100000814535
+      },
+      "whole_pass_in_worker": {
+        "count": 827,
+        "mean_ms": 4.138009189971539,
+        "median_ms": 4.003800000646152
+      },
+      "arrival_lateness_ms": {
+        "mean": 0.0027147467044414952,
+        "p95": 0.0010859075700864196,
+        "max": 1.2616745370905846,
+        "share_over_1ms": 0.001
+      }
+    },
+    {
+      "chunk_blocks": 2,
+      "assumed_mean_pass_ms": 5.267449333333333,
+      "whole_pass_alone": {
+        "count": 300,
+        "mean_ms": 4.54198999980387,
+        "median_ms": 4.730749991722405
+      },
+      "whole_pass_in_worker": {
+        "count": 799,
+        "mean_ms": 4.173486608140157,
+        "median_ms": 3.9906000019982457
+      },
+      "arrival_lateness_ms": {
+        "mean": 0.002728463223320432,
+        "p95": 0.001047606929205358,
+        "max": 0.566475122468546,
+        "share_over_1ms": 0.0
+      }
+    },
+    {
+      "chunk_blocks": 4,
+      "assumed_mean_pass_ms": 4.865732333333334,
+      "whole_pass_alone": {
+        "count": 300,
+        "mean_ms": 4.387701332598226,
+        "median_ms": 4.446950006240513
+      },
+      "whole_pass_in_worker": {
+        "count": 783,
+        "mean_ms": 4.206085951756781,
+        "median_ms": 3.9952000079210848
+      },
+      "arrival_lateness_ms": {
+        "mean": 0.0006215858738869429,
+        "p95": 0.0009192008292302489,
+        "max": 0.08242292096838355,
+        "share_over_1ms": 0.0
+      }
+    },
+    {
+      "chunk_blocks": 8,
+      "assumed_mean_pass_ms": 4.380781,
+      "whole_pass_alone": {
+        "count": 300,
+        "mean_ms": 4.485559000070983,
+        "median_ms": 4.509149999648798
+      },
+      "whole_pass_in_worker": {
+        "count": 765,
+        "mean_ms": 4.231823398845782,
+        "median_ms": 4.008100004284643
+      },
+      "arrival_lateness_ms": {
+        "mean": 0.0030407149606617168,
+        "p95": 0.0007557973731309175,
+        "max": 1.1861888924613595,
+        "share_over_1ms": 0.002
+      }
+    }
+  ]
+}
