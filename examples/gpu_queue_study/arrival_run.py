@@ -45,7 +45,18 @@ def wait_until(target):
         time.sleep(remaining)
 
 
-def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
+MODES = ("plain", "synced", "stop")
+
+
+def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode="plain"):
+    """Run one case. The mode changes only how a pass treats the chunks.
+
+    plain: one synchronize at the end of the pass, as in the first study.
+    synced: a synchronize after every chunk and no stop, to price the synchronize alone.
+    stop: a synchronize after every chunk, then a look at the worker's generation. A stale
+        pass returns at that point. This is the calculation stopping itself. Work already
+        placed on the GPU is not removed, and the chunk in flight finishes first.
+    """
     rng = random.Random(f"gpu/{arrival}/{load}/{seed}")
     schedule = [t * mean_pass for t in queue_model.arrival_times(arrival, load, requests, rng)]
     arrived = [0.0] * requests
@@ -56,14 +67,20 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
     def compute(index):
         start = time.perf_counter()
         value = inputs
-        for chunk in chunk_list:
+        stopped = False
+        for position, chunk in enumerate(chunk_list):
             value = model.run_chunk(chunk, value)
+            if mode != "plain":
+                torch.cuda.synchronize()
+            if mode == "stop" and position + 1 < len(chunk_list) and holder["worker"].stats().generation != index + 2:
+                stopped = True
+                break
         torch.cuda.synchronize()
         end = time.perf_counter()
         # Adopted when no newer request exists at the moment the computation ends.
-        adopted = holder["worker"].stats().generation == index + 2
+        adopted = (not stopped) and holder["worker"].stats().generation == index + 2
         if index >= 0:
-            runs.append((index, start, end, adopted))
+            runs.append((index, start, end, adopted, stopped))
 
     with LatestWorker(compute) as worker:
         holder["worker"] = worker
@@ -79,9 +96,10 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
             worker.request(index)
         worker.wait_idle(timeout=60)
         stats = worker.stats()
-    busy = sum(end - start for _, start, end, _ in runs)
-    stale_time = sum(end - start for _, start, end, adopted in runs if not adopted)
-    ages = [end - arrived[index] for index, _, end, adopted in runs if adopted]
+    busy = sum(end - start for _, start, end, _, _ in runs)
+    stale_time = sum(end - start for _, start, end, adopted, _ in runs if not adopted)
+    ages = [end - arrived[index] for index, _, end, adopted, _ in runs if adopted]
+    adopted_pass = [end - start for _, start, end, adopted, _ in runs if adopted]
     adopted_count = len(ages)
     return {
         "submitted": stats.submitted - 1, "computed": stats.computed - 1, "replaced": stats.replaced,
@@ -93,6 +111,10 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed):
         "adopted_share": adopted_count / requests,
         "mean_adopted_age": (statistics.fmean(ages) / mean_pass) if ages else None,
         "stale_gpu_time_share": stale_time / busy if busy else None,
+        "stopped": sum(1 for *_, stopped in runs if stopped),
+        "stale_gpu_seconds": stale_time,
+        "busy_gpu_seconds": busy,
+        "mean_adopted_pass_ms": statistics.fmean(adopted_pass) * 1000.0 if adopted_pass else None,
         "arrival_lateness_ms": {"mean": statistics.fmean(late), "p95": sorted(late)[int(0.95 * len(late))],
                                 "max": max(late), "share_over_1ms": sum(x > 1.0 for x in late) / len(late)},
     }
