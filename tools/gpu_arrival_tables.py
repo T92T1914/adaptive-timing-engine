@@ -43,8 +43,11 @@ def counts(report: dict) -> str:
     within = sum(1 for row in rows for name in ("computed_share", "mean_adopted_age", "stale_gpu_time_share")
                  if row[name]["verdict"] != "miss")
     total = len(rows) * 3
-    mismatch = sum(abs(run["adopted_check_mismatch"]) for row in rows for run in row["runs"])
-    return f"{within} of {total} comparisons are within noise, and the adopted check disagreed with the worker's own count {mismatch} times."
+    runs = [run for row in rows for run in row["runs"]]
+    mismatch = sum(abs(run["adopted_check_mismatch"]) for run in runs)
+    differing = sum(1 for run in runs if run["adopted_check_mismatch"])
+    return (f"{within} of {total} comparisons are within noise. The adopted check and the worker's own stale count "
+            f"differed by {mismatch} requests in total, spread over {differing} of {len(runs)} runs.")
 
 
 def main() -> int:

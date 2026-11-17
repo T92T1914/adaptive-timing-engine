@@ -103,11 +103,13 @@ def main(argv=None):
     chunk_list = model.chunks(blocks, 2)
     mean_pass = predictions["mean_pass_ms"]["2"] / 1000.0
     interval = {}
+    original = sys.getswitchinterval()
     for label, value in (("default_5ms", sys.getswitchinterval()), ("shorter_0.2ms", 0.0002)):
         sys.setswitchinterval(value)
         interval[label] = {
             f"{arrival}_{load}": run_case(chunk_list, inputs, arrival, load, mean_pass, REQUESTS, 7)["computed_share"]
             for arrival, load in (("periodic", 3.0), ("bursty", 0.6), ("poisson", 0.6), ("periodic", 0.9))}
+    sys.setswitchinterval(original)
     report = {"switch_interval_check": {"chunk_blocks": 2, "requests": REQUESTS, "seed": 7,
                                         "computed_share": interval},
               "note": "Made after the arrival run. One card, one machine. Nothing here changes a prediction.",

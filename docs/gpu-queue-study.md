@@ -2,7 +2,7 @@
 
 The [queue model](queue-model.md) predicts what `LatestWorker` computes and keeps when requests arrive faster than one calculation finishes. That study ran on a virtual clock with assumed service times. This one puts a real calculation under the worker: a small PyTorch model on an RTX 4090, cut into chunks, with arrivals generated in real time. I measured the service time first, wrote the predictions from it, committed them, and only then ran the arrivals.
 
-Most of the predictions miss, some by a wide margin. Two causes explain nearly all of it, and I found both only after the run.
+Most of the predictions miss, some by a wide margin. Two causes explain part of it, and I found both only after the run. Some misses stay unexplained, and the document says which.
 
 ## What was run
 
@@ -13,7 +13,7 @@ The calculation is a fixed stack of eight matrix blocks, split into chunks of 1,
 3. [`gpu-arrival-runs.json`](evidence/gpu-arrival-runs.json) is the arrival run. For each chunk size, arrival process and load, the real worker handled 1000 requests for each of three seeds. Arrivals are scheduled in units of the predicted mean pass, so a load of 0.6 means 0.6 arrivals per predicted mean pass. A computation counts as adopted when no newer request exists at the moment it ends.
 4. [`gpu-pass-diagnostic.json`](evidence/gpu-pass-diagnostic.json) was made after the arrival run, to look into the misses. It changes no prediction.
 
-Environment: NVIDIA GeForce RTX 4090, driver 621.24, CUDA toolkit 13.0, `torch` 2.14.1+cu130, Windows. The card also drives the desktop. The service time file records 41 percent utilization before its measurement, and I took the arrival run after four hours without keyboard or mouse input.
+Environment: NVIDIA GeForce RTX 4090, driver 621.24, CUDA toolkit 13.0, `torch` 2.14.1+cu130, Windows. The card also drives the desktop. The service time file records 41 percent utilization before its measurement, and Windows reported more than four hours since the last keyboard or mouse input when I started the arrival run.
 
 ```sh
 python tools/gpu_arrival_tables.py
@@ -25,7 +25,7 @@ That command prints every table below from the saved file.
 
 Computed share is the fraction of requests that start computing. Mean adopted age is measured in predicted mean passes. Stale GPU time is the share of busy GPU time spent on results that were thrown away. A star marks a measured mean within three standard errors of the prediction. Otherwise the cell is a miss.
 
-7 of 180 comparisons are within noise, and the adopted check disagreed with the worker's own count 18 times.
+7 of 180 comparisons are within noise. The adopted check and the worker's own stale count differed by 18 requests in total, spread over 14 of 180 runs.
 
 For periodic and bursty arrivals the prediction is the Poisson form at the same long run rate. It is not derived for those processes, and the committed predictions say so.
 
@@ -117,15 +117,17 @@ The predictions read the sum of per chunk timings, each with its own synchronize
 | 4 | 4.87 | 4.39 | 4.21 |
 | 8 | 4.38 | 4.49 | 4.23 |
 
-This explains the mean adopted age. An adopted result takes at least one pass, so its age is bounded below by a pass. At chunk size 1 the measured age at low load is 0.645 predicted passes, which is about 4.0 ms, and a whole pass inside the worker takes about 4.1 ms. Every age prediction is in units of the longer assumed pass, so the measured ages sit below them. The gap is largest at chunk size 1 (6.23 ms assumed) and smallest at size 8 (4.38 ms assumed), which matches the age misses shrinking with chunk size.
+This explains most of the mean adopted age miss at chunk sizes 1, 2 and 4. An adopted result takes at least one pass, so its age is bounded below by a pass. At chunk size 1 the measured age at low load is 0.645 predicted passes, which is about 4.0 ms, and a whole pass inside the worker takes about 4.1 ms. Every age prediction is in units of the longer assumed pass, so the measured ages sit below them. The gap shrinks as the assumed pass shrinks toward the real one.
 
-It also moves the load. With a shorter real pass, a nominal load of 0.6 is a real load of about 0.4 at chunk size 1. That alone would raise the computed share above the prediction, and the next cause hides it.
+It does not cover chunk size 8. There the assumed pass (4.38 ms) is shorter than the whole pass alone (4.49 ms) and only 3 percent longer than the whole pass inside the worker (4.23 ms), yet the measured age is 0.922 against 1.087 predicted at load 0.3. A 3 percent pass difference cannot make that gap, so the size 8 age miss is not explained.
 
-### The thread that generates arrivals starves the worker
+A shorter real pass also lowers the real load. A nominal load of 0.6 is about 0.4 at chunk size 1. By itself that would put the computed share above the prediction, but the Poisson measurements sit below it in most rows, so something else is acting. The next section is my best candidate.
 
-My arrival loop sleeps until about 2 ms before the next arrival and spins for the rest. A spinning Python thread keeps the interpreter lock and gives it up only at the switch interval, 5 ms by default. The worker needs the lock to start its calculation and to read the result back, so it starts late or not at all.
+### The thread that generates arrivals probably starves the worker
 
-The evidence is a pattern and one test. Periodic arrivals at load 3.0 are spaced under 2 ms apart for chunk sizes 2, 4 and 8, so the loop never sleeps, and the worker computed 0.3 percent of requests or less. At chunk size 1 the spacing is 2.08 ms, the loop does sleep, and the share is 0.410. Bursty arrivals put five requests 0.3 ms apart, and the worker computes about one in five, the share you get if it only ever starts after the whole burst has arrived. The test reran four cases at chunk size 2 with the switch interval at 0.2 ms, one seed and 1000 requests each:
+My arrival loop sleeps until 1.5 ms before the next arrival, and only when more than 2 ms remain, then spins for the rest. A spinning Python thread keeps the interpreter lock and gives it up only at the switch interval, 5 ms by default. The worker needs the lock to launch its calculation, so a worker that wakes during a spin may start late. This is the mechanism I suspect. I did not measure the delay before the worker starts.
+
+The evidence is a pattern and one test. Periodic arrivals at load 3.0 are spaced under 2 ms apart for chunk sizes 2, 4 and 8, so the loop never sleeps, and the worker computed 0.3 percent of requests or less. At chunk size 1 the spacing is 2.08 ms, the loop does sleep, and the share is 0.410. Bursty arrivals put five requests 0.3 ms apart, and the worker computes about one in five, which is what a worker that starts only after the whole burst has arrived would give. That fit is after the fact. The diagnostic also logged how late the arrival thread itself ran, and it was on time (mean 0.002 ms), so it says nothing about the worker. The test reran four cases at chunk size 2 with the switch interval at 0.2 ms, one seed and 1000 requests each:
 
 | Case | Computed share, 5 ms interval | 0.2 ms interval |
 | --- | ---: | ---: |
@@ -134,19 +136,19 @@ The evidence is a pattern and one test. Periodic arrivals at load 3.0 are spaced
 | Poisson, load 0.6 (predicted 0.851) | 0.771 | 0.899 |
 | Periodic, load 0.9 | 1.000 | 1.000 |
 
-The two collapsed cases recover most of the way. The Poisson case moves from below the prediction to above it, which is the direction the shorter pass predicts. I did not rerun the full table with the shorter interval, so the numbers above stay as the first run produced them.
+The periodic case recovers most of the way, from 0.002 to 0.355 against 0.322 predicted. The bursty case moves only from 0.194 to 0.368 against 0.851 predicted, so most of its miss stays unexplained. The Poisson case moves from below the prediction to above it, the direction a shorter pass would give. The two settings ran back to back on one seed, so order and card state are not separated from the interval. I did not rerun the full table with the shorter interval, so the numbers above stay as the first run produced them.
 
 ### Periodic arrivals that never interrupt
 
 A periodic arrival with spacing longer than a pass never lands inside a computation, so nothing is replaced and no result is stale. That is the computed share of 1.000 in the periodic rows at loads 0.3 and 0.6, with a stale share of 0.000 in six of the eight. The Poisson form predicts computed shares near 0.95 and 0.85 and stale shares near 0.3 and 0.5 for them, because it assumes random arrivals. This is the same miss the virtual clock study found, and the explanation is the same.
 
-At periodic loads 0.9 and 1.5 the spacing is close to a pass, so small variation in the pass decides whether an arrival interrupts it. Those cells swing between the two regimes and I do not explain them further.
+At periodic load 1.5 the spacing is close to one pass, so small variation in the pass decides whether an arrival interrupts it, and those cells swing between regimes. At load 0.9 the spacing at chunk size 1 is 6.9 ms against a pass near 4.1 ms, and the computed share is still 1.000, yet stale GPU time is 0.274. A result cannot be stale unless an arrival lands inside it, so that cell is not explained, and I do not explain the other load 0.9 cells either.
 
 ### Not explained
 
 1. The stale GPU time of the Poisson rows is below the prediction at every load and chunk size. The shorter pass lowers the real load and so lowers the stale share, which points the right way, but I did not size it.
 2. The seven cells marked as within noise, all in periodic rows or at load 3.0, are not evidence that the model holds there. With the worker starved the way it was, I take them as chance.
-3. The adopted check at the end of a computation and the worker's own stale count are two lock acquisitions. They disagreed 18 times across 180 runs, a request slipping in between. It is small, and I did not trace each case.
+3. The adopted check at the end of a computation and the worker's own stale count are two lock acquisitions. The two counts differed by 18 requests in total, spread over 14 of the 180 runs, which fits a request slipping in between. It is small, and I did not trace each case.
 
 ## Limits
 
