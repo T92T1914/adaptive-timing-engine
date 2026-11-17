@@ -1,0 +1,811 @@
+{
+  "schema_version": 1,
+  "source": "docs/evidence/gpu-service-time.json",
+  "card": "NVIDIA GeForce RTX 4090",
+  "torch": "2.14.1+cu130",
+  "mean_pass_ms": {
+    "1": 6.229207,
+    "2": 5.267449333333333,
+    "4": 4.865732333333334,
+    "8": 4.380781
+  },
+  "settings": {
+    "loads": [
+      0.3,
+      0.6,
+      0.9,
+      1.5,
+      3.0
+    ],
+    "arrivals": [
+      "poisson",
+      "periodic",
+      "bursty"
+    ],
+    "time_unit": "mean pass duration of the chunk size",
+    "passes_per_chunk_size": 300
+  },
+  "note": "Written before any arrival run. One card, one machine, one model. Nothing here is a latency bound or a measure of human performance.",
+  "rows": [
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9533167849173392,
+        "adopted_share": 0.7140049645247982,
+        "mean_adopted_age": 1.0697502398973238,
+        "stale_gpu_time_share": 0.3048832255263334,
+        "mean_adopted_age_ms": 6.663695682620088
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8528117610200803,
+        "adopted_share": 0.4883129433879519,
+        "mean_adopted_age": 1.081370898741481,
+        "stale_gpu_time_share": 0.5056250854554537,
+        "mean_adopted_age_ms": 6.736083172036724
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7430656895252638,
+        "adopted_share": 0.3312408794272627,
+        "mean_adopted_age": 1.0631123478948659,
+        "stale_gpu_time_share": 0.6402191566582476,
+        "mean_adopted_age_ms": 6.622346879293134
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5610404729879492,
+        "adopted_share": 0.15843929051807612,
+        "mean_adopted_age": 0.9950631563158114,
+        "stale_gpu_time_share": 0.7966721844398581,
+        "mean_adopted_age_ms": 6.198454378764547
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.322003246601019,
+        "adopted_share": 0.03399026019694298,
+        "mean_adopted_age": 0.8453576027651903,
+        "stale_gpu_time_share": 0.9354201761182428,
+        "mean_adopted_age_ms": 5.2659074966481425
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "periodic",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9533167849173392,
+        "adopted_share": 0.7140049645247982,
+        "mean_adopted_age": 1.0697502398973238,
+        "stale_gpu_time_share": 0.3048832255263334,
+        "mean_adopted_age_ms": 6.663695682620088
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "periodic",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8528117610200803,
+        "adopted_share": 0.4883129433879519,
+        "mean_adopted_age": 1.081370898741481,
+        "stale_gpu_time_share": 0.5056250854554537,
+        "mean_adopted_age_ms": 6.736083172036724
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "periodic",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7430656895252638,
+        "adopted_share": 0.3312408794272627,
+        "mean_adopted_age": 1.0631123478948659,
+        "stale_gpu_time_share": 0.6402191566582476,
+        "mean_adopted_age_ms": 6.622346879293134
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "periodic",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5610404729879492,
+        "adopted_share": 0.15843929051807612,
+        "mean_adopted_age": 0.9950631563158114,
+        "stale_gpu_time_share": 0.7966721844398581,
+        "mean_adopted_age_ms": 6.198454378764547
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "periodic",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.322003246601019,
+        "adopted_share": 0.03399026019694298,
+        "mean_adopted_age": 0.8453576027651903,
+        "stale_gpu_time_share": 0.9354201761182428,
+        "mean_adopted_age_ms": 5.2659074966481425
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9533167849173392,
+        "adopted_share": 0.7140049645247982,
+        "mean_adopted_age": 1.0697502398973238,
+        "stale_gpu_time_share": 0.3048832255263334,
+        "mean_adopted_age_ms": 6.663695682620088
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8528117610200803,
+        "adopted_share": 0.4883129433879519,
+        "mean_adopted_age": 1.081370898741481,
+        "stale_gpu_time_share": 0.5056250854554537,
+        "mean_adopted_age_ms": 6.736083172036724
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7430656895252638,
+        "adopted_share": 0.3312408794272627,
+        "mean_adopted_age": 1.0631123478948659,
+        "stale_gpu_time_share": 0.6402191566582476,
+        "mean_adopted_age_ms": 6.622346879293134
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5610404729879492,
+        "adopted_share": 0.15843929051807612,
+        "mean_adopted_age": 0.9950631563158114,
+        "stale_gpu_time_share": 0.7966721844398581,
+        "mean_adopted_age_ms": 6.198454378764547
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.322003246601019,
+        "adopted_share": 0.03399026019694298,
+        "mean_adopted_age": 0.8453576027651903,
+        "stale_gpu_time_share": 0.9354201761182428,
+        "mean_adopted_age_ms": 5.2659074966481425
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9526234940072975,
+        "adopted_share": 0.7142129517978107,
+        "mean_adopted_age": 1.0649904595024906,
+        "stale_gpu_time_share": 0.3086879735753121,
+        "mean_adopted_age_ms": 5.609783285912755
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8514804087841725,
+        "adopted_share": 0.48911175472949636,
+        "mean_adopted_age": 1.07336908263419,
+        "stale_gpu_time_share": 0.5085815024328249,
+        "mean_adopted_age_ms": 5.653917258742076
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7417198388245837,
+        "adopted_share": 0.33245214505787457,
+        "mean_adopted_age": 1.0546693521029766,
+        "stale_gpu_time_share": 0.6413017276739215,
+        "mean_adopted_age_ms": 5.555417375621923
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5603496238409894,
+        "adopted_share": 0.15947556423851594,
+        "mean_adopted_age": 0.9918114309047876,
+        "stale_gpu_time_share": 0.7951713642057905,
+        "mean_adopted_age_ms": 5.224316460511803
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.3220473995883234,
+        "adopted_share": 0.03385780123502983,
+        "mean_adopted_age": 0.8582061571896591,
+        "stale_gpu_time_share": 0.9342184324372862,
+        "mean_adopted_age_ms": 4.520557450551232
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "periodic",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9526234940072975,
+        "adopted_share": 0.7142129517978107,
+        "mean_adopted_age": 1.0649904595024906,
+        "stale_gpu_time_share": 0.3086879735753121,
+        "mean_adopted_age_ms": 5.609783285912755
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "periodic",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8514804087841725,
+        "adopted_share": 0.48911175472949636,
+        "mean_adopted_age": 1.07336908263419,
+        "stale_gpu_time_share": 0.5085815024328249,
+        "mean_adopted_age_ms": 5.653917258742076
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "periodic",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7417198388245837,
+        "adopted_share": 0.33245214505787457,
+        "mean_adopted_age": 1.0546693521029766,
+        "stale_gpu_time_share": 0.6413017276739215,
+        "mean_adopted_age_ms": 5.555417375621923
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "periodic",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5603496238409894,
+        "adopted_share": 0.15947556423851594,
+        "mean_adopted_age": 0.9918114309047876,
+        "stale_gpu_time_share": 0.7951713642057905,
+        "mean_adopted_age_ms": 5.224316460511803
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "periodic",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.3220473995883234,
+        "adopted_share": 0.03385780123502983,
+        "mean_adopted_age": 0.8582061571896591,
+        "stale_gpu_time_share": 0.9342184324372862,
+        "mean_adopted_age_ms": 4.520557450551232
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9526234940072975,
+        "adopted_share": 0.7142129517978107,
+        "mean_adopted_age": 1.0649904595024906,
+        "stale_gpu_time_share": 0.3086879735753121,
+        "mean_adopted_age_ms": 5.609783285912755
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8514804087841725,
+        "adopted_share": 0.48911175472949636,
+        "mean_adopted_age": 1.07336908263419,
+        "stale_gpu_time_share": 0.5085815024328249,
+        "mean_adopted_age_ms": 5.653917258742076
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7417198388245837,
+        "adopted_share": 0.33245214505787457,
+        "mean_adopted_age": 1.0546693521029766,
+        "stale_gpu_time_share": 0.6413017276739215,
+        "mean_adopted_age_ms": 5.555417375621923
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5603496238409894,
+        "adopted_share": 0.15947556423851594,
+        "mean_adopted_age": 0.9918114309047876,
+        "stale_gpu_time_share": 0.7951713642057905,
+        "mean_adopted_age_ms": 5.224316460511803
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.3220473995883234,
+        "adopted_share": 0.03385780123502983,
+        "mean_adopted_age": 0.8582061571896591,
+        "stale_gpu_time_share": 0.9342184324372862,
+        "mean_adopted_age_ms": 4.520557450551232
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9536760850104203,
+        "adopted_share": 0.713897174496874,
+        "mean_adopted_age": 1.0724433314029458,
+        "stale_gpu_time_share": 0.30224600545151403,
+        "mean_adopted_age_ms": 5.218222193275029
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.853906265636136,
+        "adopted_share": 0.4876562406183184,
+        "mean_adopted_age": 1.0895637147944512,
+        "stale_gpu_time_share": 0.5010773165464976,
+        "mean_adopted_age_ms": 5.30152539630214
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7447253328531208,
+        "adopted_share": 0.3297472004321913,
+        "mean_adopted_age": 1.0784963361570126,
+        "stale_gpu_time_share": 0.6349866910495103,
+        "mean_adopted_age_ms": 5.247674494220712
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5629052237757537,
+        "adopted_share": 0.15564216433636946,
+        "mean_adopted_age": 1.0250104427285371,
+        "stale_gpu_time_share": 0.7926076780539548,
+        "mean_adopted_age_ms": 4.987426453188559
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32284035103787756,
+        "adopted_share": 0.03147894688636734,
+        "mean_adopted_age": 0.8921484261169144,
+        "stale_gpu_time_share": 0.9361135636043256,
+        "mean_adopted_age_ms": 4.340955443089515
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "periodic",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9536760850104203,
+        "adopted_share": 0.713897174496874,
+        "mean_adopted_age": 1.0724433314029458,
+        "stale_gpu_time_share": 0.30224600545151403,
+        "mean_adopted_age_ms": 5.218222193275029
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "periodic",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.853906265636136,
+        "adopted_share": 0.4876562406183184,
+        "mean_adopted_age": 1.0895637147944512,
+        "stale_gpu_time_share": 0.5010773165464976,
+        "mean_adopted_age_ms": 5.30152539630214
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "periodic",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7447253328531208,
+        "adopted_share": 0.3297472004321913,
+        "mean_adopted_age": 1.0784963361570126,
+        "stale_gpu_time_share": 0.6349866910495103,
+        "mean_adopted_age_ms": 5.247674494220712
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "periodic",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5629052237757537,
+        "adopted_share": 0.15564216433636946,
+        "mean_adopted_age": 1.0250104427285371,
+        "stale_gpu_time_share": 0.7926076780539548,
+        "mean_adopted_age_ms": 4.987426453188559
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "periodic",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32284035103787756,
+        "adopted_share": 0.03147894688636734,
+        "mean_adopted_age": 0.8921484261169144,
+        "stale_gpu_time_share": 0.9361135636043256,
+        "mean_adopted_age_ms": 4.340955443089515
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9536760850104203,
+        "adopted_share": 0.713897174496874,
+        "mean_adopted_age": 1.0724433314029458,
+        "stale_gpu_time_share": 0.30224600545151403,
+        "mean_adopted_age_ms": 5.218222193275029
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.853906265636136,
+        "adopted_share": 0.4876562406183184,
+        "mean_adopted_age": 1.0895637147944512,
+        "stale_gpu_time_share": 0.5010773165464976,
+        "mean_adopted_age_ms": 5.30152539630214
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7447253328531208,
+        "adopted_share": 0.3297472004321913,
+        "mean_adopted_age": 1.0784963361570126,
+        "stale_gpu_time_share": 0.6349866910495103,
+        "mean_adopted_age_ms": 5.247674494220712
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5629052237757537,
+        "adopted_share": 0.15564216433636946,
+        "mean_adopted_age": 1.0250104427285371,
+        "stale_gpu_time_share": 0.7926076780539548,
+        "mean_adopted_age_ms": 4.987426453188559
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32284035103787756,
+        "adopted_share": 0.03147894688636734,
+        "mean_adopted_age": 0.8921484261169144,
+        "stale_gpu_time_share": 0.9361135636043256,
+        "mean_adopted_age_ms": 4.340955443089515
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9558065349883573,
+        "adopted_share": 0.7132580395034928,
+        "mean_adopted_age": 1.0874398335043813,
+        "stale_gpu_time_share": 0.28964115768727616,
+        "mean_adopted_age_ms": 4.763835761259157
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8586025847905956,
+        "adopted_share": 0.48483844912564267,
+        "mean_adopted_age": 1.120451547566426,
+        "stale_gpu_time_share": 0.48771405165829007,
+        "mean_adopted_age_ms": 4.908452850999596
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7502866051508459,
+        "adopted_share": 0.32474205536423867,
+        "mean_adopted_age": 1.1215684941080204,
+        "stale_gpu_time_share": 0.6250229009538832,
+        "mean_adopted_age_ms": 4.913345949187027
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5672127035467545,
+        "adopted_share": 0.14918094467986834,
+        "mean_adopted_age": 1.078616070835903,
+        "stale_gpu_time_share": 0.7904176089301935,
+        "mean_adopted_age_ms": 4.725180789412578
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32390194431051483,
+        "adopted_share": 0.028294167068455462,
+        "mean_adopted_age": 0.9299209347242292,
+        "stale_gpu_time_share": 0.9401104394037028,
+        "mean_adopted_age_ms": 4.073779962342144
+      },
+      "basis": "derived"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "periodic",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9558065349883573,
+        "adopted_share": 0.7132580395034928,
+        "mean_adopted_age": 1.0874398335043813,
+        "stale_gpu_time_share": 0.28964115768727616,
+        "mean_adopted_age_ms": 4.763835761259157
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "periodic",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8586025847905956,
+        "adopted_share": 0.48483844912564267,
+        "mean_adopted_age": 1.120451547566426,
+        "stale_gpu_time_share": 0.48771405165829007,
+        "mean_adopted_age_ms": 4.908452850999596
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "periodic",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7502866051508459,
+        "adopted_share": 0.32474205536423867,
+        "mean_adopted_age": 1.1215684941080204,
+        "stale_gpu_time_share": 0.6250229009538832,
+        "mean_adopted_age_ms": 4.913345949187027
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "periodic",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5672127035467545,
+        "adopted_share": 0.14918094467986834,
+        "mean_adopted_age": 1.078616070835903,
+        "stale_gpu_time_share": 0.7904176089301935,
+        "mean_adopted_age_ms": 4.725180789412578
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "periodic",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32390194431051483,
+        "adopted_share": 0.028294167068455462,
+        "mean_adopted_age": 0.9299209347242292,
+        "stale_gpu_time_share": 0.9401104394037028,
+        "mean_adopted_age_ms": 4.073779962342144
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 0.3,
+      "predicted": {
+        "computed_share": 0.9558065349883573,
+        "adopted_share": 0.7132580395034928,
+        "mean_adopted_age": 1.0874398335043813,
+        "stale_gpu_time_share": 0.28964115768727616,
+        "mean_adopted_age_ms": 4.763835761259157
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 0.6,
+      "predicted": {
+        "computed_share": 0.8586025847905956,
+        "adopted_share": 0.48483844912564267,
+        "mean_adopted_age": 1.120451547566426,
+        "stale_gpu_time_share": 0.48771405165829007,
+        "mean_adopted_age_ms": 4.908452850999596
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 0.9,
+      "predicted": {
+        "computed_share": 0.7502866051508459,
+        "adopted_share": 0.32474205536423867,
+        "mean_adopted_age": 1.1215684941080204,
+        "stale_gpu_time_share": 0.6250229009538832,
+        "mean_adopted_age_ms": 4.913345949187027
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 1.5,
+      "predicted": {
+        "computed_share": 0.5672127035467545,
+        "adopted_share": 0.14918094467986834,
+        "mean_adopted_age": 1.078616070835903,
+        "stale_gpu_time_share": 0.7904176089301935,
+        "mean_adopted_age_ms": 4.725180789412578
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 3.0,
+      "predicted": {
+        "computed_share": 0.32390194431051483,
+        "adopted_share": 0.028294167068455462,
+        "mean_adopted_age": 0.9299209347242292,
+        "stale_gpu_time_share": 0.9401104394037028,
+        "mean_adopted_age_ms": 4.073779962342144
+      },
+      "basis": "the Poisson form at the same long run rate, not derived for this process"
+    }
+  ]
+}
