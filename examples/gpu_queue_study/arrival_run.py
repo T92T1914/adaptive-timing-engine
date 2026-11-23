@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 import random
 import statistics
+import subprocess
 import sys
 import time
 
@@ -31,6 +32,22 @@ PREDICTIONS = ROOT / "docs" / "evidence" / "gpu-queue-predictions.json"
 FULL = {"requests": 1000, "seeds": (7, 42, 73), "sizes": model.CHUNK_SIZES, "loads": queue_model.LOADS}
 QUICK = {"requests": 40, "seeds": (7,), "sizes": (1,), "loads": (0.6,)}
 METRICS = ("computed_share", "adopted_share", "mean_adopted_age", "stale_gpu_time_share")
+
+
+def smi(query):
+    """One nvidia-smi reading, taken outside the timed region."""
+    out = subprocess.run(["nvidia-smi", f"--query-gpu={query}", "--format=csv,noheader,nounits"],
+                         capture_output=True, text=True, timeout=30, check=True)
+    return out.stdout.strip().splitlines()[0]
+
+
+def run_read(*args):
+    """Run one case and keep the card's utilization and memory read just before and after it."""
+    before = smi("utilization.gpu,memory.used")
+    result = run_case(*args)
+    result["gpu_utilization_and_memory_before"] = before
+    result["gpu_utilization_and_memory_after"] = smi("utilization.gpu,memory.used")
+    return result
 
 
 def wait_until(target):
@@ -134,7 +151,7 @@ def study(settings, predictions, source):
         mean_pass = predictions["mean_pass_ms"][str(size)] / 1000.0
         for arrival in queue_model.ARRIVALS:
             for load in settings["loads"]:
-                runs = [run_case(chunk_list, inputs, arrival, load, mean_pass, settings["requests"], seed)
+                runs = [run_read(chunk_list, inputs, arrival, load, mean_pass, settings["requests"], seed)
                         for seed in settings["seeds"]]
                 expected = predicted[(size, arrival, load)]
                 row = {"chunk_blocks": size, "arrival": arrival, "load": load,
