@@ -72,6 +72,24 @@ class GpuExampleRunTests(unittest.TestCase):
             results.append(value)
         torch.testing.assert_close(results[0], results[1], rtol=1e-3, atol=1e-3)
 
+    def test_a_quick_arrival_run_keeps_the_worker_counts_consistent(self):
+        import json
+        import tempfile
+        import arrival_run
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "arrivals.json"
+            self.assertEqual(arrival_run.main(["--quick", "--output", str(output)]), 0)
+            report = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(len(report["rows"]), 3)
+        for row in report["rows"]:
+            for run in row["runs"]:
+                self.assertEqual(run["computed"] + run["replaced"], run["submitted"])
+                self.assertEqual(run["submitted"], arrival_run.QUICK["requests"])
+                self.assertEqual(run["computed"] - run["stale"], run["adopted"] + run["adopted_check_mismatch"])
+                self.assertTrue(0 <= run["adopted_share"] <= run["computed_share"] <= 1)
+                self.assertGreaterEqual(run["arrival_lateness_ms"]["max"], run["arrival_lateness_ms"]["mean"])
+        self.assertEqual(report["settings"]["arrival_wait"], "sleep only, no spin")
+
     def test_a_chunk_size_that_does_not_divide_is_refused(self):
         import model
         blocks, _ = model.build()
