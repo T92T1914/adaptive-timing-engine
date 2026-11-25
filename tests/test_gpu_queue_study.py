@@ -36,6 +36,11 @@ class GpuExampleTests(unittest.TestCase):
         self.assertEqual(len(lines), 1)
         self.assertRegex(lines[0], r"^torch==\d+\.\d+\.\d+\+cu\d+$")
 
+    def test_the_example_readme_names_every_script(self):
+        text = (EXAMPLE / "README.md").read_text(encoding="utf-8")
+        missing = [path.name for path in sorted(EXAMPLE.glob("*.py")) if f"`{path.name}`" not in text]
+        self.assertEqual(missing, [])
+
     def test_every_timed_region_is_closed_by_a_synchronize(self):
         tree = ast.parse((EXAMPLE / "harness.py").read_text(encoding="utf-8"))
         timed = 0
