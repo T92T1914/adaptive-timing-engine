@@ -40,6 +40,15 @@ def main():
         cells += [f"{means[mode]['mean_adopted_pass_ms']:.2f}" for mode in MODES]
         cells.append(f"{means['stop']['stopped']:.0f}")
         print("| " + " | ".join(str(cell) for cell in cells) + " |")
+    print()
+    print("| Chunk blocks | Arrivals | Load | Adopted share: plain | synced | stop | Mean adopted age: plain | synced | stop |")
+    print("|---|---|---|---|---|---|---|---|---|")
+    for row in report["rows"]:
+        means = {mode: row["modes"][mode]["means"] for mode in MODES}
+        cells = [row["chunk_blocks"], row["arrival"], f"{row['load']:.1f}"]
+        cells += [f"{means[mode]['adopted_share']:.2f}" for mode in MODES]
+        cells += [f"{means[mode]['mean_adopted_age']:.2f}" for mode in MODES]
+        print("| " + " | ".join(str(cell) for cell in cells) + " |")
 
 
 if __name__ == "__main__":
