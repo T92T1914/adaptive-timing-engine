@@ -1,6 +1,7 @@
 """The GPU example stays outside the package and its timed regions close with a synchronize."""
 import ast
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -16,6 +17,12 @@ def calls(node):
 
 
 class GpuExampleTests(unittest.TestCase):
+    def test_the_study_states_the_block_count_of_the_saved_run(self):
+        evidence = ROOT / "docs" / "evidence" / "gpu-service-time.json"
+        blocks = json.loads(evidence.read_text(encoding="utf-8"))["model"]["blocks"]
+        study = (ROOT / "docs" / "gpu-queue-study.md").read_text(encoding="utf-8")
+        self.assertIn(f"a fixed stack of {blocks} matrix blocks", study)
+
     def test_nothing_in_the_package_or_the_tools_imports_the_example(self):
         for folder in ("adaptive_timing", "tools"):
             for path in (ROOT / folder).glob("*.py"):

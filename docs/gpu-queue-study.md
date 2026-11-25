@@ -6,7 +6,7 @@ Most of the predictions miss, some by a wide margin. The first run used an arriv
 
 ## What was run
 
-The calculation is a fixed stack of eight matrix blocks, split into chunks of 1, 2, 4 or 8 blocks. The code is in [`examples/gpu_queue_study`](../examples/gpu_queue_study) with its own pinned environment. The package itself still imports only the standard library.
+The calculation is a fixed stack of 32 matrix blocks, split into chunks of 1, 2, 4 or 8 blocks. The code is in [`examples/gpu_queue_study`](../examples/gpu_queue_study) with its own pinned environment. The package itself still imports only the standard library.
 
 1. [`gpu-service-time.json`](evidence/gpu-service-time.json) holds 300 passes per chunk size. Every timed region is closed by a synchronize, so the clock stops when the GPU finishes and not when the launch returns. A pass is the sum of its chunk timings.
 2. [`gpu-queue-predictions.json`](evidence/gpu-queue-predictions.json) applies the closed forms of the queue model to that measured distribution. It was committed before any arrival run (pull request 45).
