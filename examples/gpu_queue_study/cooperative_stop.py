@@ -18,7 +18,7 @@ import statistics
 import torch
 
 import model
-from arrival_run import MODES, PREDICTIONS, ROOT, queue_model, run_case  # noqa: F401
+from arrival_run import MODES, PREDICTIONS, ROOT, queue_model, run_case, run_read  # noqa: F401
 
 FULL = {"requests": 1000, "seeds": (7, 42, 73), "sizes": model.CHUNK_SIZES,
         "cases": (("poisson", 0.9), ("poisson", 1.5), ("bursty", 0.9), ("bursty", 1.5))}
@@ -47,7 +47,7 @@ def study(settings, mean_pass_ms, source):
             row = {"chunk_blocks": size, "chunks_per_pass": len(chunk_list), "arrival": arrival, "load": load,
                    "modes": {}}
             for mode in MODES:
-                runs = [run_case(chunk_list, inputs, arrival, load, mean_pass, settings["requests"], seed, mode)
+                runs = [run_read(chunk_list, inputs, arrival, load, mean_pass, settings["requests"], seed, mode)
                         for seed in settings["seeds"]]
                 row["modes"][mode] = {"runs": runs, "means": {key: mean_of(runs, key) for key in KEYS}}
             rows.append(row)
