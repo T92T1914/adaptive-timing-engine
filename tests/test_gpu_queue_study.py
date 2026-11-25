@@ -90,6 +90,38 @@ class GpuExampleRunTests(unittest.TestCase):
                 self.assertGreaterEqual(run["arrival_lateness_ms"]["max"], run["arrival_lateness_ms"]["mean"])
         self.assertEqual(report["settings"]["arrival_wait"], "sleep only, no spin")
 
+    def test_a_quick_cooperative_stop_run_stops_only_stale_passes(self):
+        import json
+        import tempfile
+        import cooperative_stop
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "stop.json"
+            self.assertEqual(cooperative_stop.main(["--quick", "--output", str(output)]), 0)
+            report = json.loads(output.read_text(encoding="utf-8"))
+        self.assertEqual(len(report["rows"]), 3)
+        for row in report["rows"]:
+            self.assertEqual(set(row["modes"]), {"plain", "synced", "stop"})
+            for mode, block in row["modes"].items():
+                for run in block["runs"]:
+                    self.assertEqual(run["computed"] + run["replaced"], run["submitted"])
+                    self.assertLessEqual(run["stopped"], run["stale"])
+                    if mode != "stop":
+                        self.assertEqual(run["stopped"], 0)
+
+    def test_the_retained_stop_results_hold_card_readings_and_real_stops(self):
+        import json
+        report = json.loads((ROOT / "docs/evidence/gpu-cooperative-stop.json").read_text(encoding="utf-8"))
+        self.assertEqual(sorted({row["chunk_blocks"] for row in report["rows"]}), [1, 2, 4, 8])
+        for row in report["rows"]:
+            for mode, block in row["modes"].items():
+                for run in block["runs"]:
+                    self.assertIn("gpu_utilization_and_memory_before", run)
+                    self.assertIn("gpu_utilization_and_memory_after", run)
+                    if mode == "stop":
+                        self.assertGreater(run["stopped"], 0)
+                    else:
+                        self.assertEqual(run["stopped"], 0)
+
     def test_a_chunk_size_that_does_not_divide_is_refused(self):
         import model
         blocks, _ = model.build()
