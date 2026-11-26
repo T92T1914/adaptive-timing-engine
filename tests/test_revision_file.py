@@ -2,6 +2,7 @@
 from collections import Counter
 from contextlib import redirect_stderr, redirect_stdout
 import hashlib
+import inspect
 import io
 import json
 from pathlib import Path
@@ -37,6 +38,14 @@ class RevisionFileTests(unittest.TestCase):
         self.assertEqual(report["session"]["reserved_resources"], [])
         verdict = inspect_bytes(json.dumps(report).encode(), record="session")
         self.assertEqual(verdict["consistency"], "consistent", verdict)
+
+    def test_the_contract_shows_the_signatures_the_runner_has(self):
+        contract = (Path(__file__).resolve().parents[1] / "docs" / "revision-file.md").read_text(encoding="utf-8")
+        for name, shown in (("run_manifest", "run_manifest(data: bytes, *, timeout=15.0)"),
+                            ("run_file", "run_file(path, *, timeout=15.0)")):
+            timeout = inspect.signature(getattr(runner, name)).parameters["timeout"]
+            self.assertEqual((timeout.kind, timeout.default), (inspect.Parameter.KEYWORD_ONLY, 15.0))
+            self.assertIn(f"`{shown}`", contract)
 
     def test_actual_default_and_empty_final_input(self):
         for final in ([1, 2, 255, 2], []):

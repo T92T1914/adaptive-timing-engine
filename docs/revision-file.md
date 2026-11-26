@@ -28,8 +28,8 @@ valid. Offsets strictly increase within zero through ten seconds. Duplicate
 keys, nonfinite numbers, booleans as numbers and excessive nesting are refused.
 There is no callback, path loading, stdin, watch or network input mechanism.
 
-The callable APIs are `run_manifest(data: bytes, timeout=15.0)` and
-`run_file(path, timeout=15.0)`. Invalid admission raises `AdmissionError` without
+The callable APIs are `run_manifest(data: bytes, *, timeout=15.0)` and
+`run_file(path, *, timeout=15.0)`. Invalid admission raises `AdmissionError` without
 creating a session. The timeout must be positive and at most thirty seconds.
 It is a soft observation budget followed by waiting cleanup, not a hard shutdown
 or execution deadline. The runner mutates the session only on its owner thread.
