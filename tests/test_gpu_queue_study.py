@@ -23,6 +23,45 @@ class GpuExampleTests(unittest.TestCase):
         study = (ROOT / "docs" / "gpu-queue-study.md").read_text(encoding="utf-8")
         self.assertIn(f"a fixed stack of {blocks} matrix blocks", study)
 
+    def test_the_study_states_the_pass_that_sets_the_stop_loads(self):
+        evidence = ROOT / "docs" / "evidence"
+        predictions = json.loads((evidence / "gpu-queue-predictions.json").read_text(encoding="utf-8"))
+        report = json.loads((evidence / "gpu-cooperative-stop.json").read_text(encoding="utf-8"))
+        assumed = predictions["mean_pass_ms"]
+        for row in report["rows"]:
+            runs = row["modes"]["plain"]["runs"]
+            measured = 1000 * sum(run["busy_gpu_seconds"] for run in runs) / sum(run["computed"] for run in runs)
+            self.assertLess(measured, assumed[str(row["chunk_blocks"])])
+        values = [f"{assumed[size]:.2f}" for size in ("1", "2", "4", "8")]
+        study = (ROOT / "docs" / "gpu-queue-study.md").read_text(encoding="utf-8")
+        self.assertIn(f"the assumed pass of the first study, {values[0]}, {values[1]}, {values[2]} "
+                      f"and {values[3]} ms at 1, 2, 4 and 8 blocks per chunk", study)
+        self.assertNotIn("set from the mean pass of `plain`", study)
+
+    def test_the_study_separates_mean_and_single_run_stop_counts(self):
+        evidence = ROOT / "docs" / "evidence" / "gpu-cooperative-stop.json"
+        modes = [row["modes"]["stop"] for row in json.loads(evidence.read_text(encoding="utf-8"))["rows"]]
+        means = [mode["means"]["stopped"] for mode in modes]
+        runs = [run["stopped"] for mode in modes for run in mode["runs"]]
+        study = (ROOT / "docs" / "gpu-queue-study.md").read_text(encoding="utf-8")
+        self.assertIn(f"Between {min(means):.0f} and {max(means):.0f} of the 1000 requests in a run ended early "
+                      f"on the mean of three seeds, and single runs ranged from {min(runs)} to {max(runs)}.", study)
+
+    def test_the_study_states_the_predicted_range_of_the_quiet_periodic_rows(self):
+        evidence = ROOT / "docs" / "evidence" / "gpu-queue-predictions.json"
+        shares = [row["predicted"]["computed_share"]
+                  for row in json.loads(evidence.read_text(encoding="utf-8"))["rows"]
+                  if row["arrival"] == "periodic" and row["load"] <= 1.5]
+        study = (ROOT / "docs" / "gpu-queue-study.md").read_text(encoding="utf-8")
+        self.assertIn(f"predicts computed shares from {min(shares):.2f} to {max(shares):.2f}", study)
+
+    def test_the_documents_limit_the_standard_library_claim_to_the_default_modules(self):
+        for path in (ROOT / "docs" / "gpu-queue-study.md", EXAMPLE / "README.md"):
+            text = path.read_text(encoding="utf-8")
+            self.assertIn("the default modules of the package", text.lower(), path.name)
+            self.assertNotIn("package itself still imports only the standard library", text, path.name)
+            self.assertNotIn("the package still needs only the standard library", text, path.name)
+
     def test_nothing_in_the_package_or_the_tools_imports_the_example(self):
         for folder in ("adaptive_timing", "tools"):
             for path in (ROOT / folder).glob("*.py"):

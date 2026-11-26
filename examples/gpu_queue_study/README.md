@@ -1,6 +1,6 @@
 # GPU queue study
 
-This folder holds the calculation I put under the worker's queue model. It is a small fixed PyTorch model cut into chunks, plus a timing harness. The engine package does not import any of it, and the package still needs only the standard library.
+This folder holds the calculation I put under the worker's queue model. It is a small fixed PyTorch model cut into chunks, plus a timing harness. The engine package does not import any of it, and the default modules of the package still need only the standard library.
 
 ## Files
 
