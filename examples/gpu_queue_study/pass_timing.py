@@ -1,6 +1,7 @@
 """Time every pass inside the worker and how long each calculation waited to start.
 
-The first study measured neither, so some of its misses have no measured cause. This
+The first study timed passes inside the worker only under its spinning arrival loop and
+never measured the start delay, so some of its misses have no measured cause. This
 runs the same worker and the same sleeping arrival loop in the plain and stop modes
 (see arrival_run.run_case) and keeps, for every calculation that started, the time
 from its request's arrival to its start and the time from its start to its end. Both
@@ -27,7 +28,7 @@ import model
 from arrival_run import PREDICTIONS, ROOT, run_case, smi
 
 sys.path.insert(0, str(ROOT / "tools"))
-from gpu_pass_timing_tables import IDLE_AT_ARRIVAL, STOPPED, TAIL_COUNT, summarise  # noqa: E402
+from gpu_pass_timing_tables import TAIL_COUNT, samples_from, summarise  # noqa: E402
 
 CASES = (("poisson", 0.9), ("poisson", 1.5), ("bursty", 0.9), ("bursty", 1.5))
 MODES = ("plain", "stop")
@@ -37,19 +38,6 @@ QUICK = {"sizes": (2,), "cases": (("poisson", 0.9),), "block_requests": 60, "tar
          "max_blocks": 2}
 FIRST_SEED = 1000
 READING = "utilization.gpu,memory.used,clocks.sm"
-
-
-def samples_from(trace):
-    """Turn (arrived, start, end, adopted, stopped) rows into [delay_us, pass_us, flags]."""
-    out = []
-    previous_end = None
-    for arrived, start, end, _, stopped in sorted(trace, key=lambda row: row[1]):
-        flags = STOPPED if stopped else 0
-        if previous_end is None or previous_end <= arrived:
-            flags |= IDLE_AT_ARRIVAL
-        out.append([round((start - arrived) * 1e6), round((end - start) * 1e6), flags])
-        previous_end = end
-    return out
 
 
 def run_condition(settings, chunk_list, inputs, arrival, load, mean_pass, mode):

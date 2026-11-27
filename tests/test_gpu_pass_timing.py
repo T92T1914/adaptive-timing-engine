@@ -3,9 +3,12 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import sys
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+EXAMPLE = ROOT / "examples" / "gpu_queue_study"
 
 spec = importlib.util.spec_from_file_location("gpu_pass_timing_tables", ROOT / "tools" / "gpu_pass_timing_tables.py")
 tables = importlib.util.module_from_spec(spec)
@@ -19,6 +22,19 @@ class PassTimingSummaryTests(unittest.TestCase):
         self.assertEqual(tables.percentile([7], 999), 7)
         self.assertEqual(tables.percentile([1, 2, 3], 500), 2)
         self.assertIsNone(tables.percentile([], 500))
+
+    def test_samples_keep_start_order_delay_length_and_flags(self):
+        trace = [
+            # arrived, start, end, adopted, stopped. Listed out of start order.
+            (1.001, 1.004, 1.0045, False, True),
+            (1.000, 1.001, 1.004, False, False),
+            (1.006, 1.00603, 1.008, True, False),
+        ]
+        self.assertEqual(tables.samples_from(trace), [
+            [1000, 3000, tables.IDLE_AT_ARRIVAL],
+            [3000, 500, tables.STOPPED],
+            [30, 1970, tables.IDLE_AT_ARRIVAL],
+        ])
 
     def test_summary_separates_idle_starts_and_stopped_passes(self):
         condition = {"chunk_blocks": 1, "arrival": "poisson", "load": 0.9, "mode": "stop", "blocks": [
@@ -35,7 +51,30 @@ class PassTimingSummaryTests(unittest.TestCase):
         self.assertEqual(row["stopped_pass"]["max_ms"], 3.0)
 
 
-@unittest.skipUnless(tables.SUMMARY.exists(), "no saved pass timing run")
+@unittest.skipUnless(importlib.util.find_spec("torch"), "torch is not installed here")
+class PassTimingRunTests(unittest.TestCase):
+    def setUp(self):
+        import torch
+        if not torch.cuda.is_available():
+            self.skipTest("no CUDA device")
+        sys.path.insert(0, str(EXAMPLE))
+        self.addCleanup(sys.path.remove, str(EXAMPLE))
+
+    def test_a_quick_run_saves_a_summary_of_its_own_samples(self):
+        import pass_timing
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "timing.json"
+            self.assertEqual(pass_timing.main(["--quick", "--output", str(output)]), 0)
+            report = json.loads(output.read_text(encoding="utf-8"))
+            saved = tables.load_samples(output.with_name(report["samples_file"]))
+        self.assertEqual([row["mode"] for row in report["rows"]], ["plain", "stop"])
+        for condition, row in zip(saved["conditions"], report["rows"]):
+            summary = {key: value for key, value in row.items() if key != "blocks"}
+            self.assertEqual(tables.summarise(condition), summary)
+            self.assertTrue(0 < row["starts"] <= row["requests"])
+        self.assertEqual(report["rows"][0]["stopped_pass"]["count"], 0)
+
+
 class SavedPassTimingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

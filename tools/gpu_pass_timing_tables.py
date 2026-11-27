@@ -30,6 +30,24 @@ def percentile(ordered, per_mille):
     return ordered[max(1, math.ceil(len(ordered) * per_mille / 1000)) - 1]
 
 
+def samples_from(trace):
+    """Turn (arrived, start, end, adopted, stopped) rows into [delay_us, pass_us, flags].
+
+    A start counts as idle at arrival when no earlier pass was still between its own start
+    and end timestamps when the request arrived. The worker may still have been finishing
+    its bookkeeping for that earlier pass.
+    """
+    out = []
+    previous_end = None
+    for arrived, start, end, _, stopped in sorted(trace, key=lambda row: row[1]):
+        flags = STOPPED if stopped else 0
+        if previous_end is None or previous_end <= arrived:
+            flags |= IDLE_AT_ARRIVAL
+        out.append([round((start - arrived) * 1e6), round((end - start) * 1e6), flags])
+        previous_end = end
+    return out
+
+
 def spread(values_us):
     ordered = sorted(values_us)
     result = {"count": len(ordered)}
