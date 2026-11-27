@@ -10,6 +10,7 @@ from pathlib import Path
 import platform
 import subprocess
 import sys
+import tarfile
 import tempfile
 
 
@@ -52,8 +53,15 @@ def main() -> None:
     with tempfile.TemporaryDirectory(prefix="adaptive-revision-file-") as directory:
         outside = Path(directory).resolve()
         require(not outside.is_relative_to(CHECKOUT), "the consumer is outside the checkout")
+        # Build from an export of the revision, so no untracked file or old
+        # build directory can reach the wheel.
+        archive = outside / "source.tar"
+        git("archive", "--format=tar", "--output", str(archive), revision)
+        source = outside / "source"
+        with tarfile.open(archive) as exported:
+            exported.extractall(source, filter="data")
         wheels = outside / "wheel"
-        run([sys.executable, "-m", "pip", "wheel", str(CHECKOUT), "--no-deps",
+        run([sys.executable, "-m", "pip", "wheel", str(source), "--no-deps",
              "--wheel-dir", str(wheels)], outside)
         (wheel,) = wheels.glob("*.whl")
         environment = outside / "venv"
@@ -117,8 +125,10 @@ def main() -> None:
         }
 
     text = json.dumps(record, indent=2, sort_keys=True) + "\n"
-    require(str(Path.home()) not in text and str(Path.home()).replace("\\", "\\\\") not in text,
-            "the record holds no home directory path")
+    home = Path.home()
+    if home != Path(home.anchor):
+        require(str(home) not in text and str(home).replace("\\", "\\\\") not in text,
+                "the record holds no home directory path")
     with output.open("x", encoding="utf-8", newline="\n") as stream:
         stream.write(text)
     print(f"Qualification passed at {revision} on {record['platform']} "
