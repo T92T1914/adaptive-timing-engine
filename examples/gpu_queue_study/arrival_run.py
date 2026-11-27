@@ -65,7 +65,7 @@ def wait_until(target):
 MODES = ("plain", "synced", "stop")
 
 
-def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode="plain"):
+def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode="plain", trace=None):
     """Run one case. The mode changes only how a pass treats the chunks.
 
     plain: one synchronize at the end of the pass, as in the first study.
@@ -73,6 +73,9 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
     stop: a synchronize after every chunk, then a look at the worker's generation. A stale
         pass returns at that point. This is the calculation stopping itself. Work already
         placed on the GPU is not removed, and the chunk in flight finishes first.
+
+    A list passed as trace receives one row for every calculation that started, as
+    (arrived, start, end, adopted, stopped) in time.perf_counter seconds.
     """
     rng = random.Random(f"gpu/{arrival}/{load}/{seed}")
     schedule = [t * mean_pass for t in queue_model.arrival_times(arrival, load, requests, rng)]
@@ -113,6 +116,9 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
             worker.request(index)
         worker.wait_idle(timeout=60)
         stats = worker.stats()
+    if trace is not None:
+        trace.extend((arrived[index], start, end, adopted, stopped)
+                     for index, start, end, adopted, stopped in runs)
     busy = sum(end - start for _, start, end, _, _ in runs)
     stale_time = sum(end - start for _, start, end, adopted, _ in runs if not adopted)
     ages = [end - arrived[index] for index, _, end, adopted, _ in runs if adopted]
