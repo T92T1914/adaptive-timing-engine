@@ -89,8 +89,17 @@ def main() -> None:
              "--output", "unused.json"], outside, expected=2)
         require(not (outside / "unused.json").exists(), "a refused input writes no receipt")
 
+        # The temporary directory is local. Keep only the path inside the environment.
+        identity = receipt["session"]["source_identity"]
+        package = Path(identity["package_directory"]).resolve()
+        require(package == module.parent, "the receipt names the installed package")
+        identity["package_directory"] = package.relative_to(environment).as_posix()
+
         record = {
             "schema_version": 1,
+            "redaction": "receipt.session.source_identity.package_directory is written "
+                         "relative to the new environment. The verdict's receipt_sha256 "
+                         "identifies the receipt as the runner wrote it.",
             "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "revision": revision,
             "command": "python tools/check_revision_file_install.py --output <record>",
