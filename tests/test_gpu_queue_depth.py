@@ -15,6 +15,10 @@ spec = importlib.util.spec_from_file_location("gpu_depth", EXAMPLE / "depth.py")
 depth = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(depth)
 
+spec = importlib.util.spec_from_file_location("gpu_depth_tables", ROOT / "tools" / "gpu_depth_tables.py")
+tables = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(tables)
+
 
 class Stream:
     """A stand in for one stream. Work finishes only when something waits for it,
@@ -137,7 +141,7 @@ class DepthRunTests(unittest.TestCase):
             report = json.loads(output.read_text(encoding="utf-8"))
         self.assertEqual([row["depth"] for row in report["rows"]], [1, 2, 4, 8, None])
         for row in report["rows"]:
-            self.assertEqual(row["summary"], chunk_depth.summarise(row["passes"]))
+            self.assertEqual(row["summary"], tables.summarise(row["passes"]))
 
 
 class SavedChunkTimeTests(unittest.TestCase):
@@ -169,12 +173,10 @@ class SavedChunkTimeTests(unittest.TestCase):
 
     def test_the_summaries_follow_from_the_saved_passes(self):
         for row in self.report["rows"]:
-            summary = row["summary"]
-            values = [value for item in row["passes"] for value in item["chunk_ms"]]
-            self.assertEqual(summary["chunk_count"], len(values))
-            self.assertAlmostEqual(summary["chunk_mean_ms"], sum(values) / len(values))
-            waits = sum(item["waits"] for item in row["passes"]) / len(row["passes"])
-            self.assertAlmostEqual(summary["synchronizes_per_pass"], 1 + waits)
+            summary = tables.summarise(row["passes"])
+            self.assertEqual(set(summary), set(row["summary"]))
+            for key, value in summary.items():
+                self.assertAlmostEqual(row["summary"][key], value, msg=key)
 
 
 if __name__ == "__main__":

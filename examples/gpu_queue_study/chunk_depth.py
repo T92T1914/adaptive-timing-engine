@@ -13,7 +13,6 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import random
-import statistics
 import subprocess
 import sys
 import time
@@ -23,6 +22,9 @@ import torch
 import model
 from arrival_run import ROOT, smi
 from depth import run_depth
+
+sys.path.insert(0, str(ROOT / "tools"))
+from gpu_depth_tables import summarise  # noqa: E402
 
 # None queues every chunk of the pass.
 DEPTHS = (1, 2, 4, 8, None)
@@ -52,21 +54,6 @@ def one_pass(chunk_list, inputs, depth):
         intervals.append(previous.elapsed_time(event))
         previous = event
     return intervals, host, waits
-
-
-def summarise(passes):
-    """Summary of the saved passes of one chunk size and depth."""
-    intervals = sorted(value for item in passes for value in item["chunk_ms"])
-    hosts = [item["host_ms"] for item in passes]
-    return {
-        "passes": len(passes), "chunk_count": len(intervals),
-        "chunk_mean_ms": statistics.fmean(intervals), "chunk_median_ms": statistics.median(intervals),
-        "chunk_p5_ms": intervals[int(0.05 * len(intervals))],
-        "chunk_p95_ms": intervals[int(0.95 * len(intervals))],
-        "pass_host_mean_ms": statistics.fmean(hosts), "pass_host_median_ms": statistics.median(hosts),
-        # Each pass also ends in one synchronize that the depth does not change.
-        "synchronizes_per_pass": 1 + statistics.fmean(item["waits"] for item in passes),
-    }
 
 
 def study(settings):
@@ -118,7 +105,8 @@ def main(argv=None):
                      "depths": list(DEPTHS), "depth_null": "every chunk of the pass is queued",
                      "order_seed": ORDER_SEED,
                      "chunk_time": "interval on the card between the events after consecutive chunks, "
-                                   "idle time between launches included",
+                                   "idle time between launches included. The first chunk of a pass "
+                                   "starts at an event recorded on an idle stream",
                      "desktop_load": "a working desktop. Utilization, memory and core clock are read "
                                      "before and after every round of a case"},
         "note": "One card, one machine, one model. No pass goes stale and no pass runs inside the worker. "
