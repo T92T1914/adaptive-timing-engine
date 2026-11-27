@@ -1,0 +1,2981 @@
+{
+  "schema_version": 1,
+  "revision": "272345b467da721bc41c238eb7ba2423be5b18bd",
+  "card": "NVIDIA GeForce RTX 4090",
+  "driver": "621.40",
+  "toolkit": "13.0",
+  "torch": "2.14.1+cu130",
+  "torch_cuda": "13.0",
+  "python": "3.11.8",
+  "switch_interval_seconds": 0.005,
+  "started_utc": "2026-11-27T16:17:53+00:00",
+  "finished_utc": "2026-11-27T17:11:46+00:00",
+  "settings": {
+    "block_requests": 5000,
+    "target_starts": 10000,
+    "max_blocks": 8,
+    "first_seed": 1000,
+    "cases": [
+      [
+        "poisson",
+        0.9
+      ],
+      [
+        "poisson",
+        1.5
+      ],
+      [
+        "bursty",
+        0.9
+      ],
+      [
+        "bursty",
+        1.5
+      ]
+    ],
+    "modes": [
+      "plain",
+      "stop"
+    ],
+    "time_unit": "mean pass duration of the chunk size, from the first study",
+    "arrival_wait": "sleep only, no spin",
+    "arrivals": "generated in real time, not from any person",
+    "start_delay": "from just before the request call to the first line of the calculation, any wait behind an earlier pass included",
+    "pass_time": "from the first line of the calculation to the return of its last synchronize",
+    "percentile": "nearest rank",
+    "desktop_load": "a working desktop. Utilization, memory and core clock are read before and after every block as utilization.gpu,memory.used,clocks.sm"
+  },
+  "samples_file": "gpu-pass-timing-samples.json.gz",
+  "samples_sha256": "92d14370bfb474c62c658efb2b1142d1af4393a151a635a2571a267e310e0dba",
+  "note": "One card, one machine, one model, generated arrivals. Nothing here is a latency bound or a measure of human performance.",
+  "rows": [
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 13888,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13888,
+        "p50_ms": 0.029,
+        "p99_ms": 2.241,
+        "p99_9_ms": 2.65,
+        "max_ms": 3.594
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 10037,
+        "p50_ms": 0.025,
+        "p99_ms": 0.054,
+        "p99_9_ms": 0.074,
+        "max_ms": 0.127
+      },
+      "completed_pass": {
+        "count": 13888,
+        "p50_ms": 2.426,
+        "p99_ms": 3.017,
+        "p99_9_ms": 3.366,
+        "max_ms": 23.329
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 4977, 2520",
+          "utilization_memory_clock_after": "41, 5012, 2550",
+          "arrival_lateness_ms": {
+            "mean": 0.2660321685252711,
+            "p95": 0.5079937109258026,
+            "max": 1.4821900986135006,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "41, 5012, 2550",
+          "utilization_memory_clock_after": "23, 5012, 2580",
+          "arrival_lateness_ms": {
+            "mean": 0.27008885888499207,
+            "p95": 0.5061404954176396,
+            "max": 17.19812402734533,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5012, 2580",
+          "utilization_memory_clock_after": "25, 5012, 2325",
+          "arrival_lateness_ms": {
+            "mean": 0.25928030600771307,
+            "p95": 0.5067505408078432,
+            "max": 1.0275683016516268,
+            "share_over_1ms": 0.0004
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 14431,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 14431,
+        "p50_ms": 0.033,
+        "p99_ms": 0.153,
+        "p99_9_ms": 0.466,
+        "max_ms": 0.595
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 8294,
+        "p50_ms": 0.026,
+        "p99_ms": 0.055,
+        "p99_9_ms": 0.08,
+        "max_ms": 0.124
+      },
+      "completed_pass": {
+        "count": 8417,
+        "p50_ms": 3.958,
+        "p99_ms": 5.117,
+        "p99_9_ms": 5.791,
+        "max_ms": 6.631
+      },
+      "stopped_pass": {
+        "count": 6014,
+        "p50_ms": 1.998,
+        "p99_ms": 4.198,
+        "p99_9_ms": 5.311,
+        "max_ms": 6.446
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "25, 5012, 2325",
+          "utilization_memory_clock_after": "50, 5012, 1785",
+          "arrival_lateness_ms": {
+            "mean": 0.26439913921640257,
+            "p95": 0.5060220137238503,
+            "max": 1.2239025672897696,
+            "share_over_1ms": 0.0008
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "50, 5012, 1785",
+          "utilization_memory_clock_after": "29, 5009, 2265",
+          "arrival_lateness_ms": {
+            "mean": 0.266861670173239,
+            "p95": 0.5042969714850187,
+            "max": 0.9253180760424584,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "29, 5009, 2265",
+          "utilization_memory_clock_after": "17, 5015, 1935",
+          "arrival_lateness_ms": {
+            "mean": 0.26036425267811864,
+            "p95": 0.5037564842496067,
+            "max": 0.8579990244470537,
+            "share_over_1ms": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 12978,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 12978,
+        "p50_ms": 0.033,
+        "p99_ms": 2.183,
+        "p99_9_ms": 2.566,
+        "max_ms": 2.927
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 7730,
+        "p50_ms": 0.023,
+        "p99_ms": 0.052,
+        "p99_9_ms": 0.071,
+        "max_ms": 0.133
+      },
+      "completed_pass": {
+        "count": 12978,
+        "p50_ms": 2.337,
+        "p99_ms": 2.796,
+        "p99_9_ms": 3.066,
+        "max_ms": 3.409
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "17, 5015, 1935",
+          "utilization_memory_clock_after": "65, 5012, 2820",
+          "arrival_lateness_ms": {
+            "mean": 0.26889643940958197,
+            "p95": 0.5032643384765834,
+            "max": 1.1086601298302412,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "65, 5012, 2820",
+          "utilization_memory_clock_after": "48, 5012, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2670847911329474,
+            "p95": 0.5043678684160113,
+            "max": 0.8714331779628992,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "48, 5012, 2835",
+          "utilization_memory_clock_after": "39, 5012, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.26449814984807746,
+            "p95": 0.5053632485214621,
+            "max": 1.0484574304427952,
+            "share_over_1ms": 0.0002
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 14046,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 14046,
+        "p50_ms": 0.032,
+        "p99_ms": 0.134,
+        "p99_9_ms": 0.37,
+        "max_ms": 0.504
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 7037,
+        "p50_ms": 0.023,
+        "p99_ms": 0.052,
+        "p99_9_ms": 0.074,
+        "max_ms": 0.112
+      },
+      "completed_pass": {
+        "count": 7280,
+        "p50_ms": 3.072,
+        "p99_ms": 3.878,
+        "p99_9_ms": 4.454,
+        "max_ms": 4.834
+      },
+      "stopped_pass": {
+        "count": 6766,
+        "p50_ms": 1.534,
+        "p99_ms": 3.242,
+        "p99_9_ms": 3.669,
+        "max_ms": 4.018
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "39, 5012, 2835",
+          "utilization_memory_clock_after": "35, 5012, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27067586828488854,
+            "p95": 0.5055238143540919,
+            "max": 1.2933984689880162,
+            "share_over_1ms": 0.0008
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "35, 5012, 2835",
+          "utilization_memory_clock_after": "36, 5012, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2664114768791478,
+            "p95": 0.5041818949393928,
+            "max": 1.0276305256411433,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "36, 5012, 2835",
+          "utilization_memory_clock_after": "40, 5012, 2730",
+          "arrival_lateness_ms": {
+            "mean": 0.2684689239657018,
+            "p95": 0.5063550488557667,
+            "max": 0.921229860978201,
+            "share_over_1ms": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11509,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11509,
+        "p50_ms": 0.722,
+        "p99_ms": 6.558,
+        "p99_9_ms": 7.633,
+        "max_ms": 9.116
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 5120,
+        "p50_ms": 0.028,
+        "p99_ms": 0.062,
+        "p99_9_ms": 0.111,
+        "max_ms": 0.131
+      },
+      "completed_pass": {
+        "count": 11509,
+        "p50_ms": 5.46,
+        "p99_ms": 8.357,
+        "p99_9_ms": 9.398,
+        "max_ms": 9.917
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5012, 2730",
+          "utilization_memory_clock_after": "43, 5012, 885",
+          "arrival_lateness_ms": {
+            "mean": 0.26872332229395396,
+            "p95": 0.5030073516536504,
+            "max": 1.4606955810450017,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "43, 5012, 885",
+          "utilization_memory_clock_after": "25, 5007, 1035",
+          "arrival_lateness_ms": {
+            "mean": 0.2758484693011269,
+            "p95": 0.5083733703941107,
+            "max": 1.644995267270133,
+            "share_over_1ms": 0.007
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "25, 5007, 1035",
+          "utilization_memory_clock_after": "1, 5007, 990",
+          "arrival_lateness_ms": {
+            "mean": 0.2713754824770149,
+            "p95": 0.5051037878729403,
+            "max": 1.6377809806726873,
+            "share_over_1ms": 0.003
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "1, 5007, 990",
+          "utilization_memory_clock_after": "21, 5007, 735",
+          "arrival_lateness_ms": {
+            "mean": 0.27167461993522013,
+            "p95": 0.5069297912996262,
+            "max": 1.5946823405101895,
+            "share_over_1ms": 0.004
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "21, 5007, 735",
+          "utilization_memory_clock_after": "35, 5007, 1290",
+          "arrival_lateness_ms": {
+            "mean": 0.27328749117441475,
+            "p95": 0.5069313338026404,
+            "max": 1.6379344160668552,
+            "share_over_1ms": 0.0052
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "11, 5007, 1290",
+          "utilization_memory_clock_after": "3, 5012, 930",
+          "arrival_lateness_ms": {
+            "mean": 0.2715758572216146,
+            "p95": 0.5045520956628025,
+            "max": 1.5662766818422824,
+            "share_over_1ms": 0.0032
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "3, 5012, 930",
+          "utilization_memory_clock_after": "42, 5012, 915",
+          "arrival_lateness_ms": {
+            "mean": 0.2743086749513168,
+            "p95": 0.5069576436653733,
+            "max": 1.943843177286908,
+            "share_over_1ms": 0.005
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 20000,
+      "starts": 13086,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13086,
+        "p50_ms": 0.131,
+        "p99_ms": 0.48,
+        "p99_9_ms": 0.952,
+        "max_ms": 1.443
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 2840,
+        "p50_ms": 0.028,
+        "p99_ms": 0.062,
+        "p99_9_ms": 0.118,
+        "max_ms": 0.285
+      },
+      "completed_pass": {
+        "count": 2867,
+        "p50_ms": 9.885,
+        "p99_ms": 15.652,
+        "p99_9_ms": 20.193,
+        "max_ms": 25.124
+      },
+      "stopped_pass": {
+        "count": 10219,
+        "p50_ms": 0.597,
+        "p99_ms": 9.082,
+        "p99_9_ms": 12.496,
+        "max_ms": 18.308
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "42, 5012, 915",
+          "utilization_memory_clock_after": "41, 5014, 480",
+          "arrival_lateness_ms": {
+            "mean": 0.2695459406997543,
+            "p95": 0.5018752126488835,
+            "max": 1.833048154367134,
+            "share_over_1ms": 0.0038
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "35, 5014, 480",
+          "utilization_memory_clock_after": "26, 5020, 720",
+          "arrival_lateness_ms": {
+            "mean": 0.2715762485109735,
+            "p95": 0.5022934637963772,
+            "max": 1.5135793073568493,
+            "share_over_1ms": 0.0064
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5020, 720",
+          "utilization_memory_clock_after": "13, 5009, 465",
+          "arrival_lateness_ms": {
+            "mean": 0.27143320864415726,
+            "p95": 0.5058021924924105,
+            "max": 1.5989961102604866,
+            "share_over_1ms": 0.0034
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "13, 5009, 465",
+          "utilization_memory_clock_after": "17, 5009, 495",
+          "arrival_lateness_ms": {
+            "mean": 0.27265106770792047,
+            "p95": 0.5047061713412404,
+            "max": 1.6435291327070445,
+            "share_over_1ms": 0.0038
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 30000,
+      "starts": 10058,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 10058,
+        "p50_ms": 0.441,
+        "p99_ms": 3.613,
+        "p99_9_ms": 6.337,
+        "max_ms": 9.401
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4346,
+        "p50_ms": 0.025,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.08,
+        "max_ms": 0.123
+      },
+      "completed_pass": {
+        "count": 10058,
+        "p50_ms": 3.477,
+        "p99_ms": 4.853,
+        "p99_9_ms": 9.643,
+        "max_ms": 10.431
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "17, 5009, 495",
+          "utilization_memory_clock_after": "30, 5022, 1440",
+          "arrival_lateness_ms": {
+            "mean": 0.28376529411179946,
+            "p95": 0.5177597340662032,
+            "max": 1.5884439635556191,
+            "share_over_1ms": 0.0086
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "30, 5022, 1440",
+          "utilization_memory_clock_after": "27, 5022, 1530",
+          "arrival_lateness_ms": {
+            "mean": 0.2848004997125827,
+            "p95": 0.516194268129766,
+            "max": 1.6027352248784155,
+            "share_over_1ms": 0.0094
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "27, 5022, 1530",
+          "utilization_memory_clock_after": "32, 5022, 1395",
+          "arrival_lateness_ms": {
+            "mean": 0.28130887665902266,
+            "p95": 0.5162722954992205,
+            "max": 1.858283212641254,
+            "share_over_1ms": 0.0074
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "32, 5022, 1395",
+          "utilization_memory_clock_after": "14, 5022, 1470",
+          "arrival_lateness_ms": {
+            "mean": 0.27425262411125007,
+            "p95": 0.5085149314254522,
+            "max": 1.7632976523600519,
+            "share_over_1ms": 0.0058
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "14, 5022, 1470",
+          "utilization_memory_clock_after": "43, 5022, 1110",
+          "arrival_lateness_ms": {
+            "mean": 0.279508087731665,
+            "p95": 0.5152916419319808,
+            "max": 1.521391561254859,
+            "share_over_1ms": 0.0052
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "43, 5022, 1110",
+          "utilization_memory_clock_after": "46, 5022, 1470",
+          "arrival_lateness_ms": {
+            "mean": 0.2777365678397473,
+            "p95": 0.5129095516167581,
+            "max": 1.7074132629204541,
+            "share_over_1ms": 0.0048
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 1,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 20000,
+      "starts": 12821,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 12821,
+        "p50_ms": 0.09,
+        "p99_ms": 0.301,
+        "p99_9_ms": 0.644,
+        "max_ms": 0.953
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 2743,
+        "p50_ms": 0.026,
+        "p99_ms": 0.058,
+        "p99_9_ms": 0.078,
+        "max_ms": 0.121
+      },
+      "completed_pass": {
+        "count": 2777,
+        "p50_ms": 6.793,
+        "p99_ms": 9.473,
+        "p99_9_ms": 11.394,
+        "max_ms": 13.707
+      },
+      "stopped_pass": {
+        "count": 10044,
+        "p50_ms": 0.561,
+        "p99_ms": 6.071,
+        "p99_9_ms": 7.752,
+        "max_ms": 11.878
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "46, 5022, 1470",
+          "utilization_memory_clock_after": "45, 5022, 870",
+          "arrival_lateness_ms": {
+            "mean": 0.2841323974134866,
+            "p95": 0.5162714805919677,
+            "max": 1.5718131617177278,
+            "share_over_1ms": 0.008
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "45, 5022, 870",
+          "utilization_memory_clock_after": "26, 5022, 840",
+          "arrival_lateness_ms": {
+            "mean": 0.2841108814813197,
+            "p95": 0.5153935635462403,
+            "max": 1.7609887290745974,
+            "share_over_1ms": 0.0102
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5022, 840",
+          "utilization_memory_clock_after": "50, 5022, 930",
+          "arrival_lateness_ms": {
+            "mean": 0.28164949829806574,
+            "p95": 0.5140785069670528,
+            "max": 1.9349104550201446,
+            "share_over_1ms": 0.0082
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "50, 5022, 930",
+          "utilization_memory_clock_after": "19, 5022, 840",
+          "arrival_lateness_ms": {
+            "mean": 0.27635936115402726,
+            "p95": 0.5100617709103972,
+            "max": 1.691841840511188,
+            "share_over_1ms": 0.0058
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 13678,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13678,
+        "p50_ms": 0.028,
+        "p99_ms": 2.121,
+        "p99_9_ms": 2.515,
+        "max_ms": 5.582
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 9440,
+        "p50_ms": 0.023,
+        "p99_ms": 0.05,
+        "p99_9_ms": 0.068,
+        "max_ms": 0.116
+      },
+      "completed_pass": {
+        "count": 13678,
+        "p50_ms": 2.331,
+        "p99_ms": 2.862,
+        "p99_9_ms": 6.006,
+        "max_ms": 32.022
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "49, 5022, 825",
+          "utilization_memory_clock_after": "33, 5022, 2820",
+          "arrival_lateness_ms": {
+            "mean": 0.2662650448968634,
+            "p95": 0.5087010213173926,
+            "max": 0.9737189684528857,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "32, 5022, 2850",
+          "utilization_memory_clock_after": "29, 5017, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2848700571223162,
+            "p95": 0.5109983030706644,
+            "max": 26.955712091876194,
+            "share_over_1ms": 0.001
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "29, 5017, 2835",
+          "utilization_memory_clock_after": "36, 5020, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2733316261204891,
+            "p95": 0.5105030431877822,
+            "max": 1.266317442059517,
+            "share_over_1ms": 0.0006
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 14316,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 14316,
+        "p50_ms": 0.03,
+        "p99_ms": 0.219,
+        "p99_9_ms": 0.451,
+        "max_ms": 0.846
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 8820,
+        "p50_ms": 0.023,
+        "p99_ms": 0.051,
+        "p99_9_ms": 0.073,
+        "max_ms": 0.846
+      },
+      "completed_pass": {
+        "count": 9111,
+        "p50_ms": 2.989,
+        "p99_ms": 3.834,
+        "p99_9_ms": 4.31,
+        "max_ms": 6.837
+      },
+      "stopped_pass": {
+        "count": 5205,
+        "p50_ms": 1.556,
+        "p99_ms": 3.119,
+        "p99_9_ms": 3.594,
+        "max_ms": 3.826
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "18, 5020, 2835",
+          "utilization_memory_clock_after": "38, 5026, 2415",
+          "arrival_lateness_ms": {
+            "mean": 0.26877114042290484,
+            "p95": 0.5087737226858735,
+            "max": 1.3261759595479816,
+            "share_over_1ms": 0.0006
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "38, 5026, 2415",
+          "utilization_memory_clock_after": "37, 5029, 2190",
+          "arrival_lateness_ms": {
+            "mean": 0.269899461051682,
+            "p95": 0.5093973886687309,
+            "max": 1.1827092384919524,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "37, 5029, 2190",
+          "utilization_memory_clock_after": "39, 5029, 2445",
+          "arrival_lateness_ms": {
+            "mean": 0.2706884994870052,
+            "p95": 0.5074472865089774,
+            "max": 2.8649251617025584,
+            "share_over_1ms": 0.0016
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 12472,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 12472,
+        "p50_ms": 0.036,
+        "p99_ms": 2.207,
+        "p99_9_ms": 2.46,
+        "max_ms": 2.972
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 6763,
+        "p50_ms": 0.022,
+        "p99_ms": 0.049,
+        "p99_9_ms": 0.068,
+        "max_ms": 0.101
+      },
+      "completed_pass": {
+        "count": 12472,
+        "p50_ms": 2.338,
+        "p99_ms": 2.787,
+        "p99_9_ms": 3.07,
+        "max_ms": 3.38
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "39, 5029, 2445",
+          "utilization_memory_clock_after": "67, 5032, 2730",
+          "arrival_lateness_ms": {
+            "mean": 0.2722678795515094,
+            "p95": 0.5070469342172146,
+            "max": 1.2458156561478972,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "67, 5032, 2730",
+          "utilization_memory_clock_after": "54, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27078599646338264,
+            "p95": 0.5070813640486449,
+            "max": 1.1576178076211363,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "54, 5029, 2835",
+          "utilization_memory_clock_after": "48, 5029, 2805",
+          "arrival_lateness_ms": {
+            "mean": 0.2737001102301292,
+            "p95": 0.5079436814412475,
+            "max": 1.022625801851973,
+            "share_over_1ms": 0.0002
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 13819,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13819,
+        "p50_ms": 0.033,
+        "p99_ms": 0.217,
+        "p99_9_ms": 0.446,
+        "max_ms": 1.381
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 6796,
+        "p50_ms": 0.021,
+        "p99_ms": 0.049,
+        "p99_9_ms": 0.071,
+        "max_ms": 1.381
+      },
+      "completed_pass": {
+        "count": 7139,
+        "p50_ms": 2.684,
+        "p99_ms": 3.37,
+        "p99_9_ms": 3.729,
+        "max_ms": 4.096
+      },
+      "stopped_pass": {
+        "count": 6680,
+        "p50_ms": 1.462,
+        "p99_ms": 2.807,
+        "p99_9_ms": 3.139,
+        "max_ms": 3.544
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "27, 5029, 2820",
+          "utilization_memory_clock_after": "53, 5029, 2790",
+          "arrival_lateness_ms": {
+            "mean": 0.2771181821066421,
+            "p95": 0.50871423445642,
+            "max": 1.305179117480293,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "53, 5029, 2790",
+          "utilization_memory_clock_after": "48, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.28260717854718675,
+            "p95": 0.5137899715919048,
+            "max": 1.8095557461492717,
+            "share_over_1ms": 0.002
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "48, 5029, 2835",
+          "utilization_memory_clock_after": "49, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27877547375974243,
+            "p95": 0.5127233744133264,
+            "max": 1.443524583010003,
+            "share_over_1ms": 0.0008
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11449,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11449,
+        "p50_ms": 0.785,
+        "p99_ms": 5.568,
+        "p99_9_ms": 6.542,
+        "max_ms": 7.982
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 5090,
+        "p50_ms": 0.026,
+        "p99_ms": 0.059,
+        "p99_9_ms": 0.075,
+        "max_ms": 0.133
+      },
+      "completed_pass": {
+        "count": 11449,
+        "p50_ms": 4.814,
+        "p99_ms": 6.997,
+        "p99_9_ms": 7.64,
+        "max_ms": 8.267
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "49, 5029, 2835",
+          "utilization_memory_clock_after": "32, 5029, 1275",
+          "arrival_lateness_ms": {
+            "mean": 0.268245113507146,
+            "p95": 0.5127595213707536,
+            "max": 1.421289925929159,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "32, 5029, 1275",
+          "utilization_memory_clock_after": "33, 5029, 1080",
+          "arrival_lateness_ms": {
+            "mean": 0.27094857703777964,
+            "p95": 0.5100828129798174,
+            "max": 1.446447684429586,
+            "share_over_1ms": 0.0048
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "33, 5029, 1080",
+          "utilization_memory_clock_after": "34, 5029, 870",
+          "arrival_lateness_ms": {
+            "mean": 0.2753570375498384,
+            "p95": 0.5118505214340985,
+            "max": 1.4922820846550167,
+            "share_over_1ms": 0.0034
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "34, 5029, 870",
+          "utilization_memory_clock_after": "23, 5029, 930",
+          "arrival_lateness_ms": {
+            "mean": 0.27361014002817685,
+            "p95": 0.5116737738717347,
+            "max": 1.3923743390478194,
+            "share_over_1ms": 0.004
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5029, 930",
+          "utilization_memory_clock_after": "23, 5029, 1350",
+          "arrival_lateness_ms": {
+            "mean": 0.27129821155103856,
+            "p95": 0.5065312434453517,
+            "max": 1.3312956725712866,
+            "share_over_1ms": 0.0032
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5029, 1350",
+          "utilization_memory_clock_after": "53, 5033, 960",
+          "arrival_lateness_ms": {
+            "mean": 0.2720719924021978,
+            "p95": 0.5101362185087055,
+            "max": 1.4074635109864175,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "12, 5033, 1050",
+          "utilization_memory_clock_after": "40, 5029, 1215",
+          "arrival_lateness_ms": {
+            "mean": 0.27206552448915317,
+            "p95": 0.5082663265056908,
+            "max": 1.4680508174933493,
+            "share_over_1ms": 0.0032
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 20000,
+      "starts": 11130,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11130,
+        "p50_ms": 0.166,
+        "p99_ms": 0.722,
+        "p99_9_ms": 1.261,
+        "max_ms": 1.756
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 2829,
+        "p50_ms": 0.025,
+        "p99_ms": 0.057,
+        "p99_9_ms": 0.268,
+        "max_ms": 0.633
+      },
+      "completed_pass": {
+        "count": 2869,
+        "p50_ms": 8.373,
+        "p99_ms": 13.47,
+        "p99_9_ms": 16.51,
+        "max_ms": 20.737
+      },
+      "stopped_pass": {
+        "count": 8261,
+        "p50_ms": 0.614,
+        "p99_ms": 8.031,
+        "p99_9_ms": 11.196,
+        "max_ms": 14.01
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5029, 1215",
+          "utilization_memory_clock_after": "17, 5029, 705",
+          "arrival_lateness_ms": {
+            "mean": 0.2783537926559802,
+            "p95": 0.51011802861467,
+            "max": 1.6492899449076504,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "17, 5029, 705",
+          "utilization_memory_clock_after": "17, 5029, 780",
+          "arrival_lateness_ms": {
+            "mean": 0.28351966517511756,
+            "p95": 0.5136486433912069,
+            "max": 1.4426801062654704,
+            "share_over_1ms": 0.0032
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "17, 5029, 780",
+          "utilization_memory_clock_after": "14, 5029, 540",
+          "arrival_lateness_ms": {
+            "mean": 0.2736433406244032,
+            "p95": 0.509066361701116,
+            "max": 1.3940416392870247,
+            "share_over_1ms": 0.0036
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "14, 5029, 540",
+          "utilization_memory_clock_after": "13, 5029, 540",
+          "arrival_lateness_ms": {
+            "mean": 0.2744272694340907,
+            "p95": 0.5095074302516878,
+            "max": 1.8817179079633206,
+            "share_over_1ms": 0.0058
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11528,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11528,
+        "p50_ms": 0.457,
+        "p99_ms": 3.21,
+        "p99_9_ms": 4.533,
+        "max_ms": 8.972
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4933,
+        "p50_ms": 0.025,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.082,
+        "max_ms": 0.918
+      },
+      "completed_pass": {
+        "count": 11528,
+        "p50_ms": 3.129,
+        "p99_ms": 4.324,
+        "p99_9_ms": 9.555,
+        "max_ms": 11.086
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "13, 5029, 540",
+          "utilization_memory_clock_after": "41, 5029, 1470",
+          "arrival_lateness_ms": {
+            "mean": 0.2701497514382936,
+            "p95": 0.5097187822684646,
+            "max": 1.5584896900691092,
+            "share_over_1ms": 0.0052
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "51, 5029, 1545",
+          "utilization_memory_clock_after": "19, 5029, 1650",
+          "arrival_lateness_ms": {
+            "mean": 0.279711072309874,
+            "p95": 0.5127400218043476,
+            "max": 2.4635018780827522,
+            "share_over_1ms": 0.0074
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "19, 5029, 1650",
+          "utilization_memory_clock_after": "34, 5029, 1845",
+          "arrival_lateness_ms": {
+            "mean": 0.27025849514757283,
+            "p95": 0.5080306436866522,
+            "max": 1.538983837235719,
+            "share_over_1ms": 0.0046
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "34, 5029, 1845",
+          "utilization_memory_clock_after": "19, 5029, 1905",
+          "arrival_lateness_ms": {
+            "mean": 0.2649214778095484,
+            "p95": 0.5001015088055283,
+            "max": 1.4963571447879076,
+            "share_over_1ms": 0.0026
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5029, 1815",
+          "utilization_memory_clock_after": "48, 5032, 1590",
+          "arrival_lateness_ms": {
+            "mean": 0.26967783107538706,
+            "p95": 0.5073141364846379,
+            "max": 1.3736397377215326,
+            "share_over_1ms": 0.0036
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "48, 5032, 1590",
+          "utilization_memory_clock_after": "45, 5029, 1680",
+          "arrival_lateness_ms": {
+            "mean": 0.2657713220396545,
+            "p95": 0.5041277036070824,
+            "max": 1.2957651924807578,
+            "share_over_1ms": 0.0038
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "45, 5029, 1680",
+          "utilization_memory_clock_after": "23, 5029, 1650",
+          "arrival_lateness_ms": {
+            "mean": 0.2708849198243115,
+            "p95": 0.5072828789707273,
+            "max": 1.537744014058262,
+            "share_over_1ms": 0.0054
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 2,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 20000,
+      "starts": 11382,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11382,
+        "p50_ms": 0.132,
+        "p99_ms": 0.412,
+        "p99_9_ms": 0.802,
+        "max_ms": 0.998
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 2777,
+        "p50_ms": 0.025,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.076,
+        "max_ms": 0.121
+      },
+      "completed_pass": {
+        "count": 2836,
+        "p50_ms": 5.37,
+        "p99_ms": 7.335,
+        "p99_9_ms": 8.913,
+        "max_ms": 9.476
+      },
+      "stopped_pass": {
+        "count": 8546,
+        "p50_ms": 0.638,
+        "p99_ms": 4.845,
+        "p99_9_ms": 6.209,
+        "max_ms": 6.661
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5029, 1650",
+          "utilization_memory_clock_after": "44, 5029, 1095",
+          "arrival_lateness_ms": {
+            "mean": 0.2765882847190369,
+            "p95": 0.5109004850964993,
+            "max": 1.3296224642544985,
+            "share_over_1ms": 0.0048
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "44, 5029, 1095",
+          "utilization_memory_clock_after": "35, 5029, 1050",
+          "arrival_lateness_ms": {
+            "mean": 0.27136536766192876,
+            "p95": 0.5076898087281734,
+            "max": 1.4835693291388452,
+            "share_over_1ms": 0.0046
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "35, 5029, 1050",
+          "utilization_memory_clock_after": "39, 5029, 870",
+          "arrival_lateness_ms": {
+            "mean": 0.2717096651380416,
+            "p95": 0.510951125761494,
+            "max": 1.4960732369218022,
+            "share_over_1ms": 0.004
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "39, 5029, 870",
+          "utilization_memory_clock_after": "14, 5029, 915",
+          "arrival_lateness_ms": {
+            "mean": 0.2658170138660353,
+            "p95": 0.5061900883447379,
+            "max": 1.4553327055182308,
+            "share_over_1ms": 0.0036
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 13529,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13529,
+        "p50_ms": 0.029,
+        "p99_ms": 2.16,
+        "p99_9_ms": 2.634,
+        "max_ms": 5.357
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 9050,
+        "p50_ms": 0.023,
+        "p99_ms": 0.052,
+        "p99_9_ms": 0.075,
+        "max_ms": 0.135
+      },
+      "completed_pass": {
+        "count": 13529,
+        "p50_ms": 2.337,
+        "p99_ms": 2.853,
+        "p99_9_ms": 5.623,
+        "max_ms": 6.307
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "14, 5029, 915",
+          "utilization_memory_clock_after": "54, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2620737802644726,
+            "p95": 0.5077981040813029,
+            "max": 1.0200006945524365,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "54, 5029, 2835",
+          "utilization_memory_clock_after": "39, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27176946357940324,
+            "p95": 0.5067118327133358,
+            "max": 2.750083222053945,
+            "share_over_1ms": 0.0006
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "39, 5029, 2835",
+          "utilization_memory_clock_after": "44, 5032, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2733564619789831,
+            "p95": 0.5078333779238164,
+            "max": 1.1939191608689725,
+            "share_over_1ms": 0.0006
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 14227,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 14227,
+        "p50_ms": 0.029,
+        "p99_ms": 0.353,
+        "p99_9_ms": 0.652,
+        "max_ms": 0.78
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 8923,
+        "p50_ms": 0.023,
+        "p99_ms": 0.049,
+        "p99_9_ms": 0.113,
+        "max_ms": 0.367
+      },
+      "completed_pass": {
+        "count": 9621,
+        "p50_ms": 2.568,
+        "p99_ms": 3.318,
+        "p99_9_ms": 3.75,
+        "max_ms": 3.983
+      },
+      "stopped_pass": {
+        "count": 4606,
+        "p50_ms": 1.33,
+        "p99_ms": 2.633,
+        "p99_9_ms": 3.118,
+        "max_ms": 3.252
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "44, 5032, 2835",
+          "utilization_memory_clock_after": "40, 5029, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27783321038004943,
+            "p95": 0.50654515507631,
+            "max": 1.0419107566121966,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5029, 2835",
+          "utilization_memory_clock_after": "26, 5029, 2595",
+          "arrival_lateness_ms": {
+            "mean": 0.28081188413198105,
+            "p95": 0.505925010656938,
+            "max": 1.1998946429230273,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5029, 2595",
+          "utilization_memory_clock_after": "35, 5029, 2805",
+          "arrival_lateness_ms": {
+            "mean": 0.2755323429068085,
+            "p95": 0.5072133208159357,
+            "max": 1.2476599076762795,
+            "share_over_1ms": 0.0004
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 12179,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 12179,
+        "p50_ms": 0.04,
+        "p99_ms": 2.24,
+        "p99_9_ms": 2.478,
+        "max_ms": 2.918
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 6247,
+        "p50_ms": 0.022,
+        "p99_ms": 0.047,
+        "p99_9_ms": 0.11,
+        "max_ms": 0.502
+      },
+      "completed_pass": {
+        "count": 12179,
+        "p50_ms": 2.342,
+        "p99_ms": 2.785,
+        "p99_9_ms": 3.058,
+        "max_ms": 3.255
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "27, 5029, 2805",
+          "utilization_memory_clock_after": "81, 5029, 2760",
+          "arrival_lateness_ms": {
+            "mean": 0.2771861175075173,
+            "p95": 0.5093413346912712,
+            "max": 1.0279585840180516,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "81, 5029, 2760",
+          "utilization_memory_clock_after": "54, 5037, 2790",
+          "arrival_lateness_ms": {
+            "mean": 0.2831641744298395,
+            "p95": 0.5096713139209896,
+            "max": 1.0400782630313188,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "54, 5037, 2790",
+          "utilization_memory_clock_after": "61, 5038, 2790",
+          "arrival_lateness_ms": {
+            "mean": 0.28567539039650003,
+            "p95": 0.5140788853168488,
+            "max": 0.9933399560395628,
+            "share_over_1ms": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 13706,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13706,
+        "p50_ms": 0.043,
+        "p99_ms": 0.389,
+        "p99_9_ms": 0.852,
+        "max_ms": 2.37
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 6532,
+        "p50_ms": 0.022,
+        "p99_ms": 0.066,
+        "p99_9_ms": 0.876,
+        "max_ms": 2.37
+      },
+      "completed_pass": {
+        "count": 7361,
+        "p50_ms": 2.544,
+        "p99_ms": 3.189,
+        "p99_9_ms": 3.743,
+        "max_ms": 11.291
+      },
+      "stopped_pass": {
+        "count": 6345,
+        "p50_ms": 1.289,
+        "p99_ms": 2.564,
+        "p99_9_ms": 2.97,
+        "max_ms": 7.566
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5038, 2820",
+          "utilization_memory_clock_after": "59, 5038, 2760",
+          "arrival_lateness_ms": {
+            "mean": 0.2805249996425118,
+            "p95": 0.509054894791916,
+            "max": 1.4482607366517186,
+            "share_over_1ms": 0.0012
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "59, 5038, 2760",
+          "utilization_memory_clock_after": "50, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.28161031179479323,
+            "p95": 0.5081813142169267,
+            "max": 1.0309541539754719,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "50, 5038, 2835",
+          "utilization_memory_clock_after": "43, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.28862453484907746,
+            "p95": 0.5141252186149359,
+            "max": 1.3511751894839108,
+            "share_over_1ms": 0.0008
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11402,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11402,
+        "p50_ms": 0.654,
+        "p99_ms": 5.18,
+        "p99_9_ms": 6.129,
+        "max_ms": 6.853
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 5058,
+        "p50_ms": 0.025,
+        "p99_ms": 0.055,
+        "p99_9_ms": 0.068,
+        "max_ms": 0.091
+      },
+      "completed_pass": {
+        "count": 11402,
+        "p50_ms": 4.449,
+        "p99_ms": 6.565,
+        "p99_9_ms": 7.246,
+        "max_ms": 7.942
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "43, 5038, 2835",
+          "utilization_memory_clock_after": "21, 5038, 1455",
+          "arrival_lateness_ms": {
+            "mean": 0.2717046081728768,
+            "p95": 0.5097355460748076,
+            "max": 1.3449940888676792,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "21, 5038, 1455",
+          "utilization_memory_clock_after": "23, 5038, 1125",
+          "arrival_lateness_ms": {
+            "mean": 0.27256610004696996,
+            "p95": 0.5099537956994027,
+            "max": 1.4401875960174948,
+            "share_over_1ms": 0.0038
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5038, 1125",
+          "utilization_memory_clock_after": "15, 5038, 1155",
+          "arrival_lateness_ms": {
+            "mean": 0.2673452504328452,
+            "p95": 0.5046391452196985,
+            "max": 1.2564716744236648,
+            "share_over_1ms": 0.0016
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "15, 5038, 1155",
+          "utilization_memory_clock_after": "11, 5033, 900",
+          "arrival_lateness_ms": {
+            "mean": 0.26521004500682466,
+            "p95": 0.505433592479676,
+            "max": 1.515597803518176,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "11, 5033, 900",
+          "utilization_memory_clock_after": "37, 5033, 1410",
+          "arrival_lateness_ms": {
+            "mean": 0.2632784997927956,
+            "p95": 0.5017682269681245,
+            "max": 1.5118751616682857,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "37, 5033, 1410",
+          "utilization_memory_clock_after": "10, 5033, 990",
+          "arrival_lateness_ms": {
+            "mean": 0.2668036202841904,
+            "p95": 0.5004588165320456,
+            "max": 1.4063166454434395,
+            "share_over_1ms": 0.0016
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "10, 5033, 990",
+          "utilization_memory_clock_after": "22, 5033, 1410",
+          "arrival_lateness_ms": {
+            "mean": 0.2627478904731106,
+            "p95": 0.5017454386688769,
+            "max": 1.4512033376377076,
+            "share_over_1ms": 0.0024
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 25000,
+      "starts": 10807,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 10807,
+        "p50_ms": 0.188,
+        "p99_ms": 1.041,
+        "p99_9_ms": 1.498,
+        "max_ms": 2.017
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 3596,
+        "p50_ms": 0.025,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.107,
+        "max_ms": 0.249
+      },
+      "completed_pass": {
+        "count": 3675,
+        "p50_ms": 7.542,
+        "p99_ms": 11.104,
+        "p99_9_ms": 13.996,
+        "max_ms": 14.459
+      },
+      "stopped_pass": {
+        "count": 7132,
+        "p50_ms": 1.035,
+        "p99_ms": 7.134,
+        "p99_9_ms": 9.462,
+        "max_ms": 11.874
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "22, 5033, 1410",
+          "utilization_memory_clock_after": "32, 5034, 645",
+          "arrival_lateness_ms": {
+            "mean": 0.265551648469409,
+            "p95": 0.49737526569515467,
+            "max": 1.4818277559243143,
+            "share_over_1ms": 0.0022
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "32, 5034, 645",
+          "utilization_memory_clock_after": "22, 5034, 825",
+          "arrival_lateness_ms": {
+            "mean": 0.2679318195732776,
+            "p95": 0.5039921670686454,
+            "max": 1.3650906330440193,
+            "share_over_1ms": 0.0042
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "22, 5034, 825",
+          "utilization_memory_clock_after": "24, 5034, 690",
+          "arrival_lateness_ms": {
+            "mean": 0.2602797306841239,
+            "p95": 0.4984787374269217,
+            "max": 1.2061319430358708,
+            "share_over_1ms": 0.0016
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "24, 5034, 690",
+          "utilization_memory_clock_after": "22, 5034, 615",
+          "arrival_lateness_ms": {
+            "mean": 0.26691859936108814,
+            "p95": 0.5025112477596849,
+            "max": 1.2908825010526925,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "22, 5034, 615",
+          "utilization_memory_clock_after": "21, 5034, 885",
+          "arrival_lateness_ms": {
+            "mean": 0.2638813559780829,
+            "p95": 0.4985983541700989,
+            "max": 1.2546041107270867,
+            "share_over_1ms": 0.0028
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11500,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11500,
+        "p50_ms": 0.426,
+        "p99_ms": 2.999,
+        "p99_9_ms": 3.919,
+        "max_ms": 4.881
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4947,
+        "p50_ms": 0.024,
+        "p99_ms": 0.054,
+        "p99_9_ms": 0.074,
+        "max_ms": 0.112
+      },
+      "completed_pass": {
+        "count": 11500,
+        "p50_ms": 2.897,
+        "p99_ms": 4.005,
+        "p99_9_ms": 5.774,
+        "max_ms": 6.702
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "21, 5034, 885",
+          "utilization_memory_clock_after": "41, 5042, 2130",
+          "arrival_lateness_ms": {
+            "mean": 0.2715473088028375,
+            "p95": 0.508401746628806,
+            "max": 1.4201099693309516,
+            "share_over_1ms": 0.004
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "41, 5042, 2130",
+          "utilization_memory_clock_after": "23, 5039, 1785",
+          "arrival_lateness_ms": {
+            "mean": 0.2683407091011759,
+            "p95": 0.5075451044831425,
+            "max": 1.4446549757849425,
+            "share_over_1ms": 0.0048
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5039, 1785",
+          "utilization_memory_clock_after": "35, 5039, 1620",
+          "arrival_lateness_ms": {
+            "mean": 0.2704002798884176,
+            "p95": 0.5080226401332766,
+            "max": 1.3975853216834366,
+            "share_over_1ms": 0.0034
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "35, 5039, 1620",
+          "utilization_memory_clock_after": "20, 5038, 1830",
+          "arrival_lateness_ms": {
+            "mean": 0.27187102331081403,
+            "p95": 0.5044191493652761,
+            "max": 1.4072957274038345,
+            "share_over_1ms": 0.0036
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "20, 5038, 1830",
+          "utilization_memory_clock_after": "43, 5038, 1590",
+          "arrival_lateness_ms": {
+            "mean": 0.26122747879126107,
+            "p95": 0.5034578498452902,
+            "max": 1.1772317520808429,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "43, 5038, 1590",
+          "utilization_memory_clock_after": "49, 5038, 1470",
+          "arrival_lateness_ms": {
+            "mean": 0.26691085437778383,
+            "p95": 0.5029278399888426,
+            "max": 1.3710697821807116,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "14, 5038, 1890",
+          "utilization_memory_clock_after": "28, 5038, 2280",
+          "arrival_lateness_ms": {
+            "mean": 0.27265678918920455,
+            "p95": 0.5076185043435544,
+            "max": 1.2677131453529,
+            "share_over_1ms": 0.0032
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 4,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 20000,
+      "starts": 10609,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 10609,
+        "p50_ms": 0.164,
+        "p99_ms": 0.647,
+        "p99_9_ms": 0.993,
+        "max_ms": 1.125
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 2835,
+        "p50_ms": 0.024,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.075,
+        "max_ms": 0.101
+      },
+      "completed_pass": {
+        "count": 2924,
+        "p50_ms": 4.641,
+        "p99_ms": 6.414,
+        "p99_9_ms": 7.552,
+        "max_ms": 8.049
+      },
+      "stopped_pass": {
+        "count": 7685,
+        "p50_ms": 0.63,
+        "p99_ms": 4.086,
+        "p99_9_ms": 5.009,
+        "max_ms": 5.608
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "28, 5038, 2280",
+          "utilization_memory_clock_after": "49, 5038, 1170",
+          "arrival_lateness_ms": {
+            "mean": 0.2721494432014879,
+            "p95": 0.5047006125096232,
+            "max": 1.4191210793796927,
+            "share_over_1ms": 0.0048
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "49, 5038, 1170",
+          "utilization_memory_clock_after": "30, 5038, 1170",
+          "arrival_lateness_ms": {
+            "mean": 0.2707708111905959,
+            "p95": 0.5057156959082931,
+            "max": 1.3119549839757383,
+            "share_over_1ms": 0.0042
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "30, 5038, 1170",
+          "utilization_memory_clock_after": "26, 5038, 900",
+          "arrival_lateness_ms": {
+            "mean": 0.26859967811615204,
+            "p95": 0.5045965663157403,
+            "max": 1.4469853194896132,
+            "share_over_1ms": 0.0044
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5038, 900",
+          "utilization_memory_clock_after": "26, 5038, 1065",
+          "arrival_lateness_ms": {
+            "mean": 0.26237651697010733,
+            "p95": 0.500927388202399,
+            "max": 1.4423286193050444,
+            "share_over_1ms": 0.0032
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 13332,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13332,
+        "p50_ms": 0.031,
+        "p99_ms": 2.181,
+        "p99_9_ms": 2.815,
+        "max_ms": 4.077
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 8545,
+        "p50_ms": 0.023,
+        "p99_ms": 0.052,
+        "p99_9_ms": 0.075,
+        "max_ms": 0.149
+      },
+      "completed_pass": {
+        "count": 13332,
+        "p50_ms": 2.332,
+        "p99_ms": 2.81,
+        "p99_9_ms": 4.734,
+        "max_ms": 5.503
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "47, 5038, 1065",
+          "utilization_memory_clock_after": "54, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2639793056529015,
+            "p95": 0.5048926395829767,
+            "max": 0.9614750742912292,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "54, 5038, 2835",
+          "utilization_memory_clock_after": "31, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.268029326130636,
+            "p95": 0.5075174267403781,
+            "max": 1.3473471335601062,
+            "share_over_1ms": 0.001
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5038, 2835",
+          "utilization_memory_clock_after": "44, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.2627655373711605,
+            "p95": 0.5069910257589072,
+            "max": 1.0884346847888082,
+            "share_over_1ms": 0.0002
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 14157,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 14157,
+        "p50_ms": 0.031,
+        "p99_ms": 0.581,
+        "p99_9_ms": 0.79,
+        "max_ms": 0.991
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 8898,
+        "p50_ms": 0.023,
+        "p99_ms": 0.05,
+        "p99_9_ms": 0.07,
+        "max_ms": 0.164
+      },
+      "completed_pass": {
+        "count": 10113,
+        "p50_ms": 2.415,
+        "p99_ms": 2.925,
+        "p99_9_ms": 3.239,
+        "max_ms": 3.428
+      },
+      "stopped_pass": {
+        "count": 4044,
+        "p50_ms": 1.219,
+        "p99_ms": 2.184,
+        "p99_9_ms": 2.378,
+        "max_ms": 2.698
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "44, 5038, 2835",
+          "utilization_memory_clock_after": "41, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.26226176882046276,
+            "p95": 0.5025611317250878,
+            "max": 0.9918422147165984,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "41, 5038, 2835",
+          "utilization_memory_clock_after": "39, 5038, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.26539497821358965,
+            "p95": 0.5069880280643702,
+            "max": 0.9836891549639404,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "39, 5038, 2835",
+          "utilization_memory_clock_after": "29, 5038, 2730",
+          "arrival_lateness_ms": {
+            "mean": 0.26804285967955366,
+            "p95": 0.5061966949142516,
+            "max": 1.0666650487110019,
+            "share_over_1ms": 0.0002
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 15000,
+      "starts": 11833,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11833,
+        "p50_ms": 0.137,
+        "p99_ms": 2.219,
+        "p99_9_ms": 2.563,
+        "max_ms": 2.84
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 5570,
+        "p50_ms": 0.022,
+        "p99_ms": 0.05,
+        "p99_9_ms": 0.072,
+        "max_ms": 0.147
+      },
+      "completed_pass": {
+        "count": 11833,
+        "p50_ms": 2.327,
+        "p99_ms": 2.77,
+        "p99_9_ms": 3.037,
+        "max_ms": 3.796
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "29, 5038, 2730",
+          "utilization_memory_clock_after": "68, 5039, 2715",
+          "arrival_lateness_ms": {
+            "mean": 0.2705104816064704,
+            "p95": 0.5040689138695598,
+            "max": 1.033488311804831,
+            "share_over_1ms": 0.0002
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "68, 5039, 2715",
+          "utilization_memory_clock_after": "62, 5039, 2805",
+          "arrival_lateness_ms": {
+            "mean": 0.2747027874342166,
+            "p95": 0.5075242079328746,
+            "max": 1.0372968099545687,
+            "share_over_1ms": 0.0004
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "62, 5039, 2805",
+          "utilization_memory_clock_after": "50, 5039, 2790",
+          "arrival_lateness_ms": {
+            "mean": 0.2717714022262953,
+            "p95": 0.5042850971221924,
+            "max": 0.9118740272242576,
+            "share_over_1ms": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "poisson",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 15000,
+      "starts": 13551,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 13551,
+        "p50_ms": 0.064,
+        "p99_ms": 0.598,
+        "p99_9_ms": 0.835,
+        "max_ms": 1.18
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 6320,
+        "p50_ms": 0.021,
+        "p99_ms": 0.048,
+        "p99_9_ms": 0.066,
+        "max_ms": 0.117
+      },
+      "completed_pass": {
+        "count": 7731,
+        "p50_ms": 2.411,
+        "p99_ms": 2.894,
+        "p99_9_ms": 3.118,
+        "max_ms": 3.419
+      },
+      "stopped_pass": {
+        "count": 5820,
+        "p50_ms": 1.206,
+        "p99_ms": 2.19,
+        "p99_9_ms": 2.374,
+        "max_ms": 2.677
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "50, 5039, 2790",
+          "utilization_memory_clock_after": "48, 5039, 2835",
+          "arrival_lateness_ms": {
+            "mean": 0.27247880108770917,
+            "p95": 0.5066814192105085,
+            "max": 0.9759394160937518,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "48, 5039, 2835",
+          "utilization_memory_clock_after": "56, 5039, 2805",
+          "arrival_lateness_ms": {
+            "mean": 0.27063179786200636,
+            "p95": 0.506998912896961,
+            "max": 0.9375177905894816,
+            "share_over_1ms": 0.0
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "56, 5039, 2805",
+          "utilization_memory_clock_after": "60, 5042, 2820",
+          "arrival_lateness_ms": {
+            "mean": 0.2744843026914168,
+            "p95": 0.5091812927275896,
+            "max": 0.9891893132589757,
+            "share_over_1ms": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11323,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11323,
+        "p50_ms": 0.62,
+        "p99_ms": 5.105,
+        "p99_9_ms": 5.633,
+        "max_ms": 7.121
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 5010,
+        "p50_ms": 0.025,
+        "p99_ms": 0.057,
+        "p99_9_ms": 0.074,
+        "max_ms": 0.114
+      },
+      "completed_pass": {
+        "count": 11323,
+        "p50_ms": 4.21,
+        "p99_ms": 6.103,
+        "p99_9_ms": 6.813,
+        "max_ms": 7.611
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "60, 5042, 2820",
+          "utilization_memory_clock_after": "40, 5038, 1080",
+          "arrival_lateness_ms": {
+            "mean": 0.2680189619830344,
+            "p95": 0.502622511703521,
+            "max": 1.1852324532810599,
+            "share_over_1ms": 0.0012
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "40, 5038, 1080",
+          "utilization_memory_clock_after": "26, 5038, 1275",
+          "arrival_lateness_ms": {
+            "mean": 0.2690329060831573,
+            "p95": 0.5039361421950161,
+            "max": 1.332898624241352,
+            "share_over_1ms": 0.002
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "26, 5038, 1275",
+          "utilization_memory_clock_after": "19, 5038, 1080",
+          "arrival_lateness_ms": {
+            "mean": 0.26664156843326053,
+            "p95": 0.5004053527954966,
+            "max": 1.3354391849134117,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "19, 5038, 1080",
+          "utilization_memory_clock_after": "19, 5038, 1260",
+          "arrival_lateness_ms": {
+            "mean": 0.2672178098990116,
+            "p95": 0.5010030581615865,
+            "max": 1.1662887409329414,
+            "share_over_1ms": 0.0008
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "19, 5038, 1260",
+          "utilization_memory_clock_after": "55, 5038, 1530",
+          "arrival_lateness_ms": {
+            "mean": 0.26613629069179295,
+            "p95": 0.5017788498662412,
+            "max": 1.1183909082319587,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "55, 5038, 1530",
+          "utilization_memory_clock_after": "34, 5046, 1125",
+          "arrival_lateness_ms": {
+            "mean": 0.26523550467099993,
+            "p95": 0.4998677468392998,
+            "max": 1.213316252687946,
+            "share_over_1ms": 0.001
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "34, 5046, 1125",
+          "utilization_memory_clock_after": "21, 5046, 1470",
+          "arrival_lateness_ms": {
+            "mean": 0.2670093368447851,
+            "p95": 0.5000297969672829,
+            "max": 1.3337067211978137,
+            "share_over_1ms": 0.0016
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 0.9,
+      "mode": "stop",
+      "requests": 30000,
+      "starts": 10807,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 10807,
+        "p50_ms": 0.345,
+        "p99_ms": 1.78,
+        "p99_9_ms": 2.383,
+        "max_ms": 2.931
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4292,
+        "p50_ms": 0.025,
+        "p99_ms": 0.056,
+        "p99_9_ms": 0.082,
+        "max_ms": 0.2
+      },
+      "completed_pass": {
+        "count": 4552,
+        "p50_ms": 6.18,
+        "p99_ms": 9.132,
+        "p99_9_ms": 10.929,
+        "max_ms": 12.304
+      },
+      "stopped_pass": {
+        "count": 6255,
+        "p50_ms": 1.679,
+        "p99_ms": 5.603,
+        "p99_9_ms": 7.084,
+        "max_ms": 7.966
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "21, 5046, 1470",
+          "utilization_memory_clock_after": "29, 5038, 930",
+          "arrival_lateness_ms": {
+            "mean": 0.26500923988060093,
+            "p95": 0.4981050151400268,
+            "max": 1.3347248604986817,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "25, 5038, 930",
+          "utilization_memory_clock_after": "24, 5038, 855",
+          "arrival_lateness_ms": {
+            "mean": 0.2702362740121316,
+            "p95": 0.5007915606256574,
+            "max": 1.3517795305233449,
+            "share_over_1ms": 0.0024
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "24, 5038, 855",
+          "utilization_memory_clock_after": "25, 5038, 675",
+          "arrival_lateness_ms": {
+            "mean": 0.2669176070543472,
+            "p95": 0.5027968727517873,
+            "max": 1.3707237667404115,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "25, 5038, 675",
+          "utilization_memory_clock_after": "31, 5041, 945",
+          "arrival_lateness_ms": {
+            "mean": 0.26632808475987985,
+            "p95": 0.4991735622752458,
+            "max": 1.2969197996426374,
+            "share_over_1ms": 0.001
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "27, 5041, 765",
+          "utilization_memory_clock_after": "19, 5038, 1050",
+          "arrival_lateness_ms": {
+            "mean": 0.26919067039270883,
+            "p95": 0.5027968727517873,
+            "max": 1.3268320180941373,
+            "share_over_1ms": 0.0018
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "19, 5038, 1050",
+          "utilization_memory_clock_after": "65, 5038, 735",
+          "arrival_lateness_ms": {
+            "mean": 0.2651846684224438,
+            "p95": 0.49978538299910724,
+            "max": 1.2805640290025622,
+            "share_over_1ms": 0.001
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "plain",
+      "requests": 35000,
+      "starts": 11408,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 11408,
+        "p50_ms": 0.425,
+        "p99_ms": 2.784,
+        "p99_9_ms": 4.435,
+        "max_ms": 5.933
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4863,
+        "p50_ms": 0.023,
+        "p99_ms": 0.054,
+        "p99_9_ms": 0.076,
+        "max_ms": 0.404
+      },
+      "completed_pass": {
+        "count": 11408,
+        "p50_ms": 2.689,
+        "p99_ms": 3.582,
+        "p99_9_ms": 6.351,
+        "max_ms": 7.709
+      },
+      "stopped_pass": {
+        "count": 0,
+        "p50_ms": null,
+        "p99_ms": null,
+        "p99_9_ms": null,
+        "max_ms": null
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "65, 5038, 735",
+          "utilization_memory_clock_after": "46, 5039, 2160",
+          "arrival_lateness_ms": {
+            "mean": 0.2722516437992454,
+            "p95": 0.5056982336100191,
+            "max": 1.3104589888826013,
+            "share_over_1ms": 0.0032
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "46, 5039, 2160",
+          "utilization_memory_clock_after": "25, 5039, 2055",
+          "arrival_lateness_ms": {
+            "mean": 0.2744503463152796,
+            "p95": 0.5106696917209774,
+            "max": 1.6052684513852,
+            "share_over_1ms": 0.0034
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "25, 5039, 2055",
+          "utilization_memory_clock_after": "49, 5039, 1950",
+          "arrival_lateness_ms": {
+            "mean": 0.27009914597729223,
+            "p95": 0.5056487279944122,
+            "max": 1.376070751575753,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "23, 5039, 1950",
+          "utilization_memory_clock_after": "22, 5047, 1890",
+          "arrival_lateness_ms": {
+            "mean": 0.2678391228138935,
+            "p95": 0.5028031300753355,
+            "max": 1.199824590003118,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "22, 5047, 1890",
+          "utilization_memory_clock_after": "30, 5047, 2100",
+          "arrival_lateness_ms": {
+            "mean": 0.2674232243327424,
+            "p95": 0.5024605779908597,
+            "max": 1.1344940867275,
+            "share_over_1ms": 0.0014
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "30, 5047, 2100",
+          "utilization_memory_clock_after": "45, 5047, 2070",
+          "arrival_lateness_ms": {
+            "mean": 0.2682474278321024,
+            "p95": 0.5027937877457589,
+            "max": 1.3118237548042089,
+            "share_over_1ms": 0.0022
+          }
+        },
+        {
+          "seed": 1006,
+          "requests": 5000,
+          "utilization_memory_clock_before": "45, 5047, 2070",
+          "utilization_memory_clock_after": "24, 5047, 2385",
+          "arrival_lateness_ms": {
+            "mean": 0.2705356459366158,
+            "p95": 0.5053204949945211,
+            "max": 1.2611405400093645,
+            "share_over_1ms": 0.0026
+          }
+        }
+      ]
+    },
+    {
+      "chunk_blocks": 8,
+      "arrival": "bursty",
+      "load": 1.5,
+      "mode": "stop",
+      "requests": 30000,
+      "starts": 12021,
+      "tail_rests_on_fewer_than_10000_starts": false,
+      "start_delay": {
+        "count": 12021,
+        "p50_ms": 0.148,
+        "p99_ms": 1.016,
+        "p99_9_ms": 1.317,
+        "max_ms": 1.795
+      },
+      "start_delay_idle_at_arrival": {
+        "count": 4252,
+        "p50_ms": 0.023,
+        "p99_ms": 0.055,
+        "p99_9_ms": 0.08,
+        "max_ms": 0.124
+      },
+      "completed_pass": {
+        "count": 4492,
+        "p50_ms": 4.047,
+        "p99_ms": 5.517,
+        "p99_9_ms": 6.282,
+        "max_ms": 6.599
+      },
+      "stopped_pass": {
+        "count": 7529,
+        "p50_ms": 1.062,
+        "p99_ms": 3.439,
+        "p99_9_ms": 4.254,
+        "max_ms": 4.665
+      },
+      "blocks": [
+        {
+          "seed": 1000,
+          "requests": 5000,
+          "utilization_memory_clock_before": "24, 5047, 2385",
+          "utilization_memory_clock_after": "54, 5047, 1185",
+          "arrival_lateness_ms": {
+            "mean": 0.2714067390654236,
+            "p95": 0.5072897183708847,
+            "max": 1.3111457810737193,
+            "share_over_1ms": 0.0022
+          }
+        },
+        {
+          "seed": 1001,
+          "requests": 5000,
+          "utilization_memory_clock_before": "54, 5047, 1185",
+          "utilization_memory_clock_after": "36, 5047, 1245",
+          "arrival_lateness_ms": {
+            "mean": 0.2703813465195708,
+            "p95": 0.5032230401411653,
+            "max": 1.3686407182831317,
+            "share_over_1ms": 0.0028
+          }
+        },
+        {
+          "seed": 1002,
+          "requests": 5000,
+          "utilization_memory_clock_before": "36, 5047, 1245",
+          "utilization_memory_clock_after": "32, 5047, 1185",
+          "arrival_lateness_ms": {
+            "mean": 0.2700500827166252,
+            "p95": 0.5036455695517361,
+            "max": 1.3454585568979383,
+            "share_over_1ms": 0.003
+          }
+        },
+        {
+          "seed": 1003,
+          "requests": 5000,
+          "utilization_memory_clock_before": "32, 5047, 1185",
+          "utilization_memory_clock_after": "14, 5042, 1305",
+          "arrival_lateness_ms": {
+            "mean": 0.26697604150976983,
+            "p95": 0.5020814423914999,
+            "max": 1.2572643463499844,
+            "share_over_1ms": 0.0012
+          }
+        },
+        {
+          "seed": 1004,
+          "requests": 5000,
+          "utilization_memory_clock_before": "14, 5042, 1305",
+          "utilization_memory_clock_after": "37, 5039, 1110",
+          "arrival_lateness_ms": {
+            "mean": 0.26670360552961936,
+            "p95": 0.49957583541981876,
+            "max": 1.3207168667577207,
+            "share_over_1ms": 0.002
+          }
+        },
+        {
+          "seed": 1005,
+          "requests": 5000,
+          "utilization_memory_clock_before": "37, 5039, 1110",
+          "utilization_memory_clock_after": "37, 5039, 1680",
+          "arrival_lateness_ms": {
+            "mean": 0.2693996369605884,
+            "p95": 0.5027142469771206,
+            "max": 1.4079425600357354,
+            "share_over_1ms": 0.0034
+          }
+        }
+      ]
+    }
+  ]
+}
