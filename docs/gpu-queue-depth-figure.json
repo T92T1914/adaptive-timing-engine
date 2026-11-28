@@ -1,0 +1,370 @@
+{
+  "schema_version": 1,
+  "evidence": {
+    "metric": "stale_after_newer_ms_per_stop",
+    "axis_top_ms": 2.0,
+    "panels": [
+      {
+        "chunk_blocks": 1,
+        "chunks_per_pass": 32,
+        "points": [
+          {
+            "depth": 1,
+            "measured": {
+              "median": 0.32516024090466134,
+              "low": 0.30334287798072046,
+              "high": 0.3401178455484375,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.050949606673479336,
+              "low": 0.04886970896539038,
+              "high": 0.052472166142477565,
+              "conditions": 6
+            }
+          },
+          {
+            "depth": 2,
+            "measured": {
+              "median": 0.36854054120879853,
+              "low": 0.31307956302532575,
+              "high": 0.4597291014289926,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.11909094415169767,
+              "low": 0.1091378898892599,
+              "high": 0.1558507502495764,
+              "conditions": 6
+            }
+          },
+          {
+            "depth": 4,
+            "measured": {
+              "median": 0.5443266941607239,
+              "low": 0.44213051117528646,
+              "high": 0.63929954508963,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.25137460231319136,
+              "low": 0.24959946933614383,
+              "high": 0.25402571554665193,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 8,
+            "measured": {
+              "median": 0.8205902498746864,
+              "low": 0.47680999208249486,
+              "high": 0.9872307231238748,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.5382187189855088,
+              "low": 0.5360403648831157,
+              "high": 0.5448427908867443,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": "all",
+            "measured": {
+              "median": 1.182641557986596,
+              "low": 0.510939405009209,
+              "high": 1.667893602060797,
+              "conditions": 6
+            },
+            "predicted": null
+          }
+        ]
+      },
+      {
+        "chunk_blocks": 2,
+        "chunks_per_pass": 16,
+        "points": [
+          {
+            "depth": 1,
+            "measured": {
+              "median": 0.38052978192494047,
+              "low": 0.36593105293662864,
+              "high": 0.3935834370318631,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.08837837210443242,
+              "low": 0.08360891771770573,
+              "high": 0.0995597152918876,
+              "conditions": 6
+            }
+          },
+          {
+            "depth": 2,
+            "measured": {
+              "median": 0.5274907909045815,
+              "low": 0.3851107547695274,
+              "high": 0.5939986497998841,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.21576437823095732,
+              "low": 0.21172396609879077,
+              "high": 0.23228489300289487,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 4,
+            "measured": {
+              "median": 0.8618572471737654,
+              "low": 0.6150904815795871,
+              "high": 0.9710150094151188,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.5004321040935238,
+              "low": 0.49023667603259324,
+              "high": 0.5023812951627339,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 8,
+            "measured": {
+              "median": 1.480753391591247,
+              "low": 0.7526778882968196,
+              "high": 1.9023124726827572,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 1.0725161407127635,
+              "low": 1.0587875788288637,
+              "high": 1.0779505581676587,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": "all",
+            "measured": {
+              "median": 1.360843483258551,
+              "low": 0.6553140338033193,
+              "high": 1.832850525009596,
+              "conditions": 6
+            },
+            "predicted": null
+          }
+        ]
+      },
+      {
+        "chunk_blocks": 4,
+        "chunks_per_pass": 8,
+        "points": [
+          {
+            "depth": 1,
+            "measured": {
+              "median": 0.4940963577516154,
+              "low": 0.469586684423569,
+              "high": 0.5273470747888069,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.1610580806797656,
+              "low": 0.11084827207659889,
+              "high": 0.22319647489404262,
+              "conditions": 6
+            }
+          },
+          {
+            "depth": 2,
+            "measured": {
+              "median": 0.8265333614493668,
+              "low": 0.6549643315820894,
+              "high": 0.8735972447346332,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.4324050966746324,
+              "low": 0.4248813768434747,
+              "high": 0.48393250375251745,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 4,
+            "measured": {
+              "median": 1.6497322541769983,
+              "low": 1.1128727360722943,
+              "high": 1.8238117289152742,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 1.0015825235511033,
+              "low": 0.9902275897127706,
+              "high": 1.0453027643590493,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 8,
+            "measured": {
+              "median": 1.5069159700634354,
+              "low": 0.9833481138035944,
+              "high": 1.7744659570695458,
+              "conditions": 6
+            },
+            "predicted": null
+          },
+          {
+            "depth": "all",
+            "measured": {
+              "median": 1.5883225492564683,
+              "low": 0.9552802424220336,
+              "high": 1.8259133984739095,
+              "conditions": 6
+            },
+            "predicted": null
+          }
+        ]
+      },
+      {
+        "chunk_blocks": 8,
+        "chunks_per_pass": 4,
+        "points": [
+          {
+            "depth": 1,
+            "measured": {
+              "median": 0.7203106316450483,
+              "low": 0.5962999264343124,
+              "high": 0.7554337137286563,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.3191350763586387,
+              "low": 0.29784262555892743,
+              "high": 0.4602972710050128,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 2,
+            "measured": {
+              "median": 1.6736410385572527,
+              "low": 1.486617850693097,
+              "high": 1.7980915453021853,
+              "conditions": 6
+            },
+            "predicted": {
+              "median": 0.8822582596391716,
+              "low": 0.8531017255819134,
+              "high": 1.0374887964422221,
+              "conditions": 5
+            }
+          },
+          {
+            "depth": 4,
+            "measured": {
+              "median": 1.7986180331490915,
+              "low": 1.5342241725562893,
+              "high": 1.9742137360347922,
+              "conditions": 6
+            },
+            "predicted": null
+          },
+          {
+            "depth": 8,
+            "measured": {
+              "median": 1.8194013487446372,
+              "low": 1.5974533574618255,
+              "high": 1.9348836769435434,
+              "conditions": 6
+            },
+            "predicted": null
+          },
+          {
+            "depth": "all",
+            "measured": {
+              "median": 1.79195206242381,
+              "low": 1.5934239881453423,
+              "high": 1.9178283937740694,
+              "conditions": 6
+            },
+            "predicted": null
+          }
+        ]
+      }
+    ],
+    "text": [
+      "Work still running after a newer request",
+      "Mean time from the newer request to the end of a stopped pass (ms), by queue depth. Solid lines are measured. Dashed lines are predicted.",
+      "Median over the arrival conditions with a value. Bars span lowest to highest. None: the model predicts no stop. One card, generated arrivals, no latency bound."
+    ]
+  },
+  "rules": {
+    "repository": "T92T1914/clair-obscur-themes",
+    "revision": "4693831b51f2b3fa268d830fd9b977fb70c83e3d",
+    "file": "tokens-monochrome.json",
+    "version": "1.0.0"
+  },
+  "renderer": {
+    "matplotlib": "3.11.1",
+    "Pillow": "12.3.0",
+    "backend": "Agg"
+  },
+  "layout": {
+    "narrow": {
+      "width": 960,
+      "height": 3783,
+      "labels_within_canvas": 66,
+      "minimum_font_points": 33
+    },
+    "wide": {
+      "width": 1800,
+      "height": 1905,
+      "labels_within_canvas": 60,
+      "minimum_font_points": 30
+    }
+  },
+  "typography": {
+    "release": "Inter 4.1",
+    "files": {
+      "Regular": {
+        "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82",
+        "postscript": "Inter-Regular",
+        "weight": 400,
+        "italic": false
+      },
+      "SemiBold": {
+        "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3",
+        "postscript": "Inter-SemiBold",
+        "weight": 600,
+        "italic": false
+      },
+      "Bold": {
+        "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "postscript": "Inter-Bold",
+        "weight": 700,
+        "italic": false
+      }
+    },
+    "painted_faces": [
+      "Regular",
+      "SemiBold",
+      "Bold"
+    ]
+  },
+  "inputs_sha256_lf": {
+    "docs/evidence/gpu-depth-runs.json": "2b58d858a74f315ee40f5e2c498adb968a669cc09273364532475b5f64238581",
+    "docs/evidence/gpu-depth-predictions.json": "9d35000cfa1597ad78c342e26f068bf847516796c1b67fb7c87e2a6c19d9dd91",
+    "tools/obscur-figure.json": "14c0a35e48c0a7b1188c4e5b455f8a811d34fcf091a49ca071589173ca2f5a3f",
+    "tools/obscur_figure.py": "d39abb987501edd40cd1842247bb3d0bdfc1a0cec1a4bd230ec90fbb00caa7bd",
+    "tools/gpu_depth_run_tables.py": "1c7b41cf2a033aa349d06274d5ba589e26799504123bae8658dc59d076f70440",
+    "tools/render_depth_figure.py": "f9b56ae36f62cff293e02bb0250ccf7e231f5d9e17f6ae3f2fa8ba8ca40f84b5"
+  },
+  "outputs_sha256": {
+    "docs/gpu-queue-depth-obscur-wide.png": "3006c3303a658aeb2847717fbac71f595e41099958fb7e8ba9aa4c00323a60c2",
+    "docs/gpu-queue-depth-obscur-wide.svg": "24975c04f636ad62f0bdff3eff1dfa73607e17af823359f8701a6fe6ee00180d",
+    "docs/gpu-queue-depth-obscur.png": "1022be8214cd37f17b7605edbe8bce90c5502ab404ae7cf367dc2ac2aab6ea8e",
+    "docs/gpu-queue-depth-obscur.svg": "99fcfb0be7937fa06f2804edbf7933922cbc72fed7d69d1f795491791054cfff"
+  }
+}

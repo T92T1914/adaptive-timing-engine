@@ -13,3 +13,7 @@ docs/revised-lifecycle-obscur-wide.svg text eol=lf
 
 # Sanitized receipt fixtures retain their documented byte identities on every host.
 tests/fixtures/receipt-*.json text eol=lf
+
+# The queue depth figure receipt identifies exact SVG bytes too.
+docs/gpu-queue-depth-obscur.svg text eol=lf
+docs/gpu-queue-depth-obscur-wide.svg text eol=lf
