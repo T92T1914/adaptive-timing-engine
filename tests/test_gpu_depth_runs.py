@@ -1,5 +1,7 @@
 """The depth runs are summarised the way the predictions define each metric."""
 import ast
+from datetime import datetime
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -207,6 +209,67 @@ class DepthRunCardTests(unittest.TestCase):
                         self.assertLessEqual(waits, row["chunks_per_pass"] - row["depth"])
         self.assertEqual(report["predictions_digest"],
                          tables.predictions_digest(json.loads(PREDICTIONS.read_text(encoding="utf-8"))))
+
+
+class SavedDepthRunTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.report = json.loads(tables.RUNS.read_text(encoding="utf-8"))
+        cls.predictions = json.loads(PREDICTIONS.read_text(encoding="utf-8"))
+        cls.samples = tables.load_samples()
+
+    def test_the_run_names_its_machine_and_load(self):
+        for key in ("revision", "card", "driver", "toolkit", "torch", "torch_cuda", "python",
+                    "started_utc", "finished_utc"):
+            self.assertTrue(self.report[key], key)
+        self.assertTrue(self.report["tree_clean"])
+        for row in self.report["rows"]:
+            for run in row["runs"]:
+                for key in ("utilization_memory_clock_before", "utilization_memory_clock_after"):
+                    self.assertEqual(len(run[key].split(",")), 3)
+
+    def test_the_predictions_were_committed_before_the_run_and_have_not_changed(self):
+        committed = datetime.fromisoformat(self.report["predictions_committed"])
+        started = datetime.fromisoformat(self.report["started_utc"])
+        self.assertLess(committed, started)
+        self.assertEqual(self.report["predictions_commit"], "e8c52d5368e98c939da870ac1ecd8c3c3727e6c2")
+        self.assertEqual(self.report["predictions_digest"], tables.predictions_digest(self.predictions))
+
+    def test_every_prediction_has_its_three_runs_in_the_predicted_unit(self):
+        settings = self.predictions["settings"]
+        found = [tuple(row[key] for key in tables.KEYS) for row in self.report["rows"]]
+        expected = [tuple(row[key] for key in tables.KEYS) for row in self.predictions["rows"]]
+        self.assertEqual(found, expected)
+        self.assertEqual(self.report["settings"]["time_unit_ms"], settings["time_unit_ms"])
+        for row in self.report["rows"]:
+            self.assertEqual([run["seed"] for run in row["runs"]], settings["seeds"])
+            self.assertEqual({run["requests"] for run in row["runs"]}, {settings["requests_per_run"]})
+        self.assertEqual(sorted(row["order"] for row in self.report["rows"]), list(range(len(expected))))
+
+    def test_the_samples_file_is_the_one_the_report_names(self):
+        self.assertEqual(self.report["samples_file"], tables.SAMPLES.name)
+        self.assertEqual(hashlib.sha256(tables.SAMPLES.read_bytes()).hexdigest(), self.report["samples_sha256"])
+
+    def test_the_summaries_follow_from_the_saved_samples(self):
+        self.assertEqual(len(self.samples["conditions"]), len(self.report["rows"]))
+        for condition, row in zip(self.samples["conditions"], self.report["rows"]):
+            summary = {key: value for key, value in row.items() if key not in ("order", "runs")}
+            self.assertEqual(tables.summarise(condition), summary)
+
+    def test_the_samples_keep_the_depth_bound_and_the_worker_counts(self):
+        for condition, row in zip(self.samples["conditions"], self.report["rows"]):
+            count, limit = row["chunks_per_pass"], row["depth"]
+            for run, saved in zip(condition["runs"], row["runs"]):
+                self.assertEqual(saved["worker"]["computed"], len(run["samples"]))
+                self.assertEqual(saved["worker"]["failures"], 0)
+                adopted = sum(1 for sample in run["samples"] if sample[5] & tables.ADOPTED)
+                self.assertEqual(saved["worker"]["adopted"], adopted)
+                for delay, length, newer, waits, launched, flags in run["samples"]:
+                    self.assertEqual(bool(flags & tables.STOPPED), launched < count)
+                    self.assertFalse(flags & tables.STOPPED and flags & tables.ADOPTED)
+                    self.assertLessEqual(waits, 0 if limit is None else max(0, count - limit))
+                    if flags & tables.STOPPED:
+                        self.assertIsNotNone(newer)
 
 
 if __name__ == "__main__":
