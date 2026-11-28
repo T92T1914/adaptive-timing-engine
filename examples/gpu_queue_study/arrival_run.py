@@ -18,6 +18,7 @@ import time
 
 import torch
 
+from depth import run_depth
 import model
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -63,9 +64,19 @@ def wait_until(target):
 
 
 MODES = ("plain", "synced", "stop")
+# Not in MODES, so the scripts that run every mode in MODES keep their conditions.
+DEPTH_MODE = "depth"
 
 
-def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode="plain", trace=None):
+def new_event():
+    """An event recorded on the current stream after the launch just made."""
+    event = torch.cuda.Event(enable_timing=True)
+    event.record()
+    return event
+
+
+def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode="plain", trace=None,
+             depth=None, passes=None):
     """Run one case. The mode changes only how a pass treats the chunks.
 
     plain: one synchronize at the end of the pass, as in the first study.
@@ -73,10 +84,23 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
     stop: a synchronize after every chunk, then a look at the worker's generation. A stale
         pass returns at that point. This is the calculation stopping itself. Work already
         placed on the GPU is not removed, and the chunk in flight finishes first.
+    depth: depth.run_depth keeps at most `depth` chunks queued and looks at the generation
+        between launches. A `depth` of None queues every chunk. A stale pass launches
+        nothing more, and the chunks it already queued run to their end before the closing
+        synchronize. `depth` is read only in this mode.
 
     A list passed as trace receives one row for every calculation that started, as
     (arrived, start, end, adopted, stopped) in time.perf_counter seconds.
+
+    A list passed as passes receives one dict for every calculation that started, in the
+    order they ended, with the request index, its arrival, the arrival of the request after
+    it, start, end, adopted, stopped, the waits of the pass and the chunks it launched. The
+    next arrival is kept even when that request was replaced before it could start, and it
+    is None for the last request. The waits are the event waits of a full queue, so they
+    stay 0 outside the depth mode.
     """
+    if mode not in MODES + (DEPTH_MODE,):
+        raise ValueError(f"unknown mode {mode!r}")
     rng = random.Random(f"gpu/{arrival}/{load}/{seed}")
     schedule = [t * mean_pass for t in queue_model.arrival_times(arrival, load, requests, rng)]
     arrived = [0.0] * requests
@@ -88,19 +112,30 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
         start = time.perf_counter()
         value = inputs
         stopped = False
-        for position, chunk in enumerate(chunk_list):
-            value = model.run_chunk(chunk, value)
-            if mode != "plain":
-                torch.cuda.synchronize()
-            if mode == "stop" and position + 1 < len(chunk_list) and holder["worker"].stats().generation != index + 2:
-                stopped = True
-                break
+        waits = 0
+        launched = len(chunk_list)
+        if mode == DEPTH_MODE:
+            def stale():
+                return holder["worker"].stats().generation != index + 2
+
+            value, events, waits = run_depth(chunk_list, inputs, depth, model.run_chunk, new_event, stale)
+            launched = len(events)
+            stopped = launched < len(chunk_list)
+        else:
+            for position, chunk in enumerate(chunk_list):
+                value = model.run_chunk(chunk, value)
+                if mode != "plain":
+                    torch.cuda.synchronize()
+                if mode == "stop" and position + 1 < len(chunk_list) and holder["worker"].stats().generation != index + 2:
+                    stopped = True
+                    launched = position + 1
+                    break
         torch.cuda.synchronize()
         end = time.perf_counter()
         # Adopted when no newer request exists at the moment the computation ends.
         adopted = (not stopped) and holder["worker"].stats().generation == index + 2
         if index >= 0:
-            runs.append((index, start, end, adopted, stopped))
+            runs.append((index, start, end, adopted, stopped, waits, launched))
 
     with LatestWorker(compute) as worker:
         holder["worker"] = worker
@@ -118,15 +153,23 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
         stats = worker.stats()
     if trace is not None:
         trace.extend((arrived[index], start, end, adopted, stopped)
-                     for index, start, end, adopted, stopped in runs)
-    busy = sum(end - start for _, start, end, _, _ in runs)
-    stale_time = sum(end - start for _, start, end, adopted, _ in runs if not adopted)
-    ages = [end - arrived[index] for index, _, end, adopted, _ in runs if adopted]
-    adopted_pass = [end - start for _, start, end, adopted, _ in runs if adopted]
+                     for index, start, end, adopted, stopped, _, _ in runs)
+    if passes is not None:
+        passes.extend({"index": index, "arrived": arrived[index],
+                       "next_arrived": arrived[index + 1] if index + 1 < requests else None,
+                       "start": start, "end": end, "adopted": adopted, "stopped": stopped,
+                       "waits": waits, "launched": launched}
+                      for index, start, end, adopted, stopped, waits, launched in runs)
+    busy = sum(end - start for _, start, end, *_ in runs)
+    stale_time = sum(end - start for _, start, end, adopted, *_ in runs if not adopted)
+    ages = [end - arrived[index] for index, _, end, adopted, *_ in runs if adopted]
+    adopted_pass = [end - start for _, start, end, adopted, *_ in runs if adopted]
     adopted_count = len(ages)
     return {
         "submitted": stats.submitted - 1, "computed": stats.computed - 1, "replaced": stats.replaced,
         "stale": stats.stale, "adopted": adopted_count,
+        # The worker counts a calculation that raised and moves on, so it leaves no row here.
+        "failures": stats.failures,
         # The check at the end of a computation and the worker's own check are two lock
         # acquisitions. A mismatch is a request that slipped between them.
         "adopted_check_mismatch": (stats.computed - 1 - stats.stale) - adopted_count,
@@ -134,7 +177,7 @@ def run_case(chunk_list, inputs, arrival, load, mean_pass, requests, seed, mode=
         "adopted_share": adopted_count / requests,
         "mean_adopted_age": (statistics.fmean(ages) / mean_pass) if ages else None,
         "stale_gpu_time_share": stale_time / busy if busy else None,
-        "stopped": sum(1 for *_, stopped in runs if stopped),
+        "stopped": sum(1 for _, _, _, _, stopped, *_ in runs if stopped),
         "stale_gpu_seconds": stale_time,
         "busy_gpu_seconds": busy,
         "mean_adopted_pass_ms": statistics.fmean(adopted_pass) * 1000.0 if adopted_pass else None,
