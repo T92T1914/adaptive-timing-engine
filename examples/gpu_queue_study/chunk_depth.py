@@ -20,7 +20,7 @@ import time
 import torch
 
 import model
-from arrival_run import ROOT, smi
+from arrival_run import ROOT, new_event, smi
 from depth import run_depth
 
 sys.path.insert(0, str(ROOT / "tools"))
@@ -32,12 +32,6 @@ FULL = {"sizes": model.CHUNK_SIZES, "rounds": 6, "passes_per_round": 50, "warmup
 QUICK = {"sizes": (4,), "rounds": 2, "passes_per_round": 5, "warmup": 3}
 ORDER_SEED = 29
 READING = "utilization.gpu,memory.used,clocks.sm"
-
-
-def new_event():
-    event = torch.cuda.Event(enable_timing=True)
-    event.record()
-    return event
 
 
 def one_pass(chunk_list, inputs, depth):
