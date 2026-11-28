@@ -2,19 +2,19 @@
 
     python tools/gpu_depth_page.py
 
-Every miss of tools/gpu_depth_run_tables.py gets one of three marks.
+Every miss of tools/gpu_depth_run_tables.py gets one of two marks.
 
 A  The condition queues every chunk, so the model predicts no stop and the run stopped
    passes there. This contradicts the first assumption of the predictions, that a launch
    takes no time. It covers only the three metrics about stops.
-L  A replay of the same model, with the chunk times of each condition stretched so that
-   their mean pass equals the median completed pass measured in that condition, comes
-   within 25 percent of the measurement. The replay was made after the runs and takes the
-   pass length from the run it is set beside. One common length for every condition does
-   at least as well, as the control table shows, so this mark names longer passes as a
-   candidate reason and does not establish it. It does not say why a pass was longer, and
-   it predicts nothing.
 ?  Not explained.
+
+The page also reports a replay of the same model, with the chunk times of each condition
+stretched so that their mean pass equals the median completed pass measured in that
+condition. It was made after the runs and takes the pass length from the run it is set
+beside. One common length for every condition brings more misses within 25 percent, as
+the control table shows, so the replay is an observation and gives no miss a reason. Why
+the passes were longer is not explained.
 
 The last table sizes part of the first study with the pass times that pass timing measured
 later inside the worker. This file needs only the standard library.
@@ -100,7 +100,7 @@ def replay(data, average=statistics.median, fixed_ms=None):
 
 
 def marked_rows(data, replayed):
-    """The comparison rows with a mark on every miss."""
+    """The comparison rows with a mark on every miss and what the replay did in every cell."""
     rows = runs_tool.comparisons(data["runs"], data["predictions"])
     measured = {key_of(row): row["measured"] for row in data["runs"]["rows"]}
     for row in rows:
@@ -113,8 +113,13 @@ def marked_rows(data, replayed):
             elif queues_every_chunk(row) and name in STOP_METRICS and result["predicted"] in (0, None):
                 result["mark"] = "A"
             else:
-                result["mark"] = "L" if held else "?"
+                result["mark"] = "?"
     return rows
+
+
+def replay_reaches(result):
+    """A miss outside A that the replay brings within 25 percent."""
+    return result["miss"] and result["mark"] != "A" and result["replay_holds"]
 
 
 def reason_counts(rows, mean_rows):
@@ -123,17 +128,19 @@ def reason_counts(rows, mean_rows):
         results = [row["metrics"][name] for row in rows]
         out[name] = {
             "missed": sum(r["miss"] for r in results),
-            **{mark: sum(r["mark"] == mark for r in results) for mark in ("A", "L", "?")},
-            "L_with_mean": sum(row["metrics"][name]["mark"] == "L" for row in mean_rows),
+            **{mark: sum(r["mark"] == mark for r in results) for mark in ("A", "?")},
+            "replay_within": sum(map(replay_reaches, results)),
+            "replay_within_with_mean": sum(replay_reaches(row["metrics"][name]) for row in mean_rows),
             "held_then_replay_missed": sum(not r["miss"] and not r["replay_holds"] for r in results),
         }
     return out
 
 
 def reason_table(counts):
-    lines = ["| Metric | Missed of 120 | A | L | Not explained | L with the mean pass instead "
-             "| Held before, missed by the replay |", "|---|---|---|---|---|---|---|"]
-    keys = ("missed", "A", "L", "?", "L_with_mean", "held_then_replay_missed")
+    lines = ["| Metric | Missed of 120 | A | Not explained | Within 25 percent in the replay, outside A "
+             "| The same with the mean pass instead | Held before, missed by the replay |",
+             "|---|---|---|---|---|---|---|"]
+    keys = ("missed", "A", "?", "replay_within", "replay_within_with_mean", "held_then_replay_missed")
     for name in METRICS:
         lines.append(f"| {TITLES[name]} | " + " | ".join(str(counts[name][key]) for key in keys) + " |")
     totals = [sum(counts[name][key] for name in METRICS) for key in keys]
@@ -150,7 +157,7 @@ def common_length_ms(data):
 def control_counts(rows):
     """How many misses outside A a replay brings within 25 percent, and how many cells it misses."""
     results = [result for row in rows for result in row["metrics"].values()]
-    return {"within": sum(r["miss"] and r["mark"] != "A" and r["replay_holds"] for r in results),
+    return {"within": sum(map(replay_reaches, results)),
             "replay_missed": sum(not r["replay_holds"] for r in results)}
 
 
@@ -338,9 +345,10 @@ def facts():
         values = list(values)
         return (min(values), max(values))
 
-    def direction(name, mark=None):
+    def direction(name, replay_missed_only=False):
         found = [row["metrics"][name] for row in rows]
-        found = [r for r in found if r["miss"] and r["relative"] is not None and mark in (None, r["mark"])]
+        found = [r for r in found if r["miss"] and r["relative"] is not None
+                 and not (replay_missed_only and r["replay_holds"])]
         above = sum(r["measured"] > r["predicted"] for r in found)
         return {"above": above, "below": len(found) - above}
 
@@ -356,7 +364,7 @@ def facts():
             "replay_otherwise": span(value for value in again if value >= 0.07)},
         "stale_after_newer_direction": direction("stale_after_newer_ms_per_stop"),
         "synchronize_direction": direction("synchronizes_per_pass"),
-        "synchronize_direction_not_explained": direction("synchronizes_per_pass", "?"),
+        "synchronize_direction_replay_missed": direction("synchronizes_per_pass", replay_missed_only=True),
         "stale_share_medians": span(entry["stale_gpu_time_share_measured"][0] for entry in entries),
         "conditions_above_host_back_to_back": sum(entry["above_host"] for entry in entries),
         "starts": {"total": sum(row["starts"] for row in runs["rows"]),

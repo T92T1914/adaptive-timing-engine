@@ -39,10 +39,10 @@ class ReplayTests(unittest.TestCase):
                     self.assertTrue(row["depth"] is None or row["depth"] >= row["chunks_per_pass"])
                     self.assertIn(result["predicted"], (0, None))
                     self.assertGreater(measured[page_tool.key_of(row)]["stopped_share_of_requests"]["mean"], 0)
-                if result["mark"] in ("L", "?"):
-                    again = page_tool.runs_tool.compare(replayed[page_tool.key_of(row)][name],
-                                                        measured[page_tool.key_of(row)][name])
-                    self.assertEqual(again["miss"], result["mark"] == "?")
+                self.assertIn(result["mark"], ("", "A", "?"))
+                again = page_tool.runs_tool.compare(replayed[page_tool.key_of(row)][name],
+                                                    measured[page_tool.key_of(row)][name])
+                self.assertEqual(again["miss"], not result["replay_holds"])
 
     def test_a_marked_table_changes_nothing_but_the_marks(self):
         data = page_tool.inputs()
@@ -53,7 +53,7 @@ class ReplayTests(unittest.TestCase):
             marked = page_tool.comparison_table(rows, columns, delay).split("\n")
             self.assertEqual(len(plain), len(marked))
             for before, after in zip(plain, marked):
-                for mark in (" * A", " * L", " * ?"):
+                for mark in (" * A", " * ?"):
                     after = after.replace(mark, " *")
                 self.assertEqual(after, before)
             self.assertEqual(sum(line.count(" * ") for line in marked),
@@ -78,41 +78,49 @@ class PageTests(unittest.TestCase):
 
     def test_the_miss_counts_in_the_text(self):
         results = [result for row in self.rows for result in row["metrics"].values()]
-        count = {mark: sum(r["mark"] == mark for r in results) for mark in ("A", "L", "?")}
+        count = {mark: sum(r["mark"] == mark for r in results) for mark in ("A", "?")}
+        reached = sum(map(page_tool.replay_reaches, results))
+        self.assertEqual(count["A"] + count["?"], sum(r["miss"] for r in results))
         self.says(f"miss in {sum(r['miss'] for r in results)} of {len(results)} cells by more than 25 percent")
         self.says(f"For {count['A']} of them, three stop metrics in each of {count['A'] // 3} conditions")
-        self.says(f"brings {count['L']} other misses within 25 percent")
-        self.says(f"The remaining {count['?']} are not explained.")
+        self.says(f"brings {reached} of the other misses within 25 percent")
+        self.says(f"In all, {count['?']} misses are not explained, the {reached} among them.")
         self.says(f"{count['?']} misses carry no reason.")
 
         def of(name, mark=None):
             return sum(r["metrics"][name]["miss"] if mark is None else r["metrics"][name]["mark"] == mark
                        for r in self.rows)
 
-        self.says(f"the adopted share, with {of('adopted_share', '?')}, and the time after the newer request, "
-                  f"with {of('stale_after_newer_ms_per_stop', '?')}.")
+        def within(name):
+            return sum(page_tool.replay_reaches(r["metrics"][name]) for r in self.rows)
+
+        largest = sorted(page_tool.METRICS, key=lambda name: of(name, "?"), reverse=True)[:2]
+        self.assertEqual(largest, ["mean_adopted_age_ms", "stale_after_newer_ms_per_stop"])
+        self.says(f"the adopted age, with {of(largest[0], '?')}, and the time after the newer request, "
+                  f"with {of(largest[1], '?')}.")
         self.says(f"in all {of('mean_adopted_age_ms')} conditions where it misses")
-        self.says(f"the replay brings {of('mean_adopted_age_ms', 'L')} of the {of('mean_adopted_age_ms')}")
-        self.says(f"moves within 25 percent in {of('stale_gpu_time_share', 'L')} of its "
+        self.says(f"the replay brings {within('mean_adopted_age_ms')} of the {of('mean_adopted_age_ms')}")
+        self.says(f"moves within 25 percent in {within('stale_gpu_time_share')} of its "
                   f"{of('stale_gpu_time_share')} misses")
 
-        def sides(mark=None):
+        def sides(replay_missed_only=False):
             found = [r["metrics"]["synchronizes_per_pass"] for r in self.rows]
-            found = [r for r in found if r["miss"] and mark in (None, r["mark"])]
+            found = [r for r in found if r["miss"] and not (replay_missed_only and r["replay_holds"])]
             above = sum(r["measured"] > r["predicted"] for r in found)
             return len(found) - above, above
 
         below, above = sides()
-        left_below, left_above = sides("?")
+        left_below, left_above = sides(replay_missed_only=True)
         self.says(f"misses in {below + above} conditions, below the prediction in {below} and above it in {above}, "
-                  f"and the replay brings {of('synchronizes_per_pass', 'L')} within 25 percent. Of the "
-                  f"{left_below + left_above} left, {left_below} are below and {left_above} above.")
+                  f"and the replay brings {within('synchronizes_per_pass')} within 25 percent. Of the "
+                  f"{left_below + left_above} it does not, {left_below} are below and {left_above} above.")
         tail = "stale_after_newer_ms_per_stop"
         both = [r["metrics"][tail] for r in self.rows
                 if r["metrics"][tail]["miss"] and r["metrics"][tail]["relative"] is not None]
         self.says(f"above the prediction in {sum(r['measured'] > r['predicted'] for r in both)} of the "
                   f"{len(both)} misses where both sides have a value")
-        self.says(f"brings {of(tail, 'L')} misses of that metric within 25 percent and leaves {of(tail, '?')}.")
+        self.says(f"All {of(tail, '?')} misses of that metric outside `A` are not explained. The replay with "
+                  f"longer passes brings {within(tail)} of them within 25 percent.")
         age = [r["metrics"]["mean_adopted_age_ms"] for r in self.rows if r["metrics"]["mean_adopted_age_ms"]["miss"]]
         self.assertTrue(all(r["measured"] > r["predicted"] for r in age))
 
@@ -148,12 +156,15 @@ class PageTests(unittest.TestCase):
     def test_a_common_pass_length_does_at_least_as_well(self):
         entries = page_tool.controls(self.data, self.rows)
         own = entries[0][1]
-        self.assertEqual(own["within"], sum(result["mark"] == "L" for row in self.rows
+        self.assertEqual(own["within"], sum(page_tool.replay_reaches(result) for row in self.rows
                                             for result in row["metrics"].values()))
         for title, counts in entries[1:]:
             self.assertGreater(counts["within"], own["within"], title)
             self.assertLess(counts["replay_missed"], own["replay_missed"], title)
-        self.says("Read `L` as a candidate reason.")
+        self.says("So the replay is an observation and gives no miss a reason.")
+        self.says("Why the passes inside the worker were longer is not yet explained.")
+        for gone in ("`L`", " * L", "candidate reason"):
+            self.assertNotIn(gone, PAGE)
 
     def test_the_within_noise_cells_of_the_first_study(self):
         arrivals = page_tool.load("gpu-arrival-runs.json")
@@ -191,7 +202,7 @@ class PageTests(unittest.TestCase):
             self.assertLessEqual(
                 statistics.median(page_tool.completed_passes_ms(samples[page_tool.key_of(row)])), spacing)
         # Most of the low ones are still misses, as the text says.
-        self.assertGreater(sum(result["mark"] == "?" for _, result in found), len(found) / 2)
+        self.assertGreater(sum(not result["replay_holds"] for _, result in found), len(found) / 2)
 
     def test_late_stops_and_run_size(self):
         late = page_tool.late_stops(self.data)
