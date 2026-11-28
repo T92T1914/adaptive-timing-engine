@@ -226,7 +226,9 @@ class SavedDepthRunTests(unittest.TestCase):
         for row in self.report["rows"]:
             for run in row["runs"]:
                 for key in ("utilization_memory_clock_before", "utilization_memory_clock_after"):
-                    self.assertEqual(len(run[key].split(",")), 3)
+                    fields = [int(field) for field in run[key].split(",")]
+                    self.assertEqual(len(fields), 3)
+                    self.assertLessEqual(fields[0], 100)
 
     def test_the_predictions_were_committed_before_the_run_and_have_not_changed(self):
         committed = datetime.fromisoformat(self.report["predictions_committed"])
@@ -244,6 +246,11 @@ class SavedDepthRunTests(unittest.TestCase):
         for row in self.report["rows"]:
             self.assertEqual([run["seed"] for run in row["runs"]], settings["seeds"])
             self.assertEqual({run["requests"] for run in row["runs"]}, {settings["requests_per_run"]})
+            for run in row["runs"]:
+                # Counted by the worker, so these do not just repeat the settings.
+                worker = run["worker"]
+                self.assertEqual(worker["submitted"], settings["requests_per_run"])
+                self.assertEqual(worker["computed"] + worker["replaced"], worker["submitted"])
         self.assertEqual(sorted(row["order"] for row in self.report["rows"]), list(range(len(expected))))
 
     def test_the_samples_file_is_the_one_the_report_names(self):
@@ -252,24 +259,36 @@ class SavedDepthRunTests(unittest.TestCase):
 
     def test_the_summaries_follow_from_the_saved_samples(self):
         self.assertEqual(len(self.samples["conditions"]), len(self.report["rows"]))
-        for condition, row in zip(self.samples["conditions"], self.report["rows"]):
+        for condition, row in zip(self.samples["conditions"], self.report["rows"], strict=True):
             summary = {key: value for key, value in row.items() if key not in ("order", "runs")}
             self.assertEqual(tables.summarise(condition), summary)
 
     def test_the_samples_keep_the_depth_bound_and_the_worker_counts(self):
-        for condition, row in zip(self.samples["conditions"], self.report["rows"]):
+        for condition, row in zip(self.samples["conditions"], self.report["rows"], strict=True):
             count, limit = row["chunks_per_pass"], row["depth"]
-            for run, saved in zip(condition["runs"], row["runs"]):
-                self.assertEqual(saved["worker"]["computed"], len(run["samples"]))
-                self.assertEqual(saved["worker"]["failures"], 0)
+            for run, saved in zip(condition["runs"], row["runs"], strict=True):
+                self.assertEqual(run["seed"], saved["seed"])
+                worker = saved["worker"]
+                self.assertEqual(worker["computed"], len(run["samples"]))
+                self.assertEqual(worker["failures"], 0)
                 adopted = sum(1 for sample in run["samples"] if sample[5] & tables.ADOPTED)
-                self.assertEqual(saved["worker"]["adopted"], adopted)
+                # The worker decides staleness under its own lock after the pass returns. A newer
+                # request between the pass's check and that lock makes the worker count a pass
+                # stale that the pass called adopted, never the other way round.
+                self.assertEqual(worker["computed"] - worker["stale"], adopted + worker["adopted_check_mismatch"])
+                self.assertLessEqual(worker["adopted_check_mismatch"], 0)
                 for delay, length, newer, waits, launched, flags in run["samples"]:
-                    self.assertEqual(bool(flags & tables.STOPPED), launched < count)
-                    self.assertFalse(flags & tables.STOPPED and flags & tables.ADOPTED)
-                    self.assertLessEqual(waits, 0 if limit is None else max(0, count - limit))
-                    if flags & tables.STOPPED:
-                        self.assertIsNotNone(newer)
+                    stopped = bool(flags & tables.STOPPED)
+                    self.assertTrue(1 <= launched <= count)
+                    self.assertEqual(stopped, launched < count)
+                    self.assertFalse(stopped and flags & tables.ADOPTED)
+                    # A pass waits only once its queue holds `limit` chunks, and a stopped pass
+                    # waited once more before the check that stopped it.
+                    reached = launched + (1 if stopped else 0)
+                    self.assertLessEqual(waits, 0 if limit is None else max(0, reached - limit))
+                    if stopped:
+                        # The newer request arrived before the stopped pass ended.
+                        self.assertLess(newer, length)
 
 
 if __name__ == "__main__":
